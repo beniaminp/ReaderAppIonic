@@ -8,7 +8,7 @@ export class BookService {
     constructor() {
     }
 
-    public goToNextPage(element, rendition, book) {
+    public goToNextPageWithBook(element, rendition, book) {
         element.addEventListener("click", function (e) {
             book.package.metadata.direction === "rtl" ? rendition.prev() : rendition.next();
             e.preventDefault();

@@ -13,7 +13,7 @@
     <ion-card>
         <ion-card-title>{{bookTitle}}</ion-card-title>
         <ion-card-content>
-            <div id="book"></div>
+            <div id="book" (swipeAll)="swipe($event)"></div>
             <button id="prev" class="arrow" (click)="goToPreviousPage()">‹</button>
             <button id="next" class="arrow" (click)="goToNextPage()">›</button>
         </ion-card-content>

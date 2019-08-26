@@ -109,4 +109,8 @@ export class UserPage implements OnInit, AfterViewInit {
         this.bookService.goToPreviousPage(this.rendition, this.book);
     }
 
+    public swipe(args) {
+        console.error('swipe', args);
+    }
+
 }
