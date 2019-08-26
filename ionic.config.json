@@ -1,0 +1,7 @@
+{
+  "name": "ebook-reader",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
