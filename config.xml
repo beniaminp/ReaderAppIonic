@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.ionic.facebook.login" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.padana.ebookreader" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>EbookReader</name>
     <description>An Ionic 4 project to show how to add Facebook Login to an Ionic 4 app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">IonicThemes Team</author>
@@ -82,8 +82,8 @@
     </platform>
     <plugin name="cordova-plugin-device" spec="^2.0.2" />
     <plugin name="cordova-plugin-facebook4" spec="^3.1.0">
-        <variable name="APP_ID" value="2392489640796829" />
-        <variable name="APP_NAME" value="ionic4-facebook-login" />
+        <variable name="APP_ID" value="524006108371584" />
+        <variable name="APP_NAME" value="EbookReader" />
         <variable name="FACEBOOK_ANDROID_SDK_VERSION" value="4.37.0" />
     </plugin>
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.1.3" />
