@@ -5,8 +5,6 @@ import {LoadingController, Platform} from '@ionic/angular';
 import {Facebook} from '@ionic-native/facebook/ngx';
 import {BookService} from "../services/book.service";
 
-declare var ePub: any;
-
 @Component({
     selector: 'app-user',
     templateUrl: './user.page.html',
@@ -25,9 +23,6 @@ export class UserPage implements OnInit, AfterViewInit {
 
     user: any;
     userReady: boolean = false;
-    book: any;
-    rendition: any;
-    bookTitle: any;
 
 
     async ngOnInit() {
@@ -62,55 +57,5 @@ export class UserPage implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.book = ePub("https://yatsa.betamo.de/ionic-epubjs/Metamorphosis-jackson.epub");
-        this.rendition = this.book.renderTo("book", {
-            width: "100%",
-            height: this.plt.height() - 70,
-            spread: "always"
-        });
-
-        this.rendition.display();
-
-        this.book.ready.then(() => {
-            console.error('this.book.package', this.book.package);
-            this.bookTitle = this.bookService.getTitle(this.book);
-            /*var next = document.getElementById("next");
-
-            this.bookService.goToNextPage(next, this.rendition, this.book);
-
-            var prev = document.getElementById("prev");
-
-            this.bookService.goToNextPage(prev, this.rendition, this.book);
-
-            var keyListener = function (e) {
-
-                // Left Key
-                if ((e.keyCode || e.which) == 37) {
-                    book.package.metadata.direction === "rtl" ? rendition.next() : rendition.prev();
-                }
-
-                // Right Key
-                if ((e.keyCode || e.which) == 39) {
-                    book.package.metadata.direction === "rtl" ? rendition.prev() : rendition.next();
-                }
-
-            };
-
-            rendition.on("keyup", keyListener);
-            document.addEventListener("keyup", keyListener, false);*/
-        });
     }
-
-    public goToNextPage() {
-        this.bookService.goToNextPage(this.rendition, this.book);
-    }
-
-    public goToPreviousPage() {
-        this.bookService.goToPreviousPage(this.rendition, this.book);
-    }
-
-    public swipe(args) {
-        console.error('swipe', args);
-    }
-
 }

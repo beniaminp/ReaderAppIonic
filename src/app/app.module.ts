@@ -11,11 +11,16 @@ import {AppRoutingModule} from './app-routing.module';
 
 import {Facebook} from '@ionic-native/facebook/ngx';
 import {NativeStorage} from '@ionic-native/native-storage/ngx';
+import {IonicStorageModule} from "@ionic/storage";
 
 @NgModule({
     declarations: [AppComponent],
     entryComponents: [],
-    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+    imports: [
+        BrowserModule,
+        IonicModule.forRoot(),
+        AppRoutingModule,
+        IonicStorageModule.forRoot()],
     providers: [
         StatusBar,
         SplashScreen,

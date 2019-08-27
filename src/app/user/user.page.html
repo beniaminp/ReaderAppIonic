@@ -1,22 +1,9 @@
 <ion-content>
-    <!--<ion-card>
-        <ion-img [src]="user.picture"></ion-img>
-        <ion-card-header>
-            <ion-card-title>{{user.name}}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-            <p>{{user.email}}</p>
-        </ion-card-content>
-        <ion-button expand="block" (click)="doFbLogout()">Log Out</ion-button>
-    </ion-card>-->
-
     <ion-card>
-        <ion-card-title>{{bookTitle}}</ion-card-title>
+        <!--<ion-card-title>{{bookTitle}}</ion-card-title>-->
         <ion-card-content>
-            <div id="book" (swipeAll)="swipe($event)"></div>
-            <button id="prev" class="arrow" (click)="goToPreviousPage()">‹</button>
-            <button id="next" class="arrow" (click)="goToNextPage()">›</button>
+           <!-- <div id="book"></div>-->
+            <app-ebook-reader [ebookSource]="'https://yatsa.betamo.de/ionic-epubjs/Metamorphosis-jackson.epub'"></app-ebook-reader>
         </ion-card-content>
     </ion-card>
-
 </ion-content>
