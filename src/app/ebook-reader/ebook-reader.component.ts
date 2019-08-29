@@ -1,4 +1,13 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Input,
+    OnInit,
+    Renderer2,
+    ViewChild
+} from '@angular/core';
 import {Platform} from "@ionic/angular";
 import {Storage} from '@ionic/storage';
 import {BookDTO} from "./bookDTO";
@@ -21,7 +30,9 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
     private bookDTO: BookDTO;
 
     constructor(public platform: Platform,
-                public storage: Storage) {
+                public storage: Storage,
+                public renderer2: Renderer2,
+                public cdr: ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -48,15 +59,16 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
             this.storage.get('books').then((res) => {
                 if (res != null) {
                     let books: BookDTO[] = JSON.parse(res);
-                    let currentBooks = books.filter(book => book.uniqueIdentifier.toLowerCase() == this.book.package.uniqueIdentifier.toLowerCase());
-                    if (currentBooks.length > 0) {
-                        this.bookDTO = currentBooks[0];
+                    let currentIndex = books
+                        .findIndex(book => book.uniqueIdentifier.toLowerCase() == this.book.package.uniqueIdentifier.toLowerCase());
+                    if (currentIndex > -1) {
+                        this.bookDTO = books[currentIndex];
                     }
                     else {
                         this.bookDTO = new BookDTO();
                         this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
-                        currentBooks.push(this.bookDTO);
-                        this.storage.set('books', JSON.stringify(currentBooks)).then();
+                        books.push(this.bookDTO);
+                        this.storage.set('books', JSON.stringify(books)).then();
                     }
                 } else {
                     this.bookDTO = new BookDTO();
@@ -66,26 +78,37 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
             });
 
             var keyListener = (e) => {
+                this.getCoordinates(e);
                 if (this.isBookmarkPress(e)) {
                     this.setUnsetBookmark();
                     return;
                 }
 
-                if (this.platform.width() / 2 > e.x) {
-                    this.book.package.metadata.direction === "rtl" ? this.rendition.next() : this.rendition.prev();
+                if (e.clientX > this.platform.width() / 2) {
+                    /*this.book.package.metadata.direction === "rtl" ? this.rendition.next() : this.rendition.prev();
+                    console.error('in next');*/
+                    this.rendition.next()
                 } else {
-                    this.book.package.metadata.direction === "rtl" ? this.rendition.prev() : this.rendition.next();
+                    /*this.book.package.metadata.direction === "rtl" ? this.rendition.prev() : this.rendition.next();
+                    console.error('in prev');*/
+                    this.rendition.prev()
                 }
+
+                this.isBookmarkSet = false;
+                if (this.bookmarkExists()) {
+                    this.isBookmarkSet = true;
+                }
+                this.cdr.detectChanges();
             };
 
-            this.rendition.on("mouseup", keyListener);
+            this.rendition.on("click", keyListener);
             document.addEventListener("mouseup", keyListener, false)
         });
     }
 
     public isBookmarkPress(clickEvent) {
-        if (clickEvent.y < 50
-            && clickEvent.x > this.platform.width() - 50) {
+        if (clickEvent.clientY < 70
+            && clickEvent.clientX > this.platform.width() - 70) {
             return true;
         }
         return false;
@@ -93,27 +116,23 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
 
     public setUnsetBookmark() {
         var cfi = this.rendition.currentLocation().start.cfi;
-        console.error('cfi', cfi);
-        console.error('this.bookDTO.bookmarks', this.bookDTO.bookmarks);
-        let filteredBookMarks = this.bookDTO.bookmarks.filter(bookMark => {
-            bookMark.toLowerCase() === cfi.toLowerCase()
-        });
+
+        let cfiIndex = this.bookDTO.bookmarks.indexOf(cfi);
 
         if (!this.bookmarkExists()) {
             this.isBookmarkSet = true;
             this.bookDTO.bookmarks.push(cfi);
         } else {
-            this.bookDTO.bookmarks.splice(this.bookDTO.bookmarks.indexOf(filteredBookMarks[0]), 1);
+            this.bookDTO.bookmarks.splice(cfiIndex, 1);
             this.isBookmarkSet = false;
         }
+        this.cdr.detectChanges();
+        this.storage.set('books', JSON.stringify([this.bookDTO])).then();
     }
 
     private bookmarkExists() {
         var cfi = this.rendition.currentLocation().start.cfi;
-        let filteredBookMarks = this.bookDTO.bookmarks.filter(bookMark => {
-            bookMark.toLowerCase() === cfi.toLowerCase()
-        });
-        if (filteredBookMarks.length == 1) {
+        if (this.bookDTO.bookmarks.indexOf(cfi.toString()) > -1) {
             return true;
         }
         return false;
@@ -130,5 +149,13 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
         this.bookDTO.bookmarks.splice(this.bookDTO.bookmarks.indexOf(cfi), 1);
         this.isBookmarkSet = false;
     }
+
+    public getCoordinates(event) {
+        console.log('this.platform.width()', this.platform.width());
+        console.log(event);
+        console.log(event.clientX);
+        console.log(event.clientY);
+    }
+
 
 }
