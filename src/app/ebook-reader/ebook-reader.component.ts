@@ -1,4 +1,5 @@
 import {
+    AfterContentInit,
     AfterViewInit,
     ChangeDetectorRef,
     Component,
@@ -19,7 +20,7 @@ declare var ePub: any;
     templateUrl: './ebook-reader.component.html',
     styleUrls: ['./ebook-reader.component.scss']
 })
-export class EbookReaderComponent implements OnInit, AfterViewInit {
+export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContentInit {
     @Input('ebookSource')
     public ebookSource: any;
 
@@ -39,7 +40,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.initBook();
     }
 
     private initBook() {
@@ -49,61 +49,91 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
         this.book = ePub(this.ebookSource);
         this.rendition = this.book.renderTo("book", {
             width: '100%',
-            height: this.platform.height() - 70,
-            spread: 'always'
+            height: this.platform.height() - 105,
+            spread: 'always',
+            resizeOnOrientationChange: true
         });
 
         this.rendition.display();
 
+        this.bookReady();
+    }
+
+    private bookReady() {
+        console.error(this.book);
         this.book.ready.then(() => {
             this.storage.get('books').then((res) => {
                 if (res != null) {
-                    let books: BookDTO[] = JSON.parse(res);
-                    let currentIndex = books
-                        .findIndex(book => book.uniqueIdentifier.toLowerCase() == this.book.package.uniqueIdentifier.toLowerCase());
-                    if (currentIndex > -1) {
-                        this.bookDTO = books[currentIndex];
-                    }
-                    else {
-                        this.bookDTO = new BookDTO();
-                        this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
-                        books.push(this.bookDTO);
-                        this.storage.set('books', JSON.stringify(books)).then();
-                    }
+                    this.checkInLocalStorage(res);
                 } else {
-                    this.bookDTO = new BookDTO();
-                    this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
-                    this.storage.set('books', JSON.stringify([this.bookDTO])).then();
+                    this.addToLocalStorage();
                 }
             });
 
-            var keyListener = (e) => {
+            /*var keyListener = (e) => {
                 this.getCoordinates(e);
                 if (this.isBookmarkPress(e)) {
                     this.setUnsetBookmark();
                     return;
                 }
 
-                if (e.clientX > this.platform.width() / 2) {
-                    /*this.book.package.metadata.direction === "rtl" ? this.rendition.next() : this.rendition.prev();
-                    console.error('in next');*/
-                    this.rendition.next()
-                } else {
-                    /*this.book.package.metadata.direction === "rtl" ? this.rendition.prev() : this.rendition.next();
-                    console.error('in prev');*/
-                    this.rendition.prev()
-                }
+                 if (e.clientX > this.platform.width() / 2) {
+                     /!*this.book.package.metadata.direction === "rtl" ? this.rendition.next() : this.rendition.prev();*!/
+                     console.error('in next');
+                     this.rendition.next()
+                 } else {
+                     /!*this.book.package.metadata.direction === "rtl" ? this.rendition.prev() : this.rendition.next();*!/
+                     console.error('in prev');
+                     this.rendition.prev()
+                 }
 
                 this.isBookmarkSet = false;
                 if (this.bookmarkExists()) {
                     this.isBookmarkSet = true;
                 }
-                this.cdr.detectChanges();
+                 this.cdr.detectChanges();
             };
 
             this.rendition.on("click", keyListener);
-            document.addEventListener("mouseup", keyListener, false)
+            document.addEventListener("mouseup", keyListener, false)*/
         });
+    }
+
+    private addToLocalStorage() {
+        this.bookDTO = new BookDTO();
+        this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
+        this.storage.set('books', JSON.stringify([this.bookDTO])).then();
+    }
+
+    private checkInLocalStorage(res) {
+        let books: BookDTO[] = JSON.parse(res);
+        let currentIndex = books
+            .findIndex(book => book.uniqueIdentifier.toLowerCase() == this.book.package.uniqueIdentifier.toLowerCase());
+        if (currentIndex > -1) {
+            this.bookDTO = books[currentIndex];
+        }
+        else {
+            this.bookDTO = new BookDTO();
+            this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
+            this.bookDTO.title = this.book.package.metadata.title;
+            books.push(this.bookDTO);
+            this.storage.set('books', JSON.stringify(books)).then();
+        }
+    }
+
+    public move(where) {
+        if (where == 0) {
+            this.rendition.prev().then(res => this.setUnsetBookmarkIcon());
+        } else {
+            this.rendition.next().then((res) => this.setUnsetBookmarkIcon());
+        }
+    }
+
+    private setUnsetBookmarkIcon() {
+        this.isBookmarkSet = false;
+        if (this.bookmarkExists()) {
+            this.isBookmarkSet = true;
+        }
     }
 
     public isBookmarkPress(clickEvent) {
@@ -115,6 +145,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
     }
 
     public setUnsetBookmark() {
+        console.error('bookmark cliked')
         var cfi = this.rendition.currentLocation().start.cfi;
 
         let cfiIndex = this.bookDTO.bookmarks.indexOf(cfi);
@@ -150,11 +181,8 @@ export class EbookReaderComponent implements OnInit, AfterViewInit {
         this.isBookmarkSet = false;
     }
 
-    public getCoordinates(event) {
-        console.log('this.platform.width()', this.platform.width());
-        console.log(event);
-        console.log(event.clientX);
-        console.log(event.clientY);
+    ngAfterContentInit(): void {
+        this.initBook();
     }
 
 

@@ -1,21 +1,28 @@
-<!--<ion-menu side="start" menuId="ebook-menu" class="ebook-menu">
-    <ion-header>
-        <ion-toolbar color="tertiary">
-            <ion-title>Menu</ion-title>
-        </ion-toolbar>
-    </ion-header>
-    <ion-content>
-        <ion-list>
-            <ion-item>Menu Item</ion-item>
-            <ion-item>Menu Item</ion-item>
-            <ion-item>Menu Item</ion-item>
-            <ion-item>Menu Item</ion-item>
-            <ion-item>Menu Item</ion-item>
-        </ion-list>
-    </ion-content>
-</ion-menu>-->
-<div>
-    <ion-icon name="bookmark" style="float: right; z-index: 2;"
-              [style.visibility]="isBookmarkSet ?'visible' : 'hidden'"></ion-icon>
+<ion-header *ngIf="bookDTO != null">
+    <ion-toolbar color="tertiary">
+        <ion-title>{{bookDTO.title}}</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="setUnsetBookmark()">
+                <ion-icon name="bookmark" style="float: right;"
+                          [style.visibility]="isBookmarkSet ?'visible' : 'hidden'"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<main class="container" role="main">
     <div id="book"></div>
-</div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <ion-toolbar>
+            <ion-buttons slot="start">
+                <ion-icon name="arrow-dropleft-circle" (click)="move(0)"></ion-icon>
+            </ion-buttons>
+            <ion-buttons slot="end">
+                <ion-icon name="arrow-dropright-circle" (click)="move(1)" style="float:right;"></ion-icon>
+            </ion-buttons>
+        </ion-toolbar>
+    </div>
+</footer>

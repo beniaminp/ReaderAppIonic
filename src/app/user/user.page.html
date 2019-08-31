@@ -1,9 +1,4 @@
 <ion-content>
-    <ion-card>
-        <!--<ion-card-title>{{bookTitle}}</ion-card-title>-->
-        <ion-card-content>
-           <!-- <div id="book"></div>-->
-            <app-ebook-reader [ebookSource]="'https://yatsa.betamo.de/ionic-epubjs/Metamorphosis-jackson.epub'"></app-ebook-reader>
-        </ion-card-content>
-    </ion-card>
+    <app-ebook-reader
+            [ebookSource]="'https://yatsa.betamo.de/ionic-epubjs/Metamorphosis-jackson.epub'"></app-ebook-reader>
 </ion-content>
