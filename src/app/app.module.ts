@@ -12,15 +12,18 @@ import {AppRoutingModule} from './app-routing.module';
 import {Facebook} from '@ionic-native/facebook/ngx';
 import {NativeStorage} from '@ionic-native/native-storage/ngx';
 import {IonicStorageModule} from "@ionic/storage";
+import {EbookReaderModule} from "./ebook-reader/ebook-reader.module";
 
 @NgModule({
     declarations: [AppComponent],
     entryComponents: [],
     imports: [
         BrowserModule,
+        EbookReaderModule,
         IonicModule.forRoot(),
         AppRoutingModule,
-        IonicStorageModule.forRoot()],
+        IonicStorageModule.forRoot(),
+    ],
     providers: [
         StatusBar,
         SplashScreen,

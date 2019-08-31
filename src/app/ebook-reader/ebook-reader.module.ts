@@ -3,6 +3,7 @@ import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {IonicModule} from "@ionic/angular";
 import {EbookReaderComponent} from "./ebook-reader.component";
+import { EbookMenuComponent } from './ebook-menu/ebook-menu.component';
 
 @NgModule({
     imports: [
@@ -11,10 +12,12 @@ import {EbookReaderComponent} from "./ebook-reader.component";
         IonicModule
     ],
     declarations: [
-        EbookReaderComponent
+        EbookReaderComponent,
+        EbookMenuComponent
     ],
     exports: [
-        EbookReaderComponent
+        EbookReaderComponent,
+        EbookMenuComponent
     ]
 })
 export class EbookReaderModule {

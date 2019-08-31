@@ -1,0 +1,12 @@
+<div *ngIf="bookDTO != null">
+    <ion-header>
+        <ion-toolbar translucent>
+            <ion-title>{{bookDTO.title}}</ion-title>
+        </ion-toolbar>
+    </ion-header>
+    <ion-list>
+        <ion-item (click)="viewBookMarks()">
+            <ion-label>Bookmarks</ion-label>
+        </ion-item>
+    </ion-list>
+</div>

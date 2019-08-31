@@ -9,9 +9,10 @@ import {
     Renderer2,
     ViewChild
 } from '@angular/core';
-import {Platform} from "@ionic/angular";
+import {MenuController, Platform} from "@ionic/angular";
 import {Storage} from '@ionic/storage';
-import {BookDTO} from "./bookDTO";
+import {BookDTO} from "./dto/bookDTO";
+import {EBookService} from "./services/e-book.service";
 
 declare var ePub: any;
 
@@ -32,14 +33,20 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
     constructor(public platform: Platform,
                 public storage: Storage,
-                public renderer2: Renderer2,
-                public cdr: ChangeDetectorRef) {
+                public cdr: ChangeDetectorRef,
+                public menu: MenuController,
+                public ebookService: EBookService) {
     }
 
     ngOnInit() {
     }
 
     ngAfterViewInit(): void {
+        this.enableMenu();
+    }
+
+    private enableMenu() {
+        this.menu.enable(true, 'ebook-menu');
     }
 
     private initBook() {
@@ -68,6 +75,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 } else {
                     this.addToLocalStorage();
                 }
+                this.ebookService.eBookEmitter.next(this.bookDTO);
             });
 
             /*var keyListener = (e) => {
@@ -102,6 +110,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     private addToLocalStorage() {
         this.bookDTO = new BookDTO();
         this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
+        this.bookDTO.title = this.book.package.metadata.title;
         this.storage.set('books', JSON.stringify([this.bookDTO])).then();
     }
 
@@ -111,13 +120,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             .findIndex(book => book.uniqueIdentifier.toLowerCase() == this.book.package.uniqueIdentifier.toLowerCase());
         if (currentIndex > -1) {
             this.bookDTO = books[currentIndex];
-        }
-        else {
-            this.bookDTO = new BookDTO();
-            this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
-            this.bookDTO.title = this.book.package.metadata.title;
-            books.push(this.bookDTO);
-            this.storage.set('books', JSON.stringify(books)).then();
         }
     }
 
