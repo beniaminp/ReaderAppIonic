@@ -3,7 +3,8 @@ import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {IonicModule} from "@ionic/angular";
 import {EbookReaderComponent} from "./ebook-reader.component";
-import { EbookMenuComponent } from './ebook-menu/ebook-menu.component';
+import {EbookMenuComponent} from './ebook-menu/ebook-menu.component';
+import {BookmarksListComponent} from './ebook-menu/bookmarks-list/bookmarks-list.component';
 
 @NgModule({
     imports: [
@@ -13,11 +14,13 @@ import { EbookMenuComponent } from './ebook-menu/ebook-menu.component';
     ],
     declarations: [
         EbookReaderComponent,
-        EbookMenuComponent
+        EbookMenuComponent,
+        BookmarksListComponent
     ],
     exports: [
         EbookReaderComponent,
-        EbookMenuComponent
+        EbookMenuComponent,
+        BookmarksListComponent
     ]
 })
 export class EbookReaderModule {

@@ -71,7 +71,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.book.ready.then(() => {
             this.storage.get('books').then((res) => {
                 if (res != null) {
-                    this.checkInLocalStorage(res);
+                    this.getFromLocalStorage(res);
                 } else {
                     this.addToLocalStorage();
                 }
@@ -114,7 +114,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.storage.set('books', JSON.stringify([this.bookDTO])).then();
     }
 
-    private checkInLocalStorage(res) {
+    private getFromLocalStorage(res) {
         let books: BookDTO[] = JSON.parse(res);
         let currentIndex = books
             .findIndex(book => book.uniqueIdentifier.toLowerCase() == this.book.package.uniqueIdentifier.toLowerCase());
