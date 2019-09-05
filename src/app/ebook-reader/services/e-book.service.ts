@@ -18,4 +18,24 @@ export class EBookService {
     public emitEpub(epub) {
         this.ePubEmitter.next({type: 1, value: epub});
     }
+
+    public getPagePercentByCfi(epub, cfi) {
+        return (epub.locations.percentageFromCfi(cfi) * 100).toPrecision(3);
+    }
+
+    public getCurrentLocation(epub) {
+        return epub.rendition.currentLocation();
+    }
+
+    public getSpineItemByLocation(epub, location) {
+        return epub.spine.get(location);
+    }
+
+    public getNavItemBySpine(epub, spine) {
+        return epub.navigation.get(spine.href);
+    }
+
+    public getStartCfi(epub) {
+        return epub.rendition.currentLocation().start.cfi;
+    }
 }

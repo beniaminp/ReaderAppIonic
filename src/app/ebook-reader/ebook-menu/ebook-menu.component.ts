@@ -3,6 +3,7 @@ import {EBookService} from "../services/e-book.service";
 import {BookDTO} from "../dto/bookDTO";
 import {BookmarksListComponent} from "./bookmarks-list/bookmarks-list.component";
 import {MenuController, ModalController} from "@ionic/angular";
+import {MenuService} from "../services/menu.service";
 
 @Component({
     selector: 'ebook-menu',
@@ -16,7 +17,8 @@ export class EbookMenuComponent implements OnInit {
 
     constructor(public ebookService: EBookService,
                 public modalController: ModalController,
-                public menuCtrl: MenuController) {
+                public menuCtrl: MenuController,
+                public menuService: MenuService) {
     }
 
     ngOnInit() {
@@ -43,6 +45,18 @@ export class EbookMenuComponent implements OnInit {
         }
     }
 
+    goToBookMark(bookmarkCFI){
+        this.ePub.rendition.display(bookmarkCFI);
+        this.menuService.menuEmitter.next(0);
+        this.menuCtrl.toggle();
+    }
+
+    goToChapter(chapter) {
+        this.ePub.rendition.display(chapter.href);
+        this.menuService.menuEmitter.next(0);
+        this.menuCtrl.toggle();
+    }
+
     private initEventListeners() {
         this.ebookService.eBookEmitter.subscribe((eBook: BookDTO) => {
             this.bookDTO = eBook;
@@ -55,16 +69,5 @@ export class EbookMenuComponent implements OnInit {
                 }
             }
         )
-    }
-
-    goToBookMark(bookmarkCFI){
-        this.ePub.rendition.display(bookmarkCFI);
-        this.menuCtrl.toggle();
-    }
-
-    goToChapter(chapter) {
-        this.ePub.rendition.display(chapter.href);
-        this.menuCtrl.toggle();
-        console.error(chapter);
     }
 }

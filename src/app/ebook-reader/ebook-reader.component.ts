@@ -3,6 +3,7 @@ import {MenuController, Platform} from "@ionic/angular";
 import {Storage} from '@ionic/storage';
 import {BookDTO} from "./dto/bookDTO";
 import {EBookService} from "./services/e-book.service";
+import {MenuService} from "./services/menu.service";
 
 declare var ePub: any;
 
@@ -24,8 +25,9 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     constructor(public platform: Platform,
                 public storage: Storage,
                 public cdr: ChangeDetectorRef,
-                public menu: MenuController,
-                public ebookService: EBookService) {
+                public menuController: MenuController,
+                public ebookService: EBookService,
+                public menuService: MenuService) {
     }
 
     ngOnInit() {
@@ -35,8 +37,38 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.enableMenu();
     }
 
+    ngAfterContentInit(): void {
+        this.initBook();
+        this.initEventListeners();
+    }
+
+    public move(where) {
+        if (where == 0) {
+            this.rendition.prev().then(res => this.setUnsetBookmarkIcon());
+        } else {
+            this.rendition.next().then((res) => this.setUnsetBookmarkIcon());
+        }
+    }
+
+    public setUnsetBookmark() {
+        var cfi = this.ebookService.getStartCfi(this.book);
+
+        let cfiIndex = this.bookDTO.bookmarks.indexOf(cfi);
+
+        if (!this.bookmarkExists()) {
+            this.isBookmarkSet = true;
+            this.bookDTO.bookmarks.push(cfi);
+        } else {
+            this.bookDTO.bookmarks.splice(cfiIndex, 1);
+            this.isBookmarkSet = false;
+        }
+        this.cdr.detectChanges();
+        this.storage.set('books', JSON.stringify([this.bookDTO])).then();
+
+    }
+
     private enableMenu() {
-        this.menu.enable(true, 'ebook-menu');
+        this.menuController.enable(true, 'ebook-menu');
     }
 
     private initBook() {
@@ -67,6 +99,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 }
                 this.ebookService.eBookEmitter.next(this.bookDTO);
             });
+            this.book.locations.generate(1600);
 
             /*var keyListener = (e) => {
                 this.getCoordinates(e);
@@ -114,46 +147,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         }
     }
 
-    public move(where) {
-        if (where == 0) {
-            this.rendition.prev().then(res => this.setUnsetBookmarkIcon());
-        } else {
-            this.rendition.next().then((res) => this.setUnsetBookmarkIcon());
-        }
-    }
-
-    private setUnsetBookmarkIcon() {
-        this.isBookmarkSet = false;
-        if (this.bookmarkExists()) {
-            this.isBookmarkSet = true;
-        }
-    }
-    public setUnsetBookmark() {
-        var cfi = this.rendition.currentLocation().start.cfi;
-
-        let cfiIndex = this.bookDTO.bookmarks.indexOf(cfi);
-
-        if (!this.bookmarkExists()) {
-            this.isBookmarkSet = true;
-            this.bookDTO.bookmarks.push(cfi);
-        } else {
-            this.bookDTO.bookmarks.splice(cfiIndex, 1);
-            this.isBookmarkSet = false;
-        }
-        this.cdr.detectChanges();
-        this.storage.set('books', JSON.stringify([this.bookDTO])).then();
-
-        let currentLocation = this.rendition.currentLocation().start.cfi;
-        console.error(currentLocation);
-        let spineItem = this.book.spine.get(currentLocation);
-        let navItem = this.book.navigation.get(spineItem.href);
-        console.error('spine', spineItem);
-        console.error('navItem', navItem);
-        let currentPage = this.book.locations.percentageFromCfi(currentLocation);
-        console.error(currentPage);
-
-    }
-
     private bookmarkExists() {
         var cfi = this.rendition.currentLocation().start.cfi;
         if (this.bookDTO.bookmarks.indexOf(cfi.toString()) > -1) {
@@ -162,21 +155,11 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         return false;
     }
 
-    public setBookmark() {
-        var cfi = this.rendition.currentLocation().start.cfi;
-        this.bookDTO.bookmarks.push(cfi);
-        this.isBookmarkSet = true;
-    }
-
-    public unsetBookmark() {
-        var cfi = this.rendition.currentLocation().start.cfi;
-        this.bookDTO.bookmarks.splice(this.bookDTO.bookmarks.indexOf(cfi), 1);
+    private setUnsetBookmarkIcon() {
         this.isBookmarkSet = false;
-    }
-
-    ngAfterContentInit(): void {
-        this.initBook();
-        this.initEventListeners();
+        if (this.bookmarkExists()) {
+            this.isBookmarkSet = true;
+        }
     }
 
     private initEventListeners() {
@@ -187,9 +170,15 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                     this.book.locations.setCurrent(event.value);
                 }
             }
+        );
+        this.menuService.menuEmitter.subscribe(
+            (event) => {
+                if (event == 0) {
+                    this.cdr.detectChanges();
+                }
+            }
         )
     }
-
 
     // search in chapter book.currentChapter.find("Some Text to look for");
     // page number from cfi book.pagination.pageFromCfi(cfiGoesHere);
