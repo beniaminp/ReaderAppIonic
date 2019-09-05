@@ -1,4 +1,6 @@
 export class BookmarkDTO {
-    cfi: string;
+    cfi: any;
     date: number;
+    percentage: number;
+    page: number;
 }

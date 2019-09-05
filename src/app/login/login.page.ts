@@ -35,6 +35,10 @@ export class LoginPage {
             return;
         }
 
+        this.router.navigate(["/user"]);
+        loading.dismiss();
+        return;
+
         //the permissions your facebook app needs from the user
         const permissions = ["public_profile", "email"];
 

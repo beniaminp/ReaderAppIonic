@@ -1,14 +1,4 @@
-import {
-    AfterContentInit,
-    AfterViewInit,
-    ChangeDetectorRef,
-    Component,
-    ElementRef,
-    Input,
-    OnInit,
-    Renderer2,
-    ViewChild
-} from '@angular/core';
+import {AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {MenuController, Platform} from "@ionic/angular";
 import {Storage} from '@ionic/storage';
 import {BookDTO} from "./dto/bookDTO";
@@ -105,6 +95,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.rendition.on("click", keyListener);
             document.addEventListener("mouseup", keyListener, false)*/
         });
+        console.error('this.book', this.book);
     }
 
     private addToLocalStorage() {
@@ -137,17 +128,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.isBookmarkSet = true;
         }
     }
-
-    public isBookmarkPress(clickEvent) {
-        if (clickEvent.clientY < 70
-            && clickEvent.clientX > this.platform.width() - 70) {
-            return true;
-        }
-        return false;
-    }
-
     public setUnsetBookmark() {
-        console.error('bookmark cliked')
         var cfi = this.rendition.currentLocation().start.cfi;
 
         let cfiIndex = this.bookDTO.bookmarks.indexOf(cfi);
@@ -161,6 +142,16 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         }
         this.cdr.detectChanges();
         this.storage.set('books', JSON.stringify([this.bookDTO])).then();
+
+        let currentLocation = this.rendition.currentLocation().start.cfi;
+        console.error(currentLocation);
+        let spineItem = this.book.spine.get(currentLocation);
+        let navItem = this.book.navigation.get(spineItem.href);
+        console.error('spine', spineItem);
+        console.error('navItem', navItem);
+        let currentPage = this.book.locations.percentageFromCfi(currentLocation);
+        console.error(currentPage);
+
     }
 
     private bookmarkExists() {
@@ -185,7 +176,21 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
     ngAfterContentInit(): void {
         this.initBook();
+        this.initEventListeners();
+    }
+
+    private initEventListeners() {
+        this.ebookService.emitEpub(this.book);
+        this.ebookService.ePubEmitter.subscribe(
+            (event) => {
+                if (event.type == 0) {
+                    this.book.locations.setCurrent(event.value);
+                }
+            }
+        )
     }
 
 
+    // search in chapter book.currentChapter.find("Some Text to look for");
+    // page number from cfi book.pagination.pageFromCfi(cfiGoesHere);
 }

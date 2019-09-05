@@ -4,7 +4,6 @@ import {FormsModule} from "@angular/forms";
 import {IonicModule} from "@ionic/angular";
 import {EbookReaderComponent} from "./ebook-reader.component";
 import {EbookMenuComponent} from './ebook-menu/ebook-menu.component';
-import {BookmarksListComponent} from './ebook-menu/bookmarks-list/bookmarks-list.component';
 
 @NgModule({
     imports: [
@@ -15,13 +14,12 @@ import {BookmarksListComponent} from './ebook-menu/bookmarks-list/bookmarks-list
     declarations: [
         EbookReaderComponent,
         EbookMenuComponent,
-        BookmarksListComponent
+
     ],
     exports: [
         EbookReaderComponent,
         EbookMenuComponent,
-        BookmarksListComponent
-    ]
+    ],
 })
 export class EbookReaderModule {
 }

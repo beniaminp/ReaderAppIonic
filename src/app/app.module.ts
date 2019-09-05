@@ -13,16 +13,17 @@ import {Facebook} from '@ionic-native/facebook/ngx';
 import {NativeStorage} from '@ionic-native/native-storage/ngx';
 import {IonicStorageModule} from "@ionic/storage";
 import {EbookReaderModule} from "./ebook-reader/ebook-reader.module";
+import {BookmarksListComponent} from "./ebook-reader/ebook-menu/bookmarks-list/bookmarks-list.component";
 
 @NgModule({
-    declarations: [AppComponent],
-    entryComponents: [],
+    declarations: [AppComponent, BookmarksListComponent],
+    entryComponents: [BookmarksListComponent],
     imports: [
         BrowserModule,
-        EbookReaderModule,
         IonicModule.forRoot(),
         AppRoutingModule,
         IonicStorageModule.forRoot(),
+        EbookReaderModule,
     ],
     providers: [
         StatusBar,
