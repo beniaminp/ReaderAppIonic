@@ -1,4 +1,4 @@
 <ion-content>
-    <app-ebook-reader
-            [ebookSource]="'https://yatsa.betamo.de/ionic-epubjs/Metamorphosis-jackson.epub'"></app-ebook-reader>
+    <app-ebook-reader *ngIf="ebookSource"
+            [ebookSource]="ebookSource"></app-ebook-reader>
 </ion-content>

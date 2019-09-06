@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from "@ionic/angular";
 import {BookDTO} from "../../dto/bookDTO";
-import {EBookService} from "../../services/e-book.service";
+import {EBookService, EPUB_EVENT_TYPES} from "../../services/e-book.service";
 import {BookmarkDTO} from "../../dto/bookmarkDTO";
 
 @Component({
@@ -31,7 +31,7 @@ export class BookmarksListComponent implements OnInit {
     private initEventListeners() {
         this.ebookService.ePubEmitter.subscribe(
             (event) => {
-                if (event.type == 1) {
+                if (event.type == EPUB_EVENT_TYPES.EPUB) {
                     this.ePub = event.value;
                 }
             }

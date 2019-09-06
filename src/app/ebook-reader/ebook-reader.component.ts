@@ -2,7 +2,7 @@ import {AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, Input, On
 import {MenuController, Platform} from "@ionic/angular";
 import {Storage} from '@ionic/storage';
 import {BookDTO} from "./dto/bookDTO";
-import {EBookService} from "./services/e-book.service";
+import {EBookService, EPUB_EVENT_TYPES} from "./services/e-book.service";
 import {MenuService} from "./services/menu.service";
 
 declare var ePub: any;
@@ -166,8 +166,10 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.ebookService.emitEpub(this.book);
         this.ebookService.ePubEmitter.subscribe(
             (event) => {
-                if (event.type == 0) {
-                    this.book.locations.setCurrent(event.value);
+                if (event.type == EPUB_EVENT_TYPES.GO_TO_BOOKMARK) {
+                    this.book.rendition.display(event.value);
+                    this.menuController.toggle();
+                    this.cdr.detectChanges();
                 }
             }
         );

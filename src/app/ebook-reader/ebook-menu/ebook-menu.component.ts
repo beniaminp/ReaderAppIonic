@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {EBookService} from "../services/e-book.service";
+import {EBookService, EPUB_EVENT_TYPES} from "../services/e-book.service";
 import {BookDTO} from "../dto/bookDTO";
 import {BookmarksListComponent} from "./bookmarks-list/bookmarks-list.component";
 import {MenuController, ModalController} from "@ionic/angular";
@@ -45,10 +45,8 @@ export class EbookMenuComponent implements OnInit {
         }
     }
 
-    goToBookMark(bookmarkCFI){
-        this.ePub.rendition.display(bookmarkCFI);
-        this.menuService.menuEmitter.next(0);
-        this.menuCtrl.toggle();
+    goToBookMark(bookmarkCFI) {
+        this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.GO_TO_BOOKMARK, value: bookmarkCFI});
     }
 
     goToChapter(chapter) {
@@ -64,7 +62,7 @@ export class EbookMenuComponent implements OnInit {
 
         this.ebookService.ePubEmitter.subscribe(
             (event) => {
-                if (event.type == 1) {
+                if (event.type == EPUB_EVENT_TYPES.EPUB) {
                     this.ePub = event.value;
                 }
             }

@@ -4,6 +4,9 @@ import {NativeStorage} from '@ionic-native/native-storage/ngx';
 import {LoadingController, Platform} from '@ionic/angular';
 import {Facebook} from '@ionic-native/facebook/ngx';
 import {BookService} from "../services/book.service";
+import {Storage} from "@ionic/storage";
+import {File} from "@ionic-native/file/ngx";
+import {SimpleFileEntry} from "@angular-devkit/schematics/src/tree/entry";
 
 @Component({
     selector: 'app-user',
@@ -11,6 +14,7 @@ import {BookService} from "../services/book.service";
     styleUrls: ['./user.page.scss'],
 })
 export class UserPage implements OnInit, AfterViewInit {
+    ebookSource;
 
     constructor(
         private fb: Facebook,
@@ -18,7 +22,9 @@ export class UserPage implements OnInit, AfterViewInit {
         public loadingController: LoadingController,
         private router: Router,
         public bookService: BookService,
-        public plt: Platform) {
+        public plt: Platform,
+        public storage: Storage,
+        private file: File) {
     }
 
     user: any;
@@ -26,6 +32,18 @@ export class UserPage implements OnInit, AfterViewInit {
 
 
     async ngOnInit() {
+        this.storage.get("bookUri").then(
+            (res) => {
+                this.file.resolveLocalFilesystemUrl(res).then(
+                    (res1) => {
+                        console.error(res1);
+                    }
+                )
+                console.error(res);
+                this.ebookSource = res;
+            }
+        );
+
         const loading = await this.loadingController.create({
             message: 'Please wait...'
         });

@@ -14,6 +14,8 @@ import {NativeStorage} from '@ionic-native/native-storage/ngx';
 import {IonicStorageModule} from "@ionic/storage";
 import {EbookReaderModule} from "./ebook-reader/ebook-reader.module";
 import {BookmarksListComponent} from "./ebook-reader/ebook-menu/bookmarks-list/bookmarks-list.component";
+import {File} from "@ionic-native/file/ngx";
+import {FileChooser} from "@ionic-native/file-chooser/ngx";
 
 @NgModule({
     declarations: [AppComponent, BookmarksListComponent],
@@ -30,7 +32,9 @@ import {BookmarksListComponent} from "./ebook-reader/ebook-menu/bookmarks-list/b
         SplashScreen,
         NativeStorage,
         Facebook,
-        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
+        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
+        File,
+        FileChooser
     ],
     bootstrap: [AppComponent]
 })
