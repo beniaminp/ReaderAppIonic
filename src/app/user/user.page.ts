@@ -1,12 +1,10 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {NativeStorage} from '@ionic-native/native-storage/ngx';
-import {LoadingController, Platform} from '@ionic/angular';
+import {LoadingController} from '@ionic/angular';
 import {Facebook} from '@ionic-native/facebook/ngx';
 import {BookService} from "../services/book.service";
 import {Storage} from "@ionic/storage";
-import {File} from "@ionic-native/file/ngx";
-import {SimpleFileEntry} from "@angular-devkit/schematics/src/tree/entry";
 
 @Component({
     selector: 'app-user',
@@ -22,9 +20,8 @@ export class UserPage implements OnInit, AfterViewInit {
         public loadingController: LoadingController,
         private router: Router,
         public bookService: BookService,
-        public plt: Platform,
         public storage: Storage,
-        private file: File) {
+        private route: ActivatedRoute) {
     }
 
     user: any;
@@ -32,17 +29,19 @@ export class UserPage implements OnInit, AfterViewInit {
 
 
     async ngOnInit() {
-        this.storage.get("bookUri").then(
-            (res) => {
-                this.file.resolveLocalFilesystemUrl(res).then(
-                    (res1) => {
-                        console.error(res1);
-                    }
-                )
-                console.error(res);
-                this.ebookSource = res;
+        this.route.params.subscribe(params => {
+            console.error(params);
+            if (this.router.getCurrentNavigation().extras.state) {
+                this.ebookSource = this.router.getCurrentNavigation().extras.state.book.bookContent;
             }
-        );
+        });
+        /*
+                this.storage.get("bookUri").then(
+                    (res) => {
+                        this.ebookSource = res;
+                        console.error('this.ebookSource', this.ebookSource);
+                    }
+                );*/
 
         const loading = await this.loadingController.create({
             message: 'Please wait...'

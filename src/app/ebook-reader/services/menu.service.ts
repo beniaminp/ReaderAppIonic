@@ -9,3 +9,7 @@ export class MenuService {
     constructor() {
     }
 }
+
+export enum MenuEvents{
+    BOOKS_ADDED
+}

@@ -439,7 +439,7 @@ var decToHex = function(dec, bytes) {
 /**
  * Generate the UNIX part of the external file attributes.
  * @param {Object} unixPermissions the unix permissions or null.
- * @param {Boolean} isDir true if the entry is a directory, false otherwise.
+ * @param {Boolean} isDir true if the entry is a file, false otherwise.
  * @return {Number} a 32 bit integer.
  *
  * adapted from http://unix.stackexchange.com/questions/14705/the-zip-formats-external-file-attribute :
@@ -466,7 +466,7 @@ var generateUnixExternalFileAttr = function (unixPermissions, isDir) {
 /**
  * Generate the DOS part of the external file attributes.
  * @param {Object} dosPermissions the dos permissions or null.
- * @param {Boolean} isDir true if the entry is a directory, false otherwise.
+ * @param {Boolean} isDir true if the entry is a file, false otherwise.
  * @return {Number} a 32 bit integer.
  *
  * Bit 0     Read-Only
@@ -645,7 +645,7 @@ var generateZipParts = function(streamInfo, streamedContent, streamingEnded, off
     var dirRecord = signature.CENTRAL_FILE_HEADER +
         // version made by (00: DOS)
         decToHex(versionMadeBy, 2) +
-        // file header (common to file and central directory)
+        // file header (common to file and central file)
         header +
         // file comment length
         decToHex(encodedComment.length, 2) +
@@ -687,15 +687,15 @@ var generateCentralDirectoryEnd = function (entriesCount, centralDirLength, loca
     dirEnd = signature.CENTRAL_DIRECTORY_END +
         // number of this disk
         "\x00\x00" +
-        // number of the disk with the start of the central directory
+        // number of the disk with the start of the central file
         "\x00\x00" +
-        // total number of entries in the central directory on this disk
+        // total number of entries in the central file on this disk
         decToHex(entriesCount, 2) +
-        // total number of entries in the central directory
+        // total number of entries in the central file
         decToHex(entriesCount, 2) +
-        // size of the central directory   4 bytes
+        // size of the central file   4 bytes
         decToHex(centralDirLength, 4) +
-        // offset of start of central directory with respect to the starting disk number
+        // offset of start of central file with respect to the starting disk number
         decToHex(localDirLength, 4) +
         // .ZIP file comment length
         decToHex(encodedComment.length, 2) +
@@ -752,7 +752,7 @@ function ZipFileWorker(streamFiles, comment, platform, encodeFileName) {
     this.accumulate = false;
     // The buffer receiving chunks when accumulating content.
     this.contentBuffer = [];
-    // The list of generated directory records.
+    // The list of generated file records.
     this.dirRecords = [];
     // The offset (in bytes) from the beginning of the zip file for the current source.
     this.currentSourceOffset = 0;
@@ -1575,9 +1575,9 @@ var out = {
     },
 
     /**
-     * Add a directory to the zip file, or search.
-     * @param   {String|RegExp} arg The name of the directory to add, or a regex to search folders.
-     * @return  {JSZip} an object with the new directory as the root, or an array containing matching folders.
+     * Add a file to the zip file, or search.
+     * @param   {String|RegExp} arg The name of the file to add, or a regex to search folders.
+     * @return  {JSZip} an object with the new file as the root, or an array containing matching folders.
      */
     folder: function(arg) {
         if (!arg) {
@@ -1601,7 +1601,7 @@ var out = {
     },
 
     /**
-     * Delete a file, or a directory and all sub-files, from the zip
+     * Delete a file, or a file and all sub-files, from the zip
      * @param {string} name the name of the file to delete
      * @return {JSZip} this JSZip object
      */
@@ -3555,7 +3555,7 @@ ZipEntries.prototype = {
         return result;
     },
     /**
-     * Read the end of the central directory.
+     * Read the end of the central file.
      */
     readBlockEndOfCentral: function() {
         this.diskNumber = this.reader.readInt(2);
@@ -3577,7 +3577,7 @@ ZipEntries.prototype = {
         this.zipComment = this.loadOptions.decodeFileName(decodeContent);
     },
     /**
-     * Read the end of the Zip 64 central directory.
+     * Read the end of the Zip 64 central file.
      * Not merged with the method readEndOfCentral :
      * The end of central can coexist with its Zip64 brother,
      * I don't want to read the wrong number of bytes !
@@ -3612,7 +3612,7 @@ ZipEntries.prototype = {
         }
     },
     /**
-     * Read the end of the Zip 64 central directory locator.
+     * Read the end of the Zip 64 central file locator.
      */
     readBlockZip64EndOfCentralLocator: function() {
         this.diskWithZip64CentralDirStart = this.reader.readInt(4);
@@ -3637,7 +3637,7 @@ ZipEntries.prototype = {
         }
     },
     /**
-     * Read the central directory.
+     * Read the central file.
      */
     readCentralDir: function() {
         var file;
@@ -3664,7 +3664,7 @@ ZipEntries.prototype = {
         }
     },
     /**
-     * Read the end of central directory.
+     * Read the end of central file.
      */
     readEndOfCentral: function() {
         var offset = this.reader.lastIndexOfSignature(sig.CENTRAL_DIRECTORY_END);
@@ -3677,10 +3677,10 @@ ZipEntries.prototype = {
             var isGarbage = !this.isSignature(0, sig.LOCAL_FILE_HEADER);
 
             if (isGarbage) {
-                throw new Error("Can't find end of central directory : is this a zip file ? " +
+                throw new Error("Can't find end of central file : is this a zip file ? " +
                                 "If it is, see https://stuk.github.io/jszip/documentation/howto/read_zip.html");
             } else {
-                throw new Error("Corrupted zip: can't find end of central directory");
+                throw new Error("Corrupted zip: can't find end of central file");
             }
 
         }
@@ -3691,12 +3691,12 @@ ZipEntries.prototype = {
 
 
         /* extract from the zip spec :
-            4)  If one of the fields in the end of central directory
+            4)  If one of the fields in the end of central file
                 record is too small to hold required data, the field
                 should be set to -1 (0xFFFF or 0xFFFFFFFF) and the
                 ZIP64 format record should be created.
-            5)  The end of central directory record and the
-                Zip64 end of central directory locator record must
+            5)  The end of central file record and the
+                Zip64 end of central file locator record must
                 reside on the same disk when splitting or spanning
                 an archive.
          */
@@ -3715,7 +3715,7 @@ ZipEntries.prototype = {
             // should look for a zip64 EOCD locator
             offset = this.reader.lastIndexOfSignature(sig.ZIP64_CENTRAL_DIRECTORY_LOCATOR);
             if (offset < 0) {
-                throw new Error("Corrupted zip: can't find the ZIP64 end of central directory locator");
+                throw new Error("Corrupted zip: can't find the ZIP64 end of central file locator");
             }
             this.reader.setIndex(offset);
             this.checkSignature(sig.ZIP64_CENTRAL_DIRECTORY_LOCATOR);
@@ -3723,10 +3723,10 @@ ZipEntries.prototype = {
 
             // now the zip64 EOCD record
             if (!this.isSignature(this.relativeOffsetEndOfZip64CentralDir, sig.ZIP64_CENTRAL_DIRECTORY_END)) {
-                // console.warn("ZIP64 end of central directory not where expected.");
+                // console.warn("ZIP64 end of central file not where expected.");
                 this.relativeOffsetEndOfZip64CentralDir = this.reader.lastIndexOfSignature(sig.ZIP64_CENTRAL_DIRECTORY_END);
                 if (this.relativeOffsetEndOfZip64CentralDir < 0) {
-                    throw new Error("Corrupted zip: can't find the ZIP64 end of central directory");
+                    throw new Error("Corrupted zip: can't find the ZIP64 end of central file");
                 }
             }
             this.reader.setIndex(this.relativeOffsetEndOfZip64CentralDir);
@@ -3851,8 +3851,8 @@ ZipEntry.prototype = {
         // Search "unzip mismatching "local" filename continuing with "central" filename version" on
         // the internet.
         //
-        // I think I see the logic here : the central directory is used to display
-        // content and the local directory is used to extract the files. Mixing / and \
+        // I think I see the logic here : the central file is used to display
+        // content and the local file is used to extract the files. Mixing / and \
         // may be used to display \ to windows users and use / when extracting the files.
         // Unfortunately, this lead also to some issues : http://seclists.org/fulldisclosure/2009/Sep/394
         this.fileNameLength = reader.readInt(2);
@@ -3862,7 +3862,7 @@ ZipEntry.prototype = {
         reader.skip(localExtraFieldsLength);
 
         if (this.compressedSize === -1 || this.uncompressedSize === -1) {
-            throw new Error("Bug or corrupted zip : didn't get enough informations from the central directory " + "(compressedSize === -1 || uncompressedSize === -1)");
+            throw new Error("Bug or corrupted zip : didn't get enough informations from the central file " + "(compressedSize === -1 || uncompressedSize === -1)");
         }
 
         compression = findCompression(this.compressionMethod);
@@ -3913,7 +3913,7 @@ ZipEntry.prototype = {
         this.dosPermissions = null;
         var madeBy = this.versionMadeBy >> 8;
 
-        // Check if we have the DOS directory flag set.
+        // Check if we have the DOS file flag set.
         // We look for it in the DOS and UNIX permissions
         // but some unknown platform could set it as a compatibility flag.
         this.dir = this.externalFileAttributes & 0x0010 ? true : false;

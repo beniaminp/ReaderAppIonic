@@ -16,6 +16,7 @@ import {EbookReaderModule} from "./ebook-reader/ebook-reader.module";
 import {BookmarksListComponent} from "./ebook-reader/ebook-menu/bookmarks-list/bookmarks-list.component";
 import {File} from "@ionic-native/file/ngx";
 import {FileChooser} from "@ionic-native/file-chooser/ngx";
+import {LoginPageModule} from "./login/login.module";
 
 @NgModule({
     declarations: [AppComponent, BookmarksListComponent],
@@ -26,6 +27,7 @@ import {FileChooser} from "@ionic-native/file-chooser/ngx";
         AppRoutingModule,
         IonicStorageModule.forRoot(),
         EbookReaderModule,
+        LoginPageModule
     ],
     providers: [
         StatusBar,

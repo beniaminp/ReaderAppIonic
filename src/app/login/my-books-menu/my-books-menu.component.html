@@ -1,0 +1,10 @@
+<ion-header>
+    <ion-toolbar translucent>
+        <ion-title>My Books Menu</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-list>
+    <label for="files" class="btn">Add Books</label>
+    <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)"
+           [uploadInput]="uploadInput" multiple id="files" style="visibility:hidden;">
+</ion-list>

@@ -18,9 +18,9 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
     public isBookmarkSet: boolean = false;
 
-    private book: any;
+    private book: any = ePub();
     private rendition: any;
-    private bookDTO: BookDTO;
+    private bookDTO: BookDTO = new BookDTO();
 
     constructor(public platform: Platform,
                 public storage: Storage,
@@ -75,7 +75,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         if (this.ebookSource == null) {
             alert('No ebook selected');
         }
-        this.book = ePub(this.ebookSource);
+        this.book.open(this.ebookSource, "binary");
         this.rendition = this.book.renderTo("book", {
             width: '100%',
             height: this.platform.height() - 105,
@@ -89,7 +89,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     }
 
     private bookReady() {
-        console.error(this.book);
         this.book.ready.then(() => {
             this.storage.get('books').then((res) => {
                 if (res != null) {
