@@ -140,7 +140,8 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     private getFromLocalStorage(res) {
         let books: BookDTO[] = JSON.parse(res);
         let currentIndex = books
-            .findIndex(book => book.uniqueIdentifier.toLowerCase() == this.book.package.uniqueIdentifier.toLowerCase());
+            .findIndex(book => book.uniqueIdentifier && book.uniqueIdentifier.toLowerCase()
+                == this.book.package.uniqueIdentifier.toLowerCase());
         if (currentIndex > -1) {
             this.bookDTO = books[currentIndex];
         }
