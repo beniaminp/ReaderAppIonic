@@ -1,7 +1,10 @@
 <ion-header *ngIf="bookDTO != null">
-    <ion-toolbar >
+    <ion-toolbar>
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
+            <ion-button>
+                <ion-icon name="arrow-back"></ion-icon>
+            </ion-button>
         </ion-buttons>
         <ion-title>{{bookDTO.title}}</ion-title>
         <ion-buttons slot="end">
