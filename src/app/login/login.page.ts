@@ -1,7 +1,7 @@
 import {AfterContentInit, Component, OnInit} from '@angular/core';
 import {DirectoryEntry, Entry, File} from '@ionic-native/file/ngx';
 import {FileChooser} from "@ionic-native/file-chooser/ngx";
-import {NavigationExtras, Router} from "@angular/router";
+import {NavigationExtras, Router, ActivatedRoute} from "@angular/router";
 import {Storage} from "@ionic/storage";
 import {MenuController, Platform} from "@ionic/angular";
 import {MenuEvents, MenuService} from "../ebook-reader/services/menu.service";
@@ -23,7 +23,8 @@ export class LoginPage implements AfterContentInit, OnInit {
         public storage: Storage,
         public platform: Platform,
         public menuCtrl: MenuController,
-        public menuService: MenuService) {
+        public menuService: MenuService,
+        private route: ActivatedRoute) {
         this.initEventListeners();
     }
 
@@ -41,6 +42,9 @@ export class LoginPage implements AfterContentInit, OnInit {
                 this.files = books;
             }
         );
+         this.route.params.subscribe(params => {
+            this.enableMenu();
+        });
         this.enableMenu();
     }
 
