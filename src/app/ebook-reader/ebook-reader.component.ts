@@ -4,6 +4,7 @@ import {Storage} from '@ionic/storage';
 import {BookDTO} from "./dto/bookDTO";
 import {EBookService, EPUB_EVENT_TYPES} from "./services/e-book.service";
 import {MenuService} from "./services/menu.service";
+import {Router} from "@angular/router";
 
 declare var ePub: any;
 
@@ -27,7 +28,8 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 public cdr: ChangeDetectorRef,
                 public menuController: MenuController,
                 public ebookService: EBookService,
-                public menuService: MenuService) {
+                public menuService: MenuService,
+                private router: Router) {
     }
 
     ngOnInit() {
@@ -40,6 +42,10 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     ngAfterContentInit(): void {
         this.initBook();
         this.initEventListeners();
+    }
+
+    public goBack(){
+        this.router.navigate(['login']);
     }
 
     public move(where) {

@@ -23,7 +23,7 @@ export class MyBooksMenuComponent implements OnInit {
     onUploadOutput(output): void {
         if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
             const file = output.file.nativeFile;
-            console.error(output);
+            
             const reader = new FileReader();
             reader.onload = (e: any) => {
                 let book = new BookDTO();
@@ -39,15 +39,22 @@ export class MyBooksMenuComponent implements OnInit {
                             if (foundIndex == -1) {
                                 books.push(book);
                             }
-                            this.storage.set('my-books', books).then();
+                            this.storage.set('my-books', books).then(
+                                (res) =>{
+                                        this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED})
+                                }
+                            );
                             this.menuCtrl.toggle();
                         } else {
-                            this.storage.set('my-books', [book]).then();
+                            this.storage.set('my-books', [book]).then(
+                                (res) =>{
+                                        this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED})
+                                }
+                            );
                             this.menuCtrl.toggle();
                         }
                     }
                 );
-                this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED})
             };
             reader.readAsArrayBuffer(file);
         }
