@@ -34,7 +34,7 @@ export class AppComponent {
             );
             //Here we will check if the user is already logged in
             //because we don't want to ask users to log in each time they open the app
-            this.nativeStorage.getItem('facebook_user')
+            /* this.nativeStorage.getItem('facebook_user')
                 .then(data => {
                     //user is previously logged and we have his data
                     //we will let him access the app
@@ -43,7 +43,8 @@ export class AppComponent {
                 }, err => {
                     this.router.navigate(["/login"]);
                     this.splashScreen.hide();
-                })
+                }) */
+                this.router.navigate(["/login"]);
             this.statusBar.styleDefault();
         });
     }
