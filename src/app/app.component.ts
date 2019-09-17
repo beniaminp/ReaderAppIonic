@@ -6,6 +6,7 @@ import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {Router} from '@angular/router';
 import {NativeStorage} from '@ionic-native/native-storage/ngx';
 import {Storage} from "@ionic/storage";
+import {ParseService} from "./services/parse.service";
 
 @Component({
     selector: 'app-root',
@@ -18,34 +19,29 @@ export class AppComponent {
         private statusBar: StatusBar,
         private nativeStorage: NativeStorage,
         private router: Router,
-        public storage: Storage
-    ) {
+        public storage: Storage,
+        public parseService: ParseService) {
         this.initializeApp();
     }
 
     initializeApp() {
+        this.parseService.initializeParse();
+        this.statusBar.styleDefault();
+
         this.platform.ready().then(() => {
-            this.storage.get("my-books").then(
-                (result) => {
-                    if (!result) {
-                        this.storage.set("my-books", []).then();
+            if (this.parseService.getCurrentUser() != null) {
+                this.storage.get("my-books").then(
+                    (result) => {
+                        if (!result) {
+                            this.storage.set("my-books", []).then();
+                        }
+
+                        this.router.navigate(["/shelf"]);
                     }
-                }
-            );
-            //Here we will check if the user is already logged in
-            //because we don't want to ask users to log in each time they open the app
-            /* this.nativeStorage.getItem('facebook_user')
-                .then(data => {
-                    //user is previously logged and we have his data
-                    //we will let him access the app
-                    this.router.navigate(["/user"]);
-                    this.splashScreen.hide();
-                }, err => {
-                    this.router.navigate(["/login"]);
-                    this.splashScreen.hide();
-                }) */
-                this.router.navigate(["/login"]);
-            this.statusBar.styleDefault();
+                );
+            } else {
+                this.router.navigate(["/auth"]);
+            }
         });
     }
 }

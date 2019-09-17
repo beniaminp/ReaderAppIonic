@@ -5,13 +5,13 @@ import {RouterModule, Routes} from '@angular/router';
 
 import {IonicModule} from '@ionic/angular';
 
-import {UserPage} from './user.page';
+import {ReaderPage} from './reader-page.component';
 import {EbookReaderModule} from "../ebook-reader/ebook-reader.module";
 
 const routes: Routes = [
     {
         path: '',
-        component: UserPage
+        component: ReaderPage
     }
 ];
 
@@ -23,7 +23,7 @@ const routes: Routes = [
         EbookReaderModule,
         RouterModule.forChild(routes)
     ],
-    declarations: [UserPage]
+    declarations: [ReaderPage]
 })
-export class UserPageModule {
+export class ReaderPageModule {
 }

@@ -1,7 +1,5 @@
 import {AfterContentInit, Component, OnInit} from '@angular/core';
-import {DirectoryEntry, Entry, File} from '@ionic-native/file/ngx';
-import {FileChooser} from "@ionic-native/file-chooser/ngx";
-import {NavigationExtras, Router, ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Storage} from "@ionic/storage";
 import {MenuController, Platform} from "@ionic/angular";
 import {MenuEvents, MenuService} from "../ebook-reader/services/menu.service";
@@ -10,11 +8,11 @@ import {BookDTO} from "../ebook-reader/dto/bookDTO";
 declare var ePub: any;
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.page.html',
-    styleUrls: ['./login.page.scss'],
+    selector: 'shelf-page',
+    templateUrl: './shelf-page.component.html',
+    styleUrls: ['./shelf-page.component.scss'],
 })
-export class LoginPage implements AfterContentInit, OnInit {
+export class ShelfPage implements OnInit {
 
     public files: BookDTO[];
 
@@ -28,21 +26,13 @@ export class LoginPage implements AfterContentInit, OnInit {
         this.initEventListeners();
     }
 
-
-    ngAfterContentInit(): void {
-        this.platform.ready().then(
-            (pltReady) => {
-            }
-        );
-    }
-
     ngOnInit(): void {
         this.storage.get("my-books").then(
             (books) => {
                 this.files = books;
             }
         );
-         this.route.params.subscribe(params => {
+        this.route.params.subscribe(params => {
             this.enableMenu();
         });
         this.enableMenu();
@@ -56,7 +46,6 @@ export class LoginPage implements AfterContentInit, OnInit {
         };
         this.router.navigate(['user'], navigationExtras);
     }
-
 
     private enableMenu() {
         this.menuCtrl.enable(true, 'my-books-menu');

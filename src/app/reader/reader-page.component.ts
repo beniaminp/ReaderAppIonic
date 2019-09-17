@@ -8,10 +8,10 @@ import {Storage} from "@ionic/storage";
 
 @Component({
     selector: 'app-user',
-    templateUrl: './user.page.html',
-    styleUrls: ['./user.page.scss'],
+    templateUrl: './reader-page.component.html',
+    styleUrls: ['./reader-page.component.scss'],
 })
-export class UserPage implements OnInit, AfterViewInit {
+export class ReaderPage implements OnInit, AfterViewInit {
     ebookSource;
 
     constructor(
@@ -41,7 +41,7 @@ export class UserPage implements OnInit, AfterViewInit {
                         this.ebookSource = res;
                         console.error('this.ebookSource', this.ebookSource);
                     }
-                );*/
+                );
 
         const loading = await this.loadingController.create({
             message: 'Please wait...'
@@ -49,7 +49,7 @@ export class UserPage implements OnInit, AfterViewInit {
         await loading.present();
         this.nativeStorage.getItem('facebook_user')
             .then(data => {
-                this.user = {
+                this.reader = {
                     name: data.name,
                     email: data.email,
                     picture: data.picture
@@ -65,12 +65,12 @@ export class UserPage implements OnInit, AfterViewInit {
     doFbLogout() {
         this.fb.logout()
             .then(res => {
-                //user logged out so we will remove him from the NativeStorage
+                //reader logged out so we will remove him from the NativeStorage
                 this.nativeStorage.remove('facebook_user');
-                this.router.navigate(["/login"]);
+                this.router.navigate(["/shelf"]);
             }, err => {
                 console.log(err);
-            });
+            });*/
     }
 
     ngAfterViewInit(): void {

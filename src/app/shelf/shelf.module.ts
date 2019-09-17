@@ -6,13 +6,13 @@ import {NgxUploaderModule} from 'ngx-uploader';
 
 import {IonicModule} from '@ionic/angular';
 
-import {LoginPage} from './login.page';
+import {ShelfPage} from './shelf-page.component';
 import {MyBooksMenuComponent} from './my-books-menu/my-books-menu.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: LoginPage
+        component: ShelfPage
     }
 ];
 
@@ -24,10 +24,10 @@ const routes: Routes = [
         RouterModule.forChild(routes),
         NgxUploaderModule
     ],
-    declarations: [LoginPage, MyBooksMenuComponent],
+    declarations: [ShelfPage, MyBooksMenuComponent],
     exports: [
         MyBooksMenuComponent
     ]
 })
-export class LoginPageModule {
+export class ShelfPageModule {
 }

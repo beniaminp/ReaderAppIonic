@@ -45,7 +45,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     }
 
     public goBack(){
-        this.router.navigate(['login']);
+        this.router.navigate(['shelf']);
     }
 
     public move(where) {
