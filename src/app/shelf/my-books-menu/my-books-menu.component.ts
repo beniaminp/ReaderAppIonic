@@ -12,6 +12,7 @@ declare var ePub: any;
     styleUrls: ['./my-books-menu.component.scss']
 })
 export class MyBooksMenuComponent implements OnInit {
+    public filesArray = [];
 
     constructor(public menuCtrl: MenuController,
                 public storage: Storage,
@@ -21,43 +22,38 @@ export class MyBooksMenuComponent implements OnInit {
 
 
     onUploadOutput(output): void {
-        if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
-            const file = output.file.nativeFile;
-            
-            const reader = new FileReader();
-            reader.onload = (e: any) => {
-                let book = new BookDTO();
-
-                book.bookContent = e.target.result;
-                book.fileName = file.name;
-                book.fileId = file.id;
-
-                this.storage.get("my-books").then(
-                    (books: BookDTO[]) => {
-                        if (books) {
-                            let foundIndex = books.findIndex(book => book.fileName == file.fileName);
-                            if (foundIndex == -1) {
-                                books.push(book);
-                            }
-                            this.storage.set('my-books', books).then(
-                                (res) =>{
-                                        this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED})
-                                }
-                            );
-                            this.menuCtrl.toggle();
-                        } else {
-                            this.storage.set('my-books', [book]).then(
-                                (res) =>{
-                                        this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED})
-                                }
-                            );
-                            this.menuCtrl.toggle();
-                        }
-                    }
-                );
-            };
-            reader.readAsArrayBuffer(file);
+        if (output.type == 'allAddedToQueue') {
+            this.readAllFiles();
         }
+        if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
+            this.filesArray.push(output.file.nativeFile);
+        }
+    }
+
+    public readAllFiles() {
+        let books = [];
+        this.storage.get("my-books").then((retBooks: BookDTO[]) => {
+            books = retBooks != null ? retBooks : [];
+            this.filesArray.forEach(file => {
+                let reader = new FileReader();
+                reader.onload = (e: any) => {
+                    let book = new BookDTO();
+
+                    book.bookContent = e.target.result;
+                    book.fileName = file.name;
+                    book.fileId = file.id;
+
+                    let foundIndex = books.findIndex(book => book.fileName == file.fileName);
+                    if (foundIndex == -1) {
+                        books.push(book);
+                    }
+                    this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED, value: book});
+                };
+
+                reader.readAsArrayBuffer(file);
+            });
+            this.menuCtrl.toggle().then();
+        });
     }
 
 

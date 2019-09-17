@@ -14,7 +14,7 @@ declare var ePub: any;
 })
 export class ShelfPage implements OnInit {
 
-    public files: BookDTO[];
+    public books: BookDTO[];
 
     constructor(
         private router: Router,
@@ -29,7 +29,7 @@ export class ShelfPage implements OnInit {
     ngOnInit(): void {
         this.storage.get("my-books").then(
             (books) => {
-                this.files = books;
+                this.books = books != null ? books : [];
             }
         );
         this.route.params.subscribe(params => {
@@ -55,11 +55,8 @@ export class ShelfPage implements OnInit {
         this.menuService.menuEmitter.subscribe(
             (res) => {
                 if (res.type == MenuEvents.BOOKS_ADDED) {
-                    this.storage.get("my-books").then(
-                        (books) => {
-                            this.files = books;
-                        }
-                    )
+                    this.books.push(res.value);
+                    this.storage.set("my-books", this.books).then();
                 }
             }
         )

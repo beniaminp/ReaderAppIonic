@@ -35,7 +35,6 @@ export class AppComponent {
                         if (!result) {
                             this.storage.set("my-books", []).then();
                         }
-
                         this.router.navigate(["/shelf"]);
                     }
                 );

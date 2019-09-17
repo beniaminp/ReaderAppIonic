@@ -8,9 +8,9 @@
 </ion-header>
 
 <ion-content>
-    <ion-list *ngIf="files">
-        <ion-item *ngFor="let file of files" (click)="openBook(file)">
-            {{file.fileName}}
+    <ion-list *ngIf="books">
+        <ion-item *ngFor="let book of books" (click)="openBook(book)">
+            {{book.fileName}}
         </ion-item>
     </ion-list>
 </ion-content>
