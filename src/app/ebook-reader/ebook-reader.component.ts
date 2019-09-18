@@ -98,6 +98,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                     this.addToLocalStorage();
                 }
                 this.ebookService.eBookEmitter.next(this.bookDTO);
+                this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.EPUB, value: this.book});
             });
             this.book.locations.generate(1600);
 
