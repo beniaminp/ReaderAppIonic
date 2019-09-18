@@ -1,5 +1,7 @@
 import {Injectable} from '@angular/core';
 import {UserDTO} from "../models/UserDTO";
+import {BookDTO} from "../ebook-reader/dto/bookDTO";
+import {HttpParseService} from "./http-parse.service";
 
 declare var require: any;
 
@@ -9,7 +11,7 @@ declare var require: any;
 export class ParseService {
     private Parse;
 
-    constructor() {
+    constructor(private httpParseService: HttpParseService) {
     }
 
     public initializeParse() {
@@ -38,5 +40,13 @@ export class ParseService {
 
     public getCurrentUser() {
         return this.Parse.User.current();
+    }
+
+    public getBooksForUser() {
+        let Book = this.Parse.Object.extend('Book');
+        const query = new this.Parse.Query(Book);
+
+        query.equalTo("userId", this.getCurrentUser().id);
+        return query.find();
     }
 }

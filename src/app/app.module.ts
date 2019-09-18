@@ -17,6 +17,7 @@ import {BookmarksListComponent} from "./ebook-reader/ebook-menu/bookmarks-list/b
 import {File} from "@ionic-native/file/ngx";
 import {FileChooser} from "@ionic-native/file-chooser/ngx";
 import {ShelfPageModule} from "./shelf/shelf.module";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
     declarations: [AppComponent, BookmarksListComponent],
@@ -27,7 +28,8 @@ import {ShelfPageModule} from "./shelf/shelf.module";
         AppRoutingModule,
         IonicStorageModule.forRoot(),
         EbookReaderModule,
-        ShelfPageModule
+        ShelfPageModule,
+        HttpClientModule
     ],
     providers: [
         StatusBar,

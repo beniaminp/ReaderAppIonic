@@ -7,6 +7,7 @@ import {Router} from '@angular/router';
 import {NativeStorage} from '@ionic-native/native-storage/ngx';
 import {Storage} from "@ionic/storage";
 import {ParseService} from "./services/parse.service";
+import {BookDTO} from "./ebook-reader/dto/bookDTO";
 
 @Component({
     selector: 'app-root',
@@ -31,11 +32,23 @@ export class AppComponent {
         this.platform.ready().then(() => {
             if (this.parseService.getCurrentUser() != null) {
                 this.storage.get("my-books").then(
-                    (result) => {
-                        if (!result) {
-                            this.storage.set("my-books", []).then();
+                    (books: any[]) => {
+                        if (!books) {
+                            books = [];
                         }
-                        this.router.navigate(["/shelf"]);
+                        this.parseService.getBooksForUser()
+                            .then((parseBooks) => {
+                                if (parseBooks) {
+                                    parseBooks.forEach(book => {
+                                        let bookDTO = new BookDTO();
+                                        bookDTO.fileName = book.attributes.fileName;
+                                        books.push(bookDTO);
+                                        this.storage.set("my-books", books).then();
+                                    });
+                                }
+                                this.router.navigate(["/shelf"]);
+                            })
+                            .catch((e) => console.error(e));
                     }
                 );
             } else {

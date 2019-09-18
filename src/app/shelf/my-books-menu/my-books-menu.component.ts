@@ -3,6 +3,8 @@ import {MenuController} from "@ionic/angular";
 import {Storage} from "@ionic/storage";
 import {BookDTO} from "../../ebook-reader/dto/bookDTO";
 import {MenuEvents, MenuService} from "../../ebook-reader/services/menu.service";
+import {ParseService} from "../../services/parse.service";
+import {HttpParseService} from "../../services/http-parse.service";
 
 declare var ePub: any;
 
@@ -16,7 +18,9 @@ export class MyBooksMenuComponent implements OnInit {
 
     constructor(public menuCtrl: MenuController,
                 public storage: Storage,
-                public menuService: MenuService) {
+                public menuService: MenuService,
+                public parseService: ParseService,
+                public httpParseService: HttpParseService) {
 
     }
 
@@ -47,7 +51,12 @@ export class MyBooksMenuComponent implements OnInit {
                     if (foundIndex == -1) {
                         books.push(book);
                     }
-                    this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED, value: book});
+                    this.httpParseService.addBook(book).subscribe(
+                        (success) => {
+                            console.error(success);
+                            this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED, value: book});
+                        }
+                    );
                 };
 
                 reader.readAsArrayBuffer(file);
