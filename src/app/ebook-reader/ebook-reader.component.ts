@@ -36,7 +36,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     }
 
     ngAfterViewInit(): void {
-        this.enableMenu();
     }
 
     ngAfterContentInit(): void {
@@ -44,7 +43,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.initEventListeners();
     }
 
-    public goBack(){
+    public goBack() {
         this.router.navigate(['shelf']);
     }
 
@@ -71,10 +70,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.cdr.detectChanges();
         this.storage.set('books', JSON.stringify([this.bookDTO])).then();
 
-    }
-
-    private enableMenu() {
-        this.menuController.enable(true, 'ebook-menu');
     }
 
     private initBook() {
@@ -190,4 +185,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
     // search in chapter book.currentChapter.find("Some Text to look for");
     // page number from cfi book.pagination.pageFromCfi(cfiGoesHere);
+    onSwipeLeft(event) {
+        console.error(event);
+    }
 }

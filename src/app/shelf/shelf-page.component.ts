@@ -44,7 +44,7 @@ export class ShelfPage implements OnInit {
                 book
             }
         };
-        this.router.navigate(['user'], navigationExtras);
+        this.router.navigate(['reader'], navigationExtras);
     }
 
     private enableMenu() {

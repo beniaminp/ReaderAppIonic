@@ -9,7 +9,7 @@
             </ion-buttons>
         </ion-toolbar>
     </ion-header>
-    <ion-list>
+    <ion-list *ngIf="ePub.navigation">
         <ion-item *ngFor="let chapter of ePub.navigation.toc" (click)="goToChapter(chapter)" menuClose>
             <ion-label>{{chapter.label}}</ion-label>
         </ion-item>
