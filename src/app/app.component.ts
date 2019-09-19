@@ -8,6 +8,9 @@ import {NativeStorage} from '@ionic-native/native-storage/ngx';
 import {Storage} from "@ionic/storage";
 import {ParseService} from "./services/parse.service";
 import {BookDTO} from "./ebook-reader/dto/bookDTO";
+import {HttpParseService} from "./services/http-parse.service";
+import {AppStorageService} from "./services/app-storage.service";
+import {UserDTO} from "./models/UserDTO";
 
 @Component({
     selector: 'app-root',
@@ -21,7 +24,8 @@ export class AppComponent {
         private nativeStorage: NativeStorage,
         private router: Router,
         public storage: Storage,
-        public parseService: ParseService) {
+        public parseService: ParseService,
+        private appStorageService: AppStorageService) {
         this.initializeApp();
     }
 
@@ -30,30 +34,15 @@ export class AppComponent {
         this.statusBar.styleDefault();
 
         this.platform.ready().then(() => {
-            if (this.parseService.getCurrentUser() != null) {
-                this.storage.get("my-books").then(
-                    (books: any[]) => {
-                        if (!books) {
-                            books = [];
-                        }
-                        this.parseService.getBooksForUser()
-                            .then((parseBooks) => {
-                                if (parseBooks) {
-                                    parseBooks.forEach(book => {
-                                        let bookDTO = new BookDTO();
-                                        bookDTO.fileName = book.attributes.fileName;
-                                        books.push(bookDTO);
-                                        this.storage.set("my-books", books).then();
-                                    });
-                                }
-                                this.router.navigate(["/shelf"]);
-                            })
-                            .catch((e) => console.error(e));
+            this.appStorageService.getUserDTO().then(
+                (userDTO: UserDTO) => {
+                    if (userDTO != null && userDTO.sessionToken != null) {
+                        this.router.navigate(["/shelf"]);
+                    } else {
+                        this.router.navigate(["/auth"]);
                     }
-                );
-            } else {
-                this.router.navigate(["/auth"]);
-            }
+                }
+            );
         });
     }
 }

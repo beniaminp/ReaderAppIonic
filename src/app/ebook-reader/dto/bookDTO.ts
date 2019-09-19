@@ -5,10 +5,11 @@ export class BookDTO {
     uniqueIdentifier: string;
     bookmarks: BookmarkDTO[] = [];
     fileUrl;
+    userId;
     // file infos
     fileId: string
     fileName: string;
     bookContent;
-    bookCover: string;
     fileUrlName: any;
+    objectId: any;
 }

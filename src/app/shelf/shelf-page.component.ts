@@ -4,6 +4,7 @@ import {Storage} from "@ionic/storage";
 import {MenuController, Platform} from "@ionic/angular";
 import {MenuEvents, MenuService} from "../ebook-reader/services/menu.service";
 import {BookDTO} from "../ebook-reader/dto/bookDTO";
+import {HttpParseService} from "../services/http-parse.service";
 
 declare var ePub: any;
 
@@ -22,16 +23,18 @@ export class ShelfPage implements OnInit {
         public platform: Platform,
         public menuCtrl: MenuController,
         public menuService: MenuService,
-        private route: ActivatedRoute) {
+        private route: ActivatedRoute,
+        private httpParseService: HttpParseService) {
         this.initEventListeners();
     }
 
     ngOnInit(): void {
-        this.storage.get("my-books").then(
-            (books) => {
-                this.books = books != null ? books : [];
+        this.httpParseService.getBooksForUser().subscribe(
+            (res) => {
+                this.books = res;
             }
         );
+
         this.route.params.subscribe(params => {
             this.enableMenu();
         });
@@ -56,7 +59,7 @@ export class ShelfPage implements OnInit {
             (res) => {
                 if (res.type == MenuEvents.BOOKS_ADDED) {
                     this.books.push(res.value);
-                    this.storage.set("my-books", this.books).then();
+                    this.httpParseService.addBook(res.value).subscribe();
                 }
             }
         )

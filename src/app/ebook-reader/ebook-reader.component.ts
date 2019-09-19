@@ -76,7 +76,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         if (this.ebookSource == null) {
             alert('No ebook selected');
         }
-        this.book.open(this.ebookSource, "binary");
+        this.book.open(this.ebookSource);
         this.rendition = this.book.renderTo("book", {
             width: '100%',
             height: this.platform.height() - 105,

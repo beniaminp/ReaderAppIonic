@@ -3,6 +3,8 @@ import {NgForm} from "@angular/forms";
 import {Router} from "@angular/router";
 import {ParseService} from "../../services/parse.service";
 import {UserDTO} from "../../models/UserDTO";
+import {HttpParseService} from "../../services/http-parse.service";
+import {AppStorageService} from "../../services/app-storage.service";
 
 @Component({
     selector: 'app-login',
@@ -12,7 +14,8 @@ import {UserDTO} from "../../models/UserDTO";
 export class LoginComponent implements OnInit {
 
     constructor(private router: Router,
-                public parseService: ParseService) {
+                public httpParseService: HttpParseService,
+                public appStorageService: AppStorageService) {
     }
 
     ngOnInit() {
@@ -22,14 +25,19 @@ export class LoginComponent implements OnInit {
         let userDTO: UserDTO = new UserDTO();
         userDTO.email = form.controls.email.value;
         userDTO.password = form.controls.password.value;
-        this.parseService.login(userDTO).then(
-            (res) => {
-                this.goToShelf();
+        this.httpParseService.loginUser(userDTO).subscribe(
+            (res: any) => {
+                userDTO.sessionToken = res.sessionToken;
+                userDTO.objectId = res.objectId;
+                this.appStorageService.setUserDTO(userDTO).then(
+                    (res) => {
+                        this.goToShelf();
+                    }
+                );
+            }, (e) => {
+                console.error(e);
             }
-        ).catch(error => {
-            console.error(error);
-        });
-
+        );
     }
 
     public goToRegister() {
