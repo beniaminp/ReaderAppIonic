@@ -1,0 +1,6 @@
+<ion-list *ngIf="userDTO">
+    <ion-item>
+        <ion-label>Open Last</ion-label>
+        <ion-checkbox slot="end" [checked]="userDTO.goToLastRead" (click)="setOpenLastRead()"></ion-checkbox>
+    </ion-item>
+</ion-list>

@@ -5,4 +5,6 @@ export class UserDTO {
     password;
     sessionToken;
     lastReadBook;
+    favoritesBook: string;
+    goToLastRead: boolean;
 }

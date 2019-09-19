@@ -7,7 +7,7 @@ import {UserDTO} from "../models/UserDTO";
 })
 export class AppStorageService {
 
-    constructor(public storage: Storage) {
+    constructor(private storage: Storage) {
     }
 
     public setSessionToken(sessionToken: string) {
@@ -19,6 +19,10 @@ export class AppStorageService {
     }
 
     public getUserDTO() {
-        return this.storage.get("userDTO");
+        return this.storage.get('userDTO');
     }
+}
+
+export enum STDATA {
+    USER = 'userDTO'
 }

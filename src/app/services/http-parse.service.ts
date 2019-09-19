@@ -124,6 +124,38 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
+        var subject = new Subject<void>();
+
+        this.appStorageService.setUserDTO(userDTO).then(
+            (res) => {
+                let updateParams = '{"favoriteBooks": "' + favoriteBooks + '"}';
+                this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
+                    () => {
+                        subject.next();
+                    }
+                )
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public updateOpenLastRead(userDTO: UserDTO) {
+        var subject = new Subject<void>();
+
+        this.appStorageService.setUserDTO(userDTO).then(
+            (res) => {
+                let updateParams = '{"goToLastRead": "' + userDTO.goToLastRead + '"}';
+                this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
+                    () => {
+                        subject.next();
+                    }
+                )
+            }
+        );
+        return subject.asObservable();
+    }
+
     private createHeaders() {
         let httpHeaders: HttpHeaders = new HttpHeaders();
         httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');

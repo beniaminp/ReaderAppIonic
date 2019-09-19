@@ -8,6 +8,7 @@ import {IonicModule} from '@ionic/angular';
 
 import {ShelfPage} from './shelf-page.component';
 import {MyBooksMenuComponent} from './my-books-menu/my-books-menu.component';
+import {UserSettingsComponent} from "./user-settings/user-settings.component";
 
 const routes: Routes = [
     {
@@ -24,9 +25,17 @@ const routes: Routes = [
         RouterModule.forChild(routes),
         NgxUploaderModule
     ],
-    declarations: [ShelfPage, MyBooksMenuComponent],
+    declarations: [
+        ShelfPage,
+        MyBooksMenuComponent,
+        UserSettingsComponent
+    ],
     exports: [
-        MyBooksMenuComponent
+        MyBooksMenuComponent,
+        UserSettingsComponent
+    ],
+    entryComponents: [
+        UserSettingsComponent
     ]
 })
 export class ShelfPageModule {
