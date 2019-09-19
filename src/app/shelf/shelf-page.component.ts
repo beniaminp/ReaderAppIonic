@@ -70,6 +70,10 @@ export class ShelfPage implements OnInit {
     }
 
     deleteBook(book: BookDTO) {
-        this.httpParseService.deleteBook(book).subscribe();
+        this.httpParseService.deleteBook(book).subscribe(
+            (res) => {
+                this.getBooks();
+            }
+        );
     }
 }

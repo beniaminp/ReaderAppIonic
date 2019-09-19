@@ -87,7 +87,7 @@ export class HttpParseService {
         var subject = new Subject<void>();
         this.httpClient.delete(this.parseURL + 'classes/' + ParseClasses.BOOK + '/' + bookDTO.objectId, {headers: this.createHeaders()}).subscribe(
             (res) => {
-                this.httpClient.delete(this.parseURL + 'files/' + bookDTO.fileUrlName, {headers: this.createHeaders()}).subscribe(
+                this.httpClient.delete(this.parseURL + 'files/' + bookDTO.fileUrlName, {headers: this.createFullHeaders()}).subscribe(
                     (res) => {
                         subject.next();
                     }, (e) => console.error(e)
@@ -102,6 +102,15 @@ export class HttpParseService {
         let httpHeaders: HttpHeaders = new HttpHeaders();
         httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');
         httpHeaders = httpHeaders.append('X-Parse-REST-API-Key', 'luoPAzqoXsd88o1wtKkYo6qyGnTy2kDFhzOGM7Mv');
+        return httpHeaders;
+    }
+
+    private createFullHeaders() {
+        let httpHeaders: HttpHeaders = new HttpHeaders();
+        httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');
+        httpHeaders = httpHeaders.append('X-Parse-REST-API-Key', 'luoPAzqoXsd88o1wtKkYo6qyGnTy2kDFhzOGM7Mv');
+        httpHeaders = httpHeaders.append('X-Parse-Master-Key', 'dudc1cQQLmdxL4BWz8ajM0Tu4Bxw8KWvzvefQPDt');
+        httpHeaders = httpHeaders.append("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
         return httpHeaders;
     }
 }

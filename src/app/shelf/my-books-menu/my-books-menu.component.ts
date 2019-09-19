@@ -14,6 +14,7 @@ declare var ePub: any;
 })
 export class MyBooksMenuComponent implements OnInit {
     public filesArray = [];
+    public options;
 
     constructor(public menuCtrl: MenuController,
                 public storage: Storage,
@@ -77,6 +78,7 @@ export class MyBooksMenuComponent implements OnInit {
 
 
     ngOnInit() {
+        this.options = {allowedContentTypes: ['application/epub+zip']}
     }
 
 }
