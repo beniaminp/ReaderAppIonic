@@ -10,7 +10,7 @@
         <ion-buttons slot="end">
             <ion-button (click)="setUnsetBookmark()">
                 <ion-icon name="bookmark" style="float: right;"
-                          [style.visibility]="isBookmarkSet ?'visible' : 'hidden'"></ion-icon>
+                          [style.opacity]="isBookmarkSet ? '1' : '0.2'"></ion-icon>
             </ion-button>
         </ion-buttons>
     </ion-toolbar>

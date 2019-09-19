@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
             (res: any) => {
                 userDTO.sessionToken = res.sessionToken;
                 userDTO.objectId = res.objectId;
+                userDTO.lastReadBook = res.lastReadBook;
                 this.appStorageService.setUserDTO(userDTO).then(
                     (res) => {
                         this.goToShelf();

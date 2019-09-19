@@ -5,6 +5,8 @@ import {MenuController, Platform} from "@ionic/angular";
 import {MenuEvents, MenuService} from "../ebook-reader/services/menu.service";
 import {BookDTO} from "../ebook-reader/dto/bookDTO";
 import {HttpParseService} from "../services/http-parse.service";
+import {AppStorageService} from "../services/app-storage.service";
+import {UserDTO} from "../models/UserDTO";
 
 declare var ePub: any;
 
@@ -24,7 +26,8 @@ export class ShelfPage implements OnInit {
         public menuCtrl: MenuController,
         public menuService: MenuService,
         private route: ActivatedRoute,
-        private httpParseService: HttpParseService) {
+        private httpParseService: HttpParseService,
+        private appStorageService: AppStorageService) {
         this.initEventListeners();
     }
 
@@ -33,8 +36,22 @@ export class ShelfPage implements OnInit {
             this.enableMenu();
             this.getBooks();
         });
-        this.getBooks();
-        this.enableMenu();
+
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                if (userDTO.lastReadBook) {
+                    this.httpParseService.getBookById(userDTO.lastReadBook).subscribe(
+                        (books: any) => {
+                            let bookDTO: BookDTO = books.results[0];
+                            this.openBook(bookDTO);
+                        }
+                    )
+                } else {
+                    this.getBooks();
+                    this.enableMenu();
+                }
+            }
+        )
     }
 
     public openBook(book: BookDTO) {
@@ -44,6 +61,14 @@ export class ShelfPage implements OnInit {
             }
         };
         this.router.navigate(['reader'], navigationExtras);
+    }
+
+    public deleteBook(book: BookDTO) {
+        this.httpParseService.deleteBook(book).subscribe(
+            (res) => {
+                this.getBooks();
+            }
+        );
     }
 
     private enableMenu() {
@@ -69,11 +94,5 @@ export class ShelfPage implements OnInit {
         )
     }
 
-    deleteBook(book: BookDTO) {
-        this.httpParseService.deleteBook(book).subscribe(
-            (res) => {
-                this.getBooks();
-            }
-        );
-    }
+
 }

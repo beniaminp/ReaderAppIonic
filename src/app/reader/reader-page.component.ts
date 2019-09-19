@@ -5,6 +5,7 @@ import {MenuController} from '@ionic/angular';
 import {Facebook} from '@ionic-native/facebook/ngx';
 import {Storage} from "@ionic/storage";
 import {BookDTO} from "../ebook-reader/dto/bookDTO";
+import {HttpParseService} from "../services/http-parse.service";
 
 @Component({
     selector: 'app-user',
@@ -21,7 +22,8 @@ export class ReaderPage implements OnInit, AfterViewInit {
         private router: Router,
         public storage: Storage,
         private route: ActivatedRoute,
-        public menuController: MenuController) {
+        public menuController: MenuController,
+        private httpParseService: HttpParseService) {
     }
 
     async ngOnInit() {
@@ -31,6 +33,7 @@ export class ReaderPage implements OnInit, AfterViewInit {
             if (this.router.getCurrentNavigation().extras.state) {
                 this.bookDTO = this.router.getCurrentNavigation().extras.state.book;
                 this.ebookSource = this.bookDTO.fileUrl;
+                this.httpParseService.updateLastReadBook(this.bookDTO).subscribe();
             }
         });
     }

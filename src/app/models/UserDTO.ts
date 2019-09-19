@@ -4,4 +4,5 @@ export class UserDTO {
     email;
     password;
     sessionToken;
+    lastReadBook;
 }

@@ -83,6 +83,11 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    public getBookById(bookId) {
+        let query = encodeURI('{"objectId": "' + bookId + '"}');
+        return this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOK + '?where=' + query, {headers: this.createHeaders()});
+    }
+
     public deleteBook(bookDTO: BookDTO) {
         var subject = new Subject<void>();
         this.httpClient.delete(this.parseURL + 'classes/' + ParseClasses.BOOK + '/' + bookDTO.objectId, {headers: this.createHeaders()}).subscribe(
@@ -94,6 +99,27 @@ export class HttpParseService {
                 )
 
             }, (e) => console.error(e)
+        );
+        return subject.asObservable();
+    }
+
+    public updateLastReadBook(bookDTO: BookDTO) {
+        var subject = new Subject<void>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let user = userDTO;
+                user.lastReadBook = bookDTO.objectId;
+                this.appStorageService.setUserDTO(user).then(
+                    (res) => {
+                        let updateParams = '{"lastReadBook": "' + bookDTO.objectId + '"}';
+                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
+                            () => {
+                                subject.next();
+                            }
+                        )
+                    }
+                ).catch(e => console.error(e));
+            }
         );
         return subject.asObservable();
     }
@@ -110,7 +136,6 @@ export class HttpParseService {
         httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');
         httpHeaders = httpHeaders.append('X-Parse-REST-API-Key', 'luoPAzqoXsd88o1wtKkYo6qyGnTy2kDFhzOGM7Mv');
         httpHeaders = httpHeaders.append('X-Parse-Master-Key', 'dudc1cQQLmdxL4BWz8ajM0Tu4Bxw8KWvzvefQPDt');
-        httpHeaders = httpHeaders.append("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
         return httpHeaders;
     }
 }
