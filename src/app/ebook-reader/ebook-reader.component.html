@@ -9,9 +9,10 @@
         <ion-title>{{bookDTO.title}}</ion-title>
         <ion-buttons slot="end">
             <ion-button (click)="setUnsetBookmark()">
-                <ion-icon name="bookmark" style="float: right;"
+                <ion-icon name="bookmark"
                           [style.opacity]="isBookmarkSet ? '1' : '0.2'"></ion-icon>
             </ion-button>
+            <ion-icon name="menu" (click)="presentPopover($event)"></ion-icon>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>

@@ -1,10 +1,13 @@
 import {AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {MenuController, Platform} from "@ionic/angular";
+import {MenuController, Platform, PopoverController} from "@ionic/angular";
 import {Storage} from '@ionic/storage';
 import {BookDTO} from "./dto/bookDTO";
 import {EBookService, EPUB_EVENT_TYPES} from "./services/e-book.service";
 import {MenuService} from "./services/menu.service";
 import {Router} from "@angular/router";
+import {UserSettingsComponent} from "../shelf/user-settings/user-settings.component";
+import {EbookPreferencesComponent} from "./ebook-preferences/ebook-preferences.component";
+import {AppStorageService} from "../services/app-storage.service";
 
 declare var ePub: any;
 
@@ -29,7 +32,8 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 public menuController: MenuController,
                 public ebookService: EBookService,
                 public menuService: MenuService,
-                private router: Router) {
+                private router: Router,
+                private popoverController: PopoverController) {
     }
 
     ngOnInit() {
@@ -70,6 +74,15 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.cdr.detectChanges();
         this.storage.set('books', JSON.stringify([this.bookDTO])).then();
 
+    }
+
+    public async presentPopover(ev) {
+        const popover = await this.popoverController.create({
+            component: EbookPreferencesComponent,
+            event: ev,
+            translucent: true
+        });
+        return await popover.present();
     }
 
     private initBook() {
