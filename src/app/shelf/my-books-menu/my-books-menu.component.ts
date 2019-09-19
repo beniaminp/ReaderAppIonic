@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {MenuController} from "@ionic/angular";
+import {AlertController, MenuController} from "@ionic/angular";
 import {Storage} from "@ionic/storage";
 import {BookDTO} from "../../ebook-reader/dto/bookDTO";
 import {MenuEvents, MenuService} from "../../ebook-reader/services/menu.service";
-import {ParseService} from "../../services/parse.service";
 import {HttpParseService} from "../../services/http-parse.service";
 
 declare var ePub: any;
@@ -19,8 +18,8 @@ export class MyBooksMenuComponent implements OnInit {
     constructor(public menuCtrl: MenuController,
                 public storage: Storage,
                 public menuService: MenuService,
-                public parseService: ParseService,
-                public httpParseService: HttpParseService) {
+                public httpParseService: HttpParseService,
+                public alertController: AlertController) {
 
     }
 
@@ -35,34 +34,45 @@ export class MyBooksMenuComponent implements OnInit {
     }
 
     public readAllFiles() {
-        let books = [];
-        this.storage.get("my-books").then((retBooks: BookDTO[]) => {
-            books = retBooks != null ? retBooks : [];
-            this.filesArray.forEach(file => {
-                let reader = new FileReader();
-                reader.onload = (e: any) => {
-                    let book = new BookDTO();
+        this.httpParseService.getBooksForUser().subscribe(
+            (bookDTO: BookDTO[]) => {
 
-                    book.bookContent = e.target.result;
-                    book.fileName = file.name;
-                    book.fileId = file.id;
+                this.filesArray.forEach(file => {
+                    let reader = new FileReader();
+                    reader.onload = (e: any) => {
+                        let book = new BookDTO();
 
-                    let foundIndex = books.findIndex(book => book.fileName == file.fileName);
-                    if (foundIndex == -1) {
-                        books.push(book);
-                    }
-                    this.httpParseService.addBook(book).subscribe(
-                        (success) => {
-                            console.error(success);
-                            this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED, value: book});
+                        book.bookContent = e.target.result;
+                        book.fileName = file.name;
+                        book.fileId = file.id;
+
+                        let foundedBook = bookDTO.filter(bookDTO => bookDTO.fileName.toLowerCase() == book.fileName.toLowerCase());
+                        if (foundedBook.length == 0) {
+                            this.httpParseService.addBook(book).subscribe(
+                                () => {
+                                    this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED, value: book});
+                                }
+                            );
+                        } else {
+                            this.presentAlert(book.fileName).then();
                         }
-                    );
-                };
+                    };
 
-                reader.readAsArrayBuffer(file);
-            });
-            this.menuCtrl.toggle().then();
+                    reader.readAsArrayBuffer(file);
+                });
+                this.menuCtrl.toggle().then();
+            }
+        );
+    }
+
+    async presentAlert(bookTitle) {
+        const alert = await this.alertController.create({
+            header: 'Book exists',
+            message: 'This is book is already added ' + bookTitle,
+            buttons: ['OK']
         });
+
+        await alert.present();
     }
 
 

@@ -22,6 +22,17 @@ export class HttpParseService {
             {headers: this.createHeaders()});
     }
 
+    public signUpUser(userDTO: UserDTO) {
+        let user: any = {};
+        user.set('username', userDTO.email);
+        user.set('name', userDTO.username);
+        user.set('email', userDTO.email);
+        user.set('password', userDTO.password);
+
+        return this.httpClient.post(this.parseURL + ParseClasses.USER, user,
+            {headers: this.createHeaders()});
+    }
+
     public uploadFile(byteArrayFile, fileName) {
         let headers: HttpHeaders = this.createHeaders();
         headers = headers.append('Content-Type', 'application/epub+zip ');
@@ -30,15 +41,20 @@ export class HttpParseService {
 
     public addBook(bookDTO: BookDTO) {
         var subject = new Subject<BookDTO>();
-        this.uploadFile(bookDTO.bookContent, bookDTO.fileName).subscribe(
-            (res: any) => {
-                bookDTO.fileUrl = res.url;
-                bookDTO.fileUrlName = res.name;
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                this.uploadFile(bookDTO.bookContent, bookDTO.fileName).subscribe(
+                    (res: any) => {
+                        bookDTO.fileUrl = res.url;
+                        bookDTO.fileUrlName = res.name;
+                        bookDTO.userId = userDTO.objectId;
 
-                this.httpClient.post(this.parseURL + '/classes/' + ParseClasses.BOOK, bookDTO, {headers: this.createHeaders()})
-                    .subscribe((book) => {
-                        subject.next(bookDTO);
-                    });
+                        this.httpClient.post(this.parseURL + '/classes/' + ParseClasses.BOOK, bookDTO, {headers: this.createHeaders()})
+                            .subscribe((book) => {
+                                subject.next(bookDTO);
+                            });
+                    }
+                );
             }
         );
         return subject.asObservable();
@@ -67,6 +83,21 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    public deleteBook(bookDTO: BookDTO) {
+        var subject = new Subject<void>();
+        this.httpClient.delete(this.parseURL + 'classes/' + ParseClasses.BOOK + '/' + bookDTO.objectId, {headers: this.createHeaders()}).subscribe(
+            (res) => {
+                this.httpClient.delete(this.parseURL + 'files/' + bookDTO.fileUrlName, {headers: this.createHeaders()}).subscribe(
+                    (res) => {
+                        subject.next();
+                    }, (e) => console.error(e)
+                )
+
+            }, (e) => console.error(e)
+        );
+        return subject.asObservable();
+    }
+
     private createHeaders() {
         let httpHeaders: HttpHeaders = new HttpHeaders();
         httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');
@@ -77,5 +108,6 @@ export class HttpParseService {
 
 
 export enum ParseClasses {
-    BOOK = 'Book'
+    BOOK = 'Book',
+    USER = 'users'
 }

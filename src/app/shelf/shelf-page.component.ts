@@ -29,15 +29,11 @@ export class ShelfPage implements OnInit {
     }
 
     ngOnInit(): void {
-        this.httpParseService.getBooksForUser().subscribe(
-            (res) => {
-                this.books = res;
-            }
-        );
-
         this.route.params.subscribe(params => {
             this.enableMenu();
+            this.getBooks();
         });
+        this.getBooks();
         this.enableMenu();
     }
 
@@ -54,6 +50,14 @@ export class ShelfPage implements OnInit {
         this.menuCtrl.enable(true, 'my-books-menu');
     }
 
+    private getBooks() {
+        this.httpParseService.getBooksForUser().subscribe(
+            (res) => {
+                this.books = res;
+            }
+        );
+    }
+
     private initEventListeners() {
         this.menuService.menuEmitter.subscribe(
             (res) => {
@@ -63,5 +67,9 @@ export class ShelfPage implements OnInit {
                 }
             }
         )
+    }
+
+    deleteBook(book: BookDTO) {
+        this.httpParseService.deleteBook(book).subscribe();
     }
 }

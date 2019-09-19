@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForm} from "@angular/forms";
-import {ParseService} from "../../services/parse.service";
 import {UserDTO} from "../../models/UserDTO";
 import {Router} from "@angular/router";
+import {HttpParseService} from "../../services/http-parse.service";
+import {AppStorageService} from "../../services/app-storage.service";
 
 @Component({
     selector: 'app-sign-up',
@@ -11,8 +12,9 @@ import {Router} from "@angular/router";
 })
 export class SignUpPage implements OnInit {
 
-    constructor(public parseService: ParseService,
-                private router: Router) {
+    constructor(private router: Router,
+                private httpParseService: HttpParseService,
+                private appStorageService: AppStorageService) {
     }
 
     ngOnInit() {
@@ -24,14 +26,17 @@ export class SignUpPage implements OnInit {
         userDTO.email = form.controls.email.value;
         userDTO.password = form.controls.password.value;
 
-        this.parseService.signUp(userDTO).then(
-            (user) => {
-                this.goToShelf();
-            }
-        ).catch(error => {
-            console.error(error);
-        })
-
+        this.httpParseService.signUpUser(userDTO).subscribe(
+            (res: any) => {
+                userDTO.sessionToken = res.sessionToken;
+                userDTO.objectId = res.objectId;
+                this.appStorageService.setUserDTO(userDTO).then(
+                    (res) => {
+                        this.goToShelf();
+                    }
+                );
+            }, (e) => console.error(e)
+        );
     }
 
     public goToShelf() {

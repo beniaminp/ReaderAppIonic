@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForm} from "@angular/forms";
 import {Router} from "@angular/router";
-import {ParseService} from "../../services/parse.service";
 import {UserDTO} from "../../models/UserDTO";
 import {HttpParseService} from "../../services/http-parse.service";
 import {AppStorageService} from "../../services/app-storage.service";
