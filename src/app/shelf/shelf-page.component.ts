@@ -75,14 +75,6 @@ export class ShelfPage implements OnInit {
         this.router.navigate(['reader'], navigationExtras);
     }
 
-    public deleteBook(book: BookDTO) {
-        this.httpParseService.deleteBook(book).subscribe(
-            (res) => {
-                this.deleteBookLocal(book);
-            }
-        );
-    }
-
     public doRefresh(event) {
         this.httpParseService.getBooksForUser().subscribe(
             (res) => {
@@ -170,6 +162,10 @@ export class ShelfPage implements OnInit {
                     }
                     case MenuEvents.FAVORITES_CHANGED: {
                         this.favoritesBooks = res.value;
+                        break;
+                    }
+                    case MenuEvents.BOOK_DELETED: {
+                        this.deleteBookLocal(res.value);
                         break;
                     }
                     default: {

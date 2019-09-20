@@ -61,4 +61,17 @@ export class BookPopoverComponent implements OnInit {
         ).catch(e => console.error(e))
     }
 
+
+    public deleteBook() {
+        this.httpParseService.deleteBook(this.bookDTO).subscribe(
+            (res) => {
+                this.menuService.menuEmitter.next({
+                    type: MenuEvents.BOOK_DELETED,
+                    value: this.bookDTO
+                });
+                this.popoverController.dismiss();
+            }
+        );
+    }
+
 }
