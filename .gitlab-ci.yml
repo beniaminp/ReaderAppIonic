@@ -5,7 +5,7 @@ pages:
   - npm install
   - ionic cordova build browser
   - mkdir .public
-  - cp -R www/* .public
+  - cp -R platforms/browser/www/* .public
   - mv .public public
   artifacts:
     paths:
