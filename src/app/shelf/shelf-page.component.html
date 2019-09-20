@@ -23,9 +23,7 @@
     <ion-list *ngIf="books">
         <ion-item *ngFor="let book of books">
             <ion-label (click)="openBook(book)">{{book.fileName}}</ion-label>
-            <ion-icon name="star-outline" *ngIf="!isFavoriteBook(book)" (click)="setFavorites(true, book)"></ion-icon>
-            <ion-icon name="star" *ngIf="isFavoriteBook(book)" (click)="setFavorites(false, book)"></ion-icon>
-            <ion-icon slot="end" name="trash" (click)="deleteBook(book)"></ion-icon>
+            <ion-icon name="menu" (click)="showBookPopover($event, book)"></ion-icon>
         </ion-item>
     </ion-list>
 </ion-content>

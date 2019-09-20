@@ -9,6 +9,7 @@ import {IonicModule} from '@ionic/angular';
 import {ShelfPage} from './shelf-page.component';
 import {MyBooksMenuComponent} from './my-books-menu/my-books-menu.component';
 import {UserSettingsComponent} from "./user-settings/user-settings.component";
+import {BookPopoverComponent} from "./book-popover/book-popover.component";
 
 const routes: Routes = [
     {
@@ -28,14 +29,17 @@ const routes: Routes = [
     declarations: [
         ShelfPage,
         MyBooksMenuComponent,
-        UserSettingsComponent
+        UserSettingsComponent,
+        BookPopoverComponent
     ],
     exports: [
         MyBooksMenuComponent,
-        UserSettingsComponent
+        UserSettingsComponent,
+        BookPopoverComponent
     ],
     entryComponents: [
-        UserSettingsComponent
+        UserSettingsComponent,
+        BookPopoverComponent
     ]
 })
 export class ShelfPageModule {

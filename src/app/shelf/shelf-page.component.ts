@@ -9,6 +9,7 @@ import {AppStorageService} from "../services/app-storage.service";
 import {UserDTO} from "../models/UserDTO";
 import {UserSettingsComponent} from "./user-settings/user-settings.component";
 import {LoadingService} from "../services/loading.service";
+import {BookPopoverComponent} from "./book-popover/book-popover.component";
 
 declare var ePub: any;
 
@@ -22,6 +23,7 @@ export class ShelfPage implements OnInit {
     public books: BookDTO[];
     public favoritesBooks: string[] = [];
     public showFavorites = false;
+    public userDTO: UserDTO;
 
     constructor(
         private router: Router,
@@ -45,6 +47,7 @@ export class ShelfPage implements OnInit {
 
         this.appStorageService.getUserDTO().then(
             (userDTO: UserDTO) => {
+                this.userDTO = userDTO;
                 if (userDTO.lastReadBook && userDTO.goToLastRead) {
                     this.httpParseService.getBookById(userDTO.lastReadBook).subscribe(
                         (books: any) => {
@@ -80,25 +83,6 @@ export class ShelfPage implements OnInit {
         );
     }
 
-    public setFavorites(setFav: boolean, bookDTO: BookDTO) {
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                if (!setFav) {
-                    let indexOfBook = this.favoritesBooks.findIndex(objectId => objectId == bookDTO.objectId);
-                    this.favoritesBooks.splice(indexOfBook, 1);
-                } else {
-                    this.favoritesBooks.push(bookDTO.objectId);
-                }
-                userDTO.favoritesBook = this.favoritesBooks.join(",");
-                this.httpParseService.updateFavoritesBooks(this.favoritesBooks, userDTO).subscribe();
-            }
-        ).catch(e => console.error(e))
-    }
-
-    public isFavoriteBook(bookDTO: BookDTO) {
-        return this.favoritesBooks.indexOf(bookDTO.objectId) > -1;
-    }
-
     public doRefresh(event) {
         this.httpParseService.getBooksForUser().subscribe(
             (res) => {
@@ -116,7 +100,6 @@ export class ShelfPage implements OnInit {
         });
         return await popover.present();
     }
-
 
     public searchChanged(event) {
         let searchedText = event.detail.value;
@@ -136,6 +119,27 @@ export class ShelfPage implements OnInit {
                 this.books = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText));
             }
         }
+    }
+
+    public selectionChanged(event) {
+        let showBooks = event.detail.value;
+        if (showBooks == 0) {
+            this.getBooks();
+            this.showFavorites = false;
+        } else if (showBooks == 1) {
+            this.books = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
+            this.showFavorites = true;
+        }
+    }
+
+    public async showBookPopover(event, bookDTO: BookDTO) {
+        const popover = await this.popoverController.create({
+            component: BookPopoverComponent,
+            componentProps: {bookDTO, userDTO: this.userDTO},
+            event: event,
+            translucent: true
+        });
+        return await popover.present();
     }
 
     private deleteBookLocal(bookDTO: BookDTO) {
@@ -164,22 +168,15 @@ export class ShelfPage implements OnInit {
                         this.books.push(res.value);
                         break;
                     }
+                    case MenuEvents.FAVORITES_CHANGED: {
+                        this.favoritesBooks = res.value;
+                        break;
+                    }
                     default: {
                         break;
                     }
                 }
             }
         )
-    }
-
-    selectionChanged(event) {
-        let showBooks = event.detail.value;
-        if (showBooks == 0) {
-            this.getBooks();
-            this.showFavorites = false;
-        } else if (showBooks == 1) {
-            this.books = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
-            this.showFavorites = true;
-        }
     }
 }
