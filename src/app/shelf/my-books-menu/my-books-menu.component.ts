@@ -81,14 +81,4 @@ export class MyBooksMenuComponent implements OnInit {
     ngOnInit() {
         this.options = {allowedContentTypes: ['application/epub+zip']}
     }
-
-    showFavorites() {
-        this.menuCtrl.toggle().then();
-        this.menuService.menuEmitter.next({type: MenuEvents.SHOW_FAVORITES});
-    }
-
-    showAll() {
-        this.menuCtrl.toggle().then();
-        this.menuService.menuEmitter.next({type: MenuEvents.SHOW_ALL});
-    }
 }

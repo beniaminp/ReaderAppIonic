@@ -164,16 +164,6 @@ export class ShelfPage implements OnInit {
                         this.books.push(res.value);
                         break;
                     }
-                    case MenuEvents.SHOW_FAVORITES: {
-                        this.books = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
-                        this.showFavorites = true;
-                        break;
-                    }
-                    case MenuEvents.SHOW_ALL: {
-                        this.getBooks();
-                        this.showFavorites = false;
-                        break;
-                    }
                     default: {
                         break;
                     }
@@ -182,4 +172,14 @@ export class ShelfPage implements OnInit {
         )
     }
 
+    selectionChanged(event) {
+        let showBooks = event.detail.value;
+        if (showBooks == 0) {
+            this.getBooks();
+            this.showFavorites = false;
+        } else if (showBooks == 1) {
+            this.books = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
+            this.showFavorites = true;
+        }
+    }
 }
