@@ -1,7 +1,7 @@
 <ion-list *ngIf="bookDTO">
     <ion-item>
-        <ion-icon name="star-outline" *ngIf="!isFavoriteBook()" (click)="setFavorites(true)"></ion-icon>
-        <ion-icon name="star" *ngIf="isFavoriteBook()" (click)="setFavorites(false)"></ion-icon>
+        <ion-label *ngIf="!isFavoriteBook()" (click)="setFavorites(true)">Add to favorites</ion-label>
+        <ion-label *ngIf="isFavoriteBook()" (click)="setFavorites(false)">Remove from favorites</ion-label>
     </ion-item>
     <ion-item>
         <ion-label (click)="deleteBook()">Delete</ion-label>
