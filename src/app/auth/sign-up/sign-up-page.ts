@@ -4,6 +4,7 @@ import {UserDTO} from "../../models/UserDTO";
 import {Router} from "@angular/router";
 import {HttpParseService} from "../../services/http-parse.service";
 import {AppStorageService} from "../../services/app-storage.service";
+import {LoadingService} from "../../services/loading.service";
 
 @Component({
     selector: 'app-sign-up',
@@ -14,13 +15,15 @@ export class SignUpPage implements OnInit {
 
     constructor(private router: Router,
                 private httpParseService: HttpParseService,
-                private appStorageService: AppStorageService) {
+                private appStorageService: AppStorageService,
+                private loadingService: LoadingService) {
     }
 
     ngOnInit() {
     }
 
     public register(form: NgForm) {
+        this.loadingService.showLoader();
         let userDTO: UserDTO = new UserDTO();
         userDTO.username = form.controls.name.value;
         userDTO.email = form.controls.email.value;
@@ -33,6 +36,7 @@ export class SignUpPage implements OnInit {
                 userDTO.lastReadBook = res.lastReadBook;
                 this.appStorageService.setUserDTO(userDTO).then(
                     (res) => {
+                        this.loadingService.dismissLoader();
                         this.goToShelf();
                     }
                 );

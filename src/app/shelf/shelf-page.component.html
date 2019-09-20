@@ -15,6 +15,9 @@
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
     <ion-list *ngIf="books">
+        <ion-item>
+            <ion-searchbar animated showCancelButton="never" autocomplete="true" (ionChange)="searchChanged($event)"></ion-searchbar>
+        </ion-item>
         <ion-item *ngFor="let book of books">
             <ion-label (click)="openBook(book)">{{book.fileName}}</ion-label>
             <ion-icon name="star-outline" *ngIf="!isFavoriteBook(book)" (click)="setFavorites(true, book)"></ion-icon>

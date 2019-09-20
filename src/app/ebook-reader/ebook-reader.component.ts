@@ -8,6 +8,7 @@ import {Router} from "@angular/router";
 import {UserSettingsComponent} from "../shelf/user-settings/user-settings.component";
 import {EbookPreferencesComponent} from "./ebook-preferences/ebook-preferences.component";
 import {AppStorageService} from "../services/app-storage.service";
+import {LoadingService} from "../services/loading.service";
 
 declare var ePub: any;
 
@@ -33,10 +34,12 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 public ebookService: EBookService,
                 public menuService: MenuService,
                 private router: Router,
-                private popoverController: PopoverController) {
+                private popoverController: PopoverController,
+                private loadingService: LoadingService) {
     }
 
     ngOnInit() {
+        this.loadingService.showLoader();
     }
 
     ngAfterViewInit(): void {
@@ -104,6 +107,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
     private bookReady() {
         this.book.ready.then(() => {
+            this.loadingService.dismissLoader();
             this.storage.get('books').then((res) => {
                 if (res != null) {
                     this.getFromLocalStorage(res);

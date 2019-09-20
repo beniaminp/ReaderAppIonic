@@ -1,13 +1,14 @@
 import {AfterContentInit, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Storage} from "@ionic/storage";
-import {MenuController, Platform, PopoverController} from "@ionic/angular";
+import {LoadingController, MenuController, Platform, PopoverController} from "@ionic/angular";
 import {MenuEvents, MenuService} from "../ebook-reader/services/menu.service";
 import {BookDTO} from "../ebook-reader/dto/bookDTO";
 import {HttpParseService} from "../services/http-parse.service";
 import {AppStorageService} from "../services/app-storage.service";
 import {UserDTO} from "../models/UserDTO";
 import {UserSettingsComponent} from "./user-settings/user-settings.component";
+import {LoadingService} from "../services/loading.service";
 
 declare var ePub: any;
 
@@ -31,11 +32,12 @@ export class ShelfPage implements OnInit {
         private route: ActivatedRoute,
         private httpParseService: HttpParseService,
         private appStorageService: AppStorageService,
-        private popoverController: PopoverController) {
+        private popoverController: PopoverController,
+        private loadingService: LoadingService) {
         this.initEventListeners();
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
         this.route.params.subscribe(params => {
             this.enableMenu();
             this.getBooks();
@@ -123,10 +125,12 @@ export class ShelfPage implements OnInit {
         this.menuCtrl.enable(true, 'my-books-menu');
     }
 
-    private getBooks() {
+    private async getBooks() {
+        this.loadingService.showLoader();
         this.httpParseService.getBooksForUser().subscribe(
             (res) => {
                 this.books = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
+                this.loadingService.dismissLoader();
             }
         );
     }
@@ -157,4 +161,12 @@ export class ShelfPage implements OnInit {
         )
     }
 
+    searchChanged(event) {
+        let searchedText = event.detail.value;
+        if (searchedText.trim() == '') {
+            this.getBooks();
+        } else {
+            this.books = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText));
+        }
+    }
 }

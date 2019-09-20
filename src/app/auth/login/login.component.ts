@@ -5,6 +5,7 @@ import {UserDTO} from "../../models/UserDTO";
 import {HttpParseService} from "../../services/http-parse.service";
 import {AppStorageService} from "../../services/app-storage.service";
 import {LoadingController} from "@ionic/angular";
+import {LoadingService} from "../../services/loading.service";
 
 @Component({
     selector: 'app-login',
@@ -16,13 +17,14 @@ export class LoginComponent implements OnInit {
     constructor(private router: Router,
                 public httpParseService: HttpParseService,
                 public appStorageService: AppStorageService,
-                public loadingController: LoadingController) {
+                private loadingService: LoadingService) {
     }
 
     ngOnInit() {
     }
 
     public login(form: NgForm) {
+        this.loadingService.showLoader();
         let userDTO: UserDTO = new UserDTO();
         userDTO.email = form.controls.email.value;
         userDTO.password = form.controls.password.value;
@@ -33,6 +35,7 @@ export class LoginComponent implements OnInit {
                 userDTO.lastReadBook = res.lastReadBook;
                 this.appStorageService.setUserDTO(userDTO).then(
                     (res) => {
+                        this.loadingService.dismissLoader();
                         this.goToShelf();
                     }
                 );
@@ -48,10 +51,5 @@ export class LoginComponent implements OnInit {
 
     public goToShelf() {
         this.router.navigate(['shelf']);
-    }
-
-    async presentLoading() {
-        const loading = await this.loadingController.create({});
-        await loading.present();
     }
 }
