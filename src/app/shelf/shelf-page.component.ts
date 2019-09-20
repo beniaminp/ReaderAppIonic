@@ -137,7 +137,6 @@ export class ShelfPage implements OnInit {
                 switch (res.type) {
                     case MenuEvents.BOOKS_ADDED: {
                         this.books.push(res.value);
-                        this.httpParseService.addBook(res.value).subscribe();
                         break;
                     }
                     case MenuEvents.SHOW_FAVORITES: {

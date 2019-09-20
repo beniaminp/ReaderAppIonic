@@ -50,7 +50,8 @@ export class MyBooksMenuComponent implements OnInit {
                         let foundedBook = bookDTO.filter(bookDTO => bookDTO.fileName.toLowerCase() == book.fileName.toLowerCase());
                         if (foundedBook.length == 0) {
                             this.httpParseService.addBook(book).subscribe(
-                                () => {
+                                (res) => {
+                                    book.objectId = res.objectId;
                                     this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED, value: book});
                                 }
                             );
