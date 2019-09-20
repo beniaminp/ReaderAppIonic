@@ -7,9 +7,10 @@ export class BookDTO {
     fileUrl;
     userId;
     // file infos
-    fileId: string
+    fileId: string;
     fileName: string;
     bookContent;
     fileUrlName: any;
     objectId: any;
+    isDeleted = false;
 }

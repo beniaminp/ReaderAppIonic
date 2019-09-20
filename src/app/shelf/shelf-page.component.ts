@@ -20,6 +20,7 @@ export class ShelfPage implements OnInit {
 
     public books: BookDTO[];
     public favoritesBooks: string[] = [];
+    public showFavorites = false;
 
     constructor(
         private router: Router,
@@ -72,7 +73,7 @@ export class ShelfPage implements OnInit {
     public deleteBook(book: BookDTO) {
         this.httpParseService.deleteBook(book).subscribe(
             (res) => {
-                this.getBooks();
+                this.deleteBookLocal(book);
             }
         );
     }
@@ -81,7 +82,8 @@ export class ShelfPage implements OnInit {
         this.appStorageService.getUserDTO().then(
             (userDTO: UserDTO) => {
                 if (!setFav) {
-                    this.favoritesBooks.slice(this.favoritesBooks.findIndex(objectId => objectId == bookDTO.objectId), 1);
+                    let indexOfBook = this.favoritesBooks.findIndex(objectId => objectId == bookDTO.objectId);
+                    this.favoritesBooks.splice(indexOfBook, 1);
                 } else {
                     this.favoritesBooks.push(bookDTO.objectId);
                 }
@@ -113,6 +115,10 @@ export class ShelfPage implements OnInit {
         return await popover.present();
     }
 
+    private deleteBookLocal(bookDTO: BookDTO) {
+        this.books.splice(this.books.indexOf(bookDTO), 1);
+    }
+
     private enableMenu() {
         this.menuCtrl.enable(true, 'my-books-menu');
     }
@@ -128,9 +134,25 @@ export class ShelfPage implements OnInit {
     private initEventListeners() {
         this.menuService.menuEmitter.subscribe(
             (res) => {
-                if (res.type == MenuEvents.BOOKS_ADDED) {
-                    this.books.push(res.value);
-                    this.httpParseService.addBook(res.value).subscribe();
+                switch (res.type) {
+                    case MenuEvents.BOOKS_ADDED: {
+                        this.books.push(res.value);
+                        this.httpParseService.addBook(res.value).subscribe();
+                        break;
+                    }
+                    case MenuEvents.SHOW_FAVORITES: {
+                        this.books = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
+                        this.showFavorites = true;
+                        break;
+                    }
+                    case MenuEvents.SHOW_ALL: {
+                        this.getBooks();
+                        this.showFavorites = false;
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
                 }
             }
         )

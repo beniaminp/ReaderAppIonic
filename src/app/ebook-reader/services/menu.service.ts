@@ -11,5 +11,7 @@ export class MenuService {
 }
 
 export enum MenuEvents{
-    BOOKS_ADDED
+    BOOKS_ADDED,
+    SHOW_FAVORITES,
+    SHOW_ALL
 }

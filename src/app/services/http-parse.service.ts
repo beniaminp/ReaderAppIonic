@@ -64,7 +64,7 @@ export class HttpParseService {
         var subject = new Subject<BookDTO[]>();
         this.appStorageService.getUserDTO().then(
             (userDTO: UserDTO) => {
-                let query = encodeURI('{"userId": "' + userDTO.objectId + '"}');
+                let query = encodeURI('{"userId": "' + userDTO.objectId + '", "isDeleted": false}');
                 this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOK + '?where=' + query, {headers: this.createHeaders()})
                     .subscribe((books: any) => {
                         let booksDTO: BookDTO[] = [];
@@ -90,14 +90,16 @@ export class HttpParseService {
 
     public deleteBook(bookDTO: BookDTO) {
         var subject = new Subject<void>();
-        this.httpClient.delete(this.parseURL + 'classes/' + ParseClasses.BOOK + '/' + bookDTO.objectId, {headers: this.createHeaders()}).subscribe(
+        let updateParams = '{"isDeleted": true}';
+        this.httpClient.put(this.parseURL + 'classes/' + ParseClasses.BOOK + '/' + bookDTO.objectId, updateParams, {headers: this.createHeaders()}).subscribe(
             (res) => {
-                this.httpClient.delete(this.parseURL + 'files/' + bookDTO.fileUrlName, {headers: this.createFullHeaders()}).subscribe(
+                /*this.httpClient.delete(this.parseURL + 'files/' + bookDTO.fileUrlName, {headers: this.createFullHeaders()}).subscribe(
                     (res) => {
                         subject.next();
                     }, (e) => console.error(e)
-                )
+                )*/
 
+                subject.next();
             }, (e) => console.error(e)
         );
         return subject.asObservable();
