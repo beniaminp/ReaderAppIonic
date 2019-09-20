@@ -117,6 +117,27 @@ export class ShelfPage implements OnInit {
         return await popover.present();
     }
 
+
+    public searchChanged(event) {
+        let searchedText = event.detail.value;
+        if (searchedText.trim() == '') {
+            this.getBooks();
+        } else {
+            this.books = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText));
+        }
+    }
+
+    public searchInputChanged(event) {
+        let searchedText = event.detail.data;
+        if (searchedText) {
+            if (searchedText.trim() == '') {
+                this.getBooks();
+            } else {
+                this.books = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText));
+            }
+        }
+    }
+
     private deleteBookLocal(bookDTO: BookDTO) {
         this.books.splice(this.books.indexOf(bookDTO), 1);
     }
@@ -161,12 +182,4 @@ export class ShelfPage implements OnInit {
         )
     }
 
-    searchChanged(event) {
-        let searchedText = event.detail.value;
-        if (searchedText.trim() == '') {
-            this.getBooks();
-        } else {
-            this.books = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText));
-        }
-    }
 }

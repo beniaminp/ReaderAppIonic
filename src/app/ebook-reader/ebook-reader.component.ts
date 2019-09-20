@@ -108,15 +108,9 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     private bookReady() {
         this.book.ready.then(() => {
             this.loadingService.dismissLoader();
-            this.storage.get('books').then((res) => {
-                if (res != null) {
-                    this.getFromLocalStorage(res);
-                } else {
-                    this.addToLocalStorage();
-                }
-                this.ebookService.eBookEmitter.next(this.bookDTO);
-                this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.EPUB, value: this.book});
-            });
+
+            this.ebookService.eBookEmitter.next(this.bookDTO);
+            this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.EPUB, value: this.book});
             this.book.locations.generate(1600);
 
             /*var keyListener = (e) => {
@@ -146,7 +140,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.rendition.on("click", keyListener);
             document.addEventListener("mouseup", keyListener, false)*/
         });
-        console.error('this.book', this.book);
     }
 
     private addToLocalStorage() {
