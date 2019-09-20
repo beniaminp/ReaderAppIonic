@@ -148,6 +148,16 @@ export class ShelfPage implements OnInit {
             (res) => {
                 this.books = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
                 this.loadingService.dismissLoader();
+                /*this.books.forEach(
+                    book => {
+                        ePub(book.fileUrl).ready.then(
+                            (res) => {
+                                console.error(res);
+                            }
+                        )
+
+                    }
+                )*/
             }
         );
     }

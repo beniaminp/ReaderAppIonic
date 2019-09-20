@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import {ModalController, PopoverController} from "@ionic/angular";
+import {BookmarksListComponent} from "../ebook-menu/bookmarks-list/bookmarks-list.component";
+import {EbookVisualSettingsComponent} from "../ebook-visual-settings/ebook-visual-settings.component";
 
 @Component({
     selector: 'app-ebook-preferences',
@@ -7,10 +10,21 @@ import {Component, OnInit} from '@angular/core';
 })
 export class EbookPreferencesComponent implements OnInit {
 
-    constructor() {
+    constructor(private popoverController: PopoverController,
+                public modalController: ModalController) {
     }
 
     ngOnInit() {
     }
 
+    public async openVisualSettings() {
+        const modal = await this.modalController.create({
+            component: EbookVisualSettingsComponent,
+            showBackdrop: true,
+            backdropDismiss: true
+        });
+        modal.present();
+
+        this.popoverController.dismiss();
+    }
 }
