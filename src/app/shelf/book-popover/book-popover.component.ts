@@ -26,11 +26,16 @@ export class BookPopoverComponent implements OnInit {
 
     ngOnInit() {
         this.bookDTO = this.navParams.get('bookDTO');
-        this.userDTO = this.navParams.get('userDTO');
 
-        if (this.userDTO.favoritesBook != null) {
-            this.favoritesBooks = this.userDTO.favoritesBook.split(",");
-        }
+        this.appStorageService.getUserDTO().then(
+            (user: UserDTO) => {
+                this.userDTO = user;
+
+                if (this.userDTO.favoritesBook != null) {
+                    this.favoritesBooks = this.userDTO.favoritesBook.split(",");
+                }
+            }
+        );
     }
 
     public isFavoriteBook() {
