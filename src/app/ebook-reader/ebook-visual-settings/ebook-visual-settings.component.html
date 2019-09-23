@@ -1,3 +1,12 @@
-<p>
-  ebook-visual-settings works!
-</p>
+<ion-list>
+    <ion-item>
+        <ion-label>
+            Font Size
+        </ion-label>
+        <ion-select (ionChange)="selectionChanged($event)">
+            <ion-select-option *ngFor="let i of fontSize" [value]="i" [selected]="i == 100">
+                {{i}} %
+            </ion-select-option>
+        </ion-select>
+    </ion-item>
+</ion-list>

@@ -1,10 +1,11 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BookDTO} from "../dto/bookDTO";
 
-export enum EPUB_EVENT_TYPES{
+export enum EPUB_EVENT_TYPES {
     GO_TO_BOOKMARK = 0,
     EPUB = 1,
-    GO_TO_CHAPTER = 2
+    GO_TO_CHAPTER = 2,
+    FONT_SIZE_CHANGED
 }
 
 
