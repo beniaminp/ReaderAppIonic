@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {EBookService, EPUB_EVENT_TYPES} from "../services/e-book.service";
+import {ModalController} from "@ionic/angular";
 
 @Component({
     selector: 'app-ebook-visual-settings',
@@ -8,8 +9,10 @@ import {EBookService, EPUB_EVENT_TYPES} from "../services/e-book.service";
 })
 export class EbookVisualSettingsComponent implements OnInit {
     private fontSize: number[] = [];
+    public selectedFont = 100;
 
-    constructor(private eBookService: EBookService) {
+    constructor(private eBookService: EBookService,
+                public modalController: ModalController) {
     }
 
     ngOnInit() {
@@ -21,6 +24,7 @@ export class EbookVisualSettingsComponent implements OnInit {
     public selectionChanged(event) {
         let fontSizeSelected = event.detail.value;
         this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.FONT_SIZE_CHANGED, value: fontSizeSelected});
+        this.modalController.dismiss();
     }
 
 }

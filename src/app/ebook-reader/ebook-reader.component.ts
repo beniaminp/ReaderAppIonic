@@ -11,6 +11,7 @@ import {AppStorageService} from "../services/app-storage.service";
 import {LoadingService} from "../services/loading.service";
 import {BookmarkDTO} from "./dto/BookmarkDTO";
 import {HttpParseService} from "../services/http-parse.service";
+import {UserDTO} from "../models/UserDTO";
 
 declare var ePub: any;
 
@@ -41,7 +42,8 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 private router: Router,
                 private popoverController: PopoverController,
                 private loadingService: LoadingService,
-                private httpParseService: HttpParseService) {
+                private httpParseService: HttpParseService,
+                public appStorageService: AppStorageService) {
     }
 
     ngOnInit() {
@@ -92,6 +94,12 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.ebookService.eBookEmitter.next(this.bookDTO);
             this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.EPUB, value: this.book});
             this.book.locations.generate(1600);
+
+            this.appStorageService.getUserDTO().then(
+                (userDTO: UserDTO) => {
+                    this.setFontSize(userDTO.fontSize);
+                }
+            ).catch(e => console.error(e));
 
             /*var keyListener = (e) => {
                 this.getCoordinates(e);
@@ -181,28 +189,15 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         return await popover.present();
     }
 
-    private addToLocalStorage() {
-        this.bookDTO = new BookDTO();
-        this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
-        this.bookDTO.title = this.book.package.metadata.title;
-        this.storage.set('books', JSON.stringify([this.bookDTO])).then();
-    }
-
-    private getFromLocalStorage(res) {
-        let books: BookDTO[] = JSON.parse(res);
-        let currentIndex = books
-            .findIndex(book => book.uniqueIdentifier && book.uniqueIdentifier.toLowerCase()
-                == this.book.package.uniqueIdentifier.toLowerCase());
-        if (currentIndex > -1) {
-            this.bookDTO = books[currentIndex];
-        }
-    }
-
     private setUnsetBookmarkIcon() {
         this.isBookmarkSet = false;
         if (this.bookmarkExists()) {
             this.isBookmarkSet = true;
         }
+    }
+
+    private setFontSize(fontSize) {
+        this.rendition.themes.fontSize(fontSize + '%');
     }
 
     private initEventListeners() {
@@ -213,6 +208,12 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                     this.book.rendition.display(event.value);
                     this.menuController.toggle();
                     this.cdr.detectChanges();
+                } else if (event.type == EPUB_EVENT_TYPES.FONT_SIZE_CHANGED) {
+                    this.httpParseService.updateFontSize(event.value).subscribe(
+                        (res) => {
+                            this.setFontSize(event.value);
+                        }
+                    );
                 }
             }
         );

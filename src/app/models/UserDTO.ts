@@ -7,4 +7,5 @@ export class UserDTO {
     lastReadBook;
     favoritesBook: string;
     goToLastRead: boolean;
+    fontSize: any;
 }

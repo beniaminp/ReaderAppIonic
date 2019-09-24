@@ -127,6 +127,27 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    public updateFontSize(fontSize) {
+        var subject = new Subject<void>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let user = userDTO;
+                user.fontSize = fontSize;
+                this.appStorageService.setUserDTO(user).then(
+                    (res) => {
+                        let updateParams = '{"fontSize": "' + fontSize + '"}';
+                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
+                            () => {
+                                subject.next();
+                            }
+                        )
+                    }
+                ).catch(e => console.error(e));
+            }
+        );
+        return subject.asObservable();
+    }
+
     public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
         var subject = new Subject<void>();
 

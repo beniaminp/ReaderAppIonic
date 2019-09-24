@@ -31,7 +31,7 @@
     {
       "name": "Files",
       "urls": [
-        "https://parsefiles.back4app.com/**"
+        ["https://parsefiles.back4app.com/**"]
       ],
       "cacheConfig": {
         "maxSize": 500,
@@ -41,7 +41,7 @@
     {
       "name": "Requests",
       "urls": [
-        "https://parseapi.back4app.com/**"
+        ["https://parseapi.back4app.com/**"]
       ],
       "cacheConfig": {
         "maxSize": 500,

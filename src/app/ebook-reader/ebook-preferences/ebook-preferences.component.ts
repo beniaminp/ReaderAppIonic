@@ -20,7 +20,8 @@ export class EbookPreferencesComponent implements OnInit {
         const modal = await this.modalController.create({
             component: EbookVisualSettingsComponent,
             showBackdrop: true,
-            backdropDismiss: true
+            backdropDismiss: true,
+            cssClass: 'medium-modal'
         });
         modal.present();
 

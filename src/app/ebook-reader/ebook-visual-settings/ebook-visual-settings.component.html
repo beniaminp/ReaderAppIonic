@@ -4,7 +4,7 @@
             Font Size
         </ion-label>
         <ion-select (ionChange)="selectionChanged($event)">
-            <ion-select-option *ngFor="let i of fontSize" [value]="i" [selected]="i == 100">
+            <ion-select-option *ngFor="let i of fontSize" [value]="i" [selected]="i == selectedFont">
                 {{i}} %
             </ion-select-option>
         </ion-select>
