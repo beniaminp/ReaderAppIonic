@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MenuController, NavParams, PopoverController} from "@ionic/angular";
-import {BookDTO} from "../../ebook-reader/dto/bookDTO";
+import {BookDTO} from "../../ebook-reader/dto/BookDTO";
 import {UserDTO} from "../../models/UserDTO";
 import {HttpParseService} from "../../services/http-parse.service";
 import {AppStorageService} from "../../services/app-storage.service";

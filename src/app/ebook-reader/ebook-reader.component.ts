@@ -1,7 +1,7 @@
 import {AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {MenuController, Platform, PopoverController} from "@ionic/angular";
 import {Storage} from '@ionic/storage';
-import {BookDTO} from "./dto/bookDTO";
+import {BookDTO} from "./dto/BookDTO";
 import {EBookService, EPUB_EVENT_TYPES} from "./services/e-book.service";
 import {MenuService} from "./services/menu.service";
 import {Router} from "@angular/router";
@@ -9,6 +9,8 @@ import {UserSettingsComponent} from "../shelf/user-settings/user-settings.compon
 import {EbookPreferencesComponent} from "./ebook-preferences/ebook-preferences.component";
 import {AppStorageService} from "../services/app-storage.service";
 import {LoadingService} from "../services/loading.service";
+import {BookmarkDTO} from "./dto/BookmarkDTO";
+import {HttpParseService} from "../services/http-parse.service";
 
 declare var ePub: any;
 
@@ -21,11 +23,14 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     @Input('ebookSource')
     public ebookSource: any;
 
+    @Input('bookDTO')
+    public bookDTO: BookDTO = new BookDTO();
+
     public isBookmarkSet: boolean = false;
 
     private book: any = ePub();
     private rendition: any;
-    private bookDTO: BookDTO = new BookDTO();
+    private bookMarks: BookmarkDTO[] = [];
 
     constructor(public platform: Platform,
                 public storage: Storage,
@@ -35,7 +40,8 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 public menuService: MenuService,
                 private router: Router,
                 private popoverController: PopoverController,
-                private loadingService: LoadingService) {
+                private loadingService: LoadingService,
+                private httpParseService: HttpParseService) {
     }
 
     ngOnInit() {
@@ -48,44 +54,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     ngAfterContentInit(): void {
         this.initBook();
         this.initEventListeners();
-    }
-
-    public goBack() {
-        this.router.navigate(['shelf']);
-    }
-
-    public move(where) {
-        if (where == 0) {
-            this.rendition.prev().then(res => this.setUnsetBookmarkIcon());
-        } else {
-            this.rendition.next().then((res) => this.setUnsetBookmarkIcon());
-        }
-    }
-
-    public setUnsetBookmark() {
-        var cfi = this.ebookService.getStartCfi(this.book);
-
-        let cfiIndex = this.bookDTO.bookmarks.indexOf(cfi);
-
-        if (!this.bookmarkExists()) {
-            this.isBookmarkSet = true;
-            this.bookDTO.bookmarks.push(cfi);
-        } else {
-            this.bookDTO.bookmarks.splice(cfiIndex, 1);
-            this.isBookmarkSet = false;
-        }
-        this.cdr.detectChanges();
-        this.storage.set('books', JSON.stringify([this.bookDTO])).then();
-
-    }
-
-    public async presentPopover(ev) {
-        const popover = await this.popoverController.create({
-            component: EbookPreferencesComponent,
-            event: ev,
-            translucent: true
-        });
-        return await popover.present();
     }
 
     private initBook() {
@@ -102,7 +70,19 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
         this.rendition.display();
 
+        this.getBookmarksList();
+
         this.bookReady();
+    }
+
+    private getBookmarksList() {
+        this.httpParseService.getBookmarks(this.bookDTO).subscribe(
+            (bookmarksDTOList: any) => {
+                this.bookMarks = bookmarksDTOList.results;
+                this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.BOOKMARKS_LOADED, value: this.bookMarks});
+            },
+            error => console.error(error)
+        )
     }
 
     private bookReady() {
@@ -142,6 +122,65 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         });
     }
 
+    public goBack() {
+        this.router.navigate(['shelf']);
+    }
+
+    public move(where) {
+        if (where == 0) {
+            this.rendition.prev().then(res => this.setUnsetBookmarkIcon());
+        } else {
+            this.rendition.next().then((res) => this.setUnsetBookmarkIcon());
+        }
+    }
+
+    public setUnsetBookmark() {
+        var cfi = this.ebookService.getStartCfi(this.book);
+
+        if (!this.bookmarkExists()) {
+            this.isBookmarkSet = true;
+            let bookMarkDTO: BookmarkDTO = new BookmarkDTO();
+            bookMarkDTO.cfi = cfi;
+            bookMarkDTO.isDeleted = false;
+            bookMarkDTO.bookId = this.bookDTO.objectId;
+            bookMarkDTO.percentage = this.ebookService.getPagePercentByCfi(this.book, cfi);
+            this.httpParseService.addBookmark(bookMarkDTO).subscribe(
+                (res: any) => {
+                    bookMarkDTO.objectId = res.objectId;
+                    this.bookMarks.push(bookMarkDTO);
+                }
+            );
+        } else {
+            let indexOfBookmark = this.bookMarks.findIndex(bookMarkDTO => bookMarkDTO.cfi == cfi);
+            let bookMarkToDelete = this.bookMarks[indexOfBookmark];
+            console.error('index', indexOfBookmark);
+            console.error('bookMarkToDelete', bookMarkToDelete);
+            this.bookMarks.splice(indexOfBookmark, 1);
+            this.isBookmarkSet = false;
+
+            this.httpParseService.deleteBookMark(bookMarkToDelete).subscribe();
+        }
+        this.cdr.detectChanges();
+    }
+
+    private bookmarkExists() {
+        let cfi = this.rendition.currentLocation().start.cfi;
+
+        if (this.bookMarks.filter(bookMarksDTO => bookMarksDTO.cfi == cfi).length > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public async presentPopover(ev) {
+        const popover = await this.popoverController.create({
+            component: EbookPreferencesComponent,
+            event: ev,
+            translucent: true
+        });
+        return await popover.present();
+    }
+
     private addToLocalStorage() {
         this.bookDTO = new BookDTO();
         this.bookDTO.uniqueIdentifier = this.book.package.uniqueIdentifier;
@@ -157,14 +196,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         if (currentIndex > -1) {
             this.bookDTO = books[currentIndex];
         }
-    }
-
-    private bookmarkExists() {
-        var cfi = this.rendition.currentLocation().start.cfi;
-        if (this.bookDTO.bookmarks.indexOf(cfi.toString()) > -1) {
-            return true;
-        }
-        return false;
     }
 
     private setUnsetBookmarkIcon() {

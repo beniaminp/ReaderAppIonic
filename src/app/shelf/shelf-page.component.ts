@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Storage} from "@ionic/storage";
 import {LoadingController, MenuController, Platform, PopoverController} from "@ionic/angular";
 import {MenuEvents, MenuService} from "../ebook-reader/services/menu.service";
-import {BookDTO} from "../ebook-reader/dto/bookDTO";
+import {BookDTO} from "../ebook-reader/dto/BookDTO";
 import {HttpParseService} from "../services/http-parse.service";
 import {AppStorageService} from "../services/app-storage.service";
 import {UserDTO} from "../models/UserDTO";

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AlertController, MenuController} from "@ionic/angular";
 import {Storage} from "@ionic/storage";
-import {BookDTO} from "../../ebook-reader/dto/bookDTO";
+import {BookDTO} from "../../ebook-reader/dto/BookDTO";
 import {MenuEvents, MenuService} from "../../ebook-reader/services/menu.service";
 import {HttpParseService} from "../../services/http-parse.service";
 

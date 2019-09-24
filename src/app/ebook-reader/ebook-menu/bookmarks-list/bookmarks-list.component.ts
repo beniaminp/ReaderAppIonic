@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from "@ionic/angular";
-import {BookDTO} from "../../dto/bookDTO";
+import {BookDTO} from "../../dto/BookDTO";
 import {EBookService, EPUB_EVENT_TYPES} from "../../services/e-book.service";
-import {BookmarkDTO} from "../../dto/bookmarkDTO";
+import {BookmarkDTO} from "../../dto/BookmarkDTO";
 
 @Component({
     selector: 'bookmarks-list',
@@ -14,6 +14,7 @@ export class BookmarksListComponent implements OnInit {
     public bookDTO: BookDTO;
 
     public ePub;
+    public bookmarksDTOList: BookmarkDTO[] = [];
 
     constructor(public modalController: ModalController,
                 public ebookService: EBookService) {
@@ -21,6 +22,7 @@ export class BookmarksListComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.initEventListeners();
 
     }
 
@@ -33,6 +35,8 @@ export class BookmarksListComponent implements OnInit {
             (event) => {
                 if (event.type == EPUB_EVENT_TYPES.EPUB) {
                     this.ePub = event.value;
+                } else if (event.type == EPUB_EVENT_TYPES.BOOKMARKS_LOADED) {
+                    this.bookmarksDTOList = event.value;
                 }
             }
         )

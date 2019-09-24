@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {EBookService, EPUB_EVENT_TYPES} from "../services/e-book.service";
-import {BookDTO} from "../dto/bookDTO";
+import {BookDTO} from "../dto/BookDTO";
 import {BookmarksListComponent} from "./bookmarks-list/bookmarks-list.component";
 import {MenuController, ModalController} from "@ionic/angular";
 import {MenuService} from "../services/menu.service";

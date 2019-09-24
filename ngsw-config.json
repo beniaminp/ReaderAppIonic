@@ -1,0 +1,52 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
+        ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "Files",
+      "urls": [
+        "https://parsefiles.back4app.com/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 500,
+        "maxAge": "30d"
+      }
+    },
+    {
+      "name": "Requests",
+      "urls": [
+        "https://parseapi.back4app.com/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 500,
+        "maxAge": "30d"
+      }
+    }
+  ]
+}

@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {BookDTO} from "../ebook-reader/dto/bookDTO";
+import {BookDTO} from "../ebook-reader/dto/BookDTO";
 import {BookFileDTO} from "../ebook-reader/dto/BookFileDTO";
 import {Subject} from "rxjs";
 import {UserDTO} from "../models/UserDTO";
 import {AppStorageService} from "./app-storage.service";
+import {BookmarkDTO} from "../ebook-reader/dto/BookmarkDTO";
 
 @Injectable({
     providedIn: 'root'
@@ -158,6 +159,41 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    public getBookmarks(bookDTO: BookDTO) {
+        var subject = new Subject<BookmarkDTO[]>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let query = encodeURI('{"userId": "' + userDTO.objectId + '", "isDeleted": false, "bookId": "' + bookDTO.objectId + '"}');
+                this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOKMARKS + '?where=' + query, {headers: this.createHeaders()})
+                    .subscribe((bookMarksDTO: BookmarkDTO[]) => {
+                        subject.next(bookMarksDTO);
+                    });
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public deleteBookMark(bookMarkDTO: BookmarkDTO) {
+        let updateParams = '{"isDeleted": true}';
+        return this.httpClient
+            .put(this.parseURL + 'classes/' + ParseClasses.BOOKMARKS + '/' + bookMarkDTO.objectId, updateParams, {headers: this.createFullHeaders()});
+    }
+
+    public addBookmark(bookMarkDTO: BookmarkDTO) {
+
+        var subject = new Subject<any>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                bookMarkDTO.userId = userDTO.objectId;
+                this.httpClient.post(this.parseURL + 'classes/' + ParseClasses.BOOKMARKS, bookMarkDTO, {headers: this.createHeaders()})
+                    .subscribe((res: any) => {
+                        subject.next(res);
+                    });
+            }
+        );
+        return subject.asObservable();
+    }
+
     private createHeaders() {
         let httpHeaders: HttpHeaders = new HttpHeaders();
         httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');
@@ -177,5 +213,6 @@ export class HttpParseService {
 
 export enum ParseClasses {
     BOOK = 'Book',
-    USER = 'users'
+    USER = 'users',
+    BOOKMARKS = 'Bookmarks'
 }

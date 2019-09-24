@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, PopoverController} from "@ionic/angular";
-import {BookmarksListComponent} from "../ebook-menu/bookmarks-list/bookmarks-list.component";
 import {EbookVisualSettingsComponent} from "../ebook-visual-settings/ebook-visual-settings.component";
 
 @Component({

@@ -4,7 +4,7 @@ import {NativeStorage} from '@ionic-native/native-storage/ngx';
 import {MenuController} from '@ionic/angular';
 import {Facebook} from '@ionic-native/facebook/ngx';
 import {Storage} from "@ionic/storage";
-import {BookDTO} from "../ebook-reader/dto/bookDTO";
+import {BookDTO} from "../ebook-reader/dto/BookDTO";
 import {HttpParseService} from "../services/http-parse.service";
 
 @Component({
@@ -14,7 +14,7 @@ import {HttpParseService} from "../services/http-parse.service";
 })
 export class ReaderPage implements OnInit, AfterViewInit {
     ebookSource;
-    private bookDTO: BookDTO;
+    public bookDTO: BookDTO;
 
     constructor(
         private fb: Facebook,

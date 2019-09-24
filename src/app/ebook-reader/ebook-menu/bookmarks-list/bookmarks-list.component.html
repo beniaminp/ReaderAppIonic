@@ -10,8 +10,8 @@
 </ion-header>
 <ion-content class="ion-padding">
     <ion-list>
-        <ion-item *ngFor="let bookMark of bookDTO.bookmarks">
-            <ion-label (click)="dismissModal(bookMark)">{{computePercentage(bookMark)}} % of book</ion-label>
+        <ion-item *ngFor="let bookMark of bookmarksDTOList">
+            <ion-label (click)="dismissModal(bookMark)">{{bookMark.percentage}} % of book</ion-label>
         </ion-item>
     </ion-list>
 </ion-content>

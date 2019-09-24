@@ -18,6 +18,8 @@ import {File} from "@ionic-native/file/ngx";
 import {FileChooser} from "@ionic-native/file-chooser/ngx";
 import {ShelfPageModule} from "./shelf/shelf.module";
 import {HttpClientModule} from "@angular/common/http";
+import {ServiceWorkerModule} from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
     declarations: [AppComponent, BookmarksListComponent],
@@ -29,7 +31,9 @@ import {HttpClientModule} from "@angular/common/http";
         IonicStorageModule.forRoot(),
         EbookReaderModule,
         ShelfPageModule,
-        HttpClientModule
+        HttpClientModule,
+        ServiceWorkerModule.register('/ngsw-worker.js', {enabled: true}),
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
     ],
     providers: [
         StatusBar,
