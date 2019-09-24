@@ -32,7 +32,6 @@ export class EbookVisualSettingsComponent implements OnInit {
     public selectionChanged(event) {
         let fontSizeSelected = event.detail.value;
         this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.FONT_SIZE_CHANGED, value: fontSizeSelected});
-        this.modalController.dismiss();
     }
 
 }

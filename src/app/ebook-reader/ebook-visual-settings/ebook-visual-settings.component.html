@@ -1,5 +1,5 @@
 <ion-list>
-    <ion-item>
+    <!--<ion-item>
         <ion-label>
             Font Size
         </ion-label>
@@ -8,5 +8,15 @@
                 {{i}} %
             </ion-select-option>
         </ion-select>
+    </ion-item>-->
+    <ion-item>
+        <ion-label>
+            Font Size
+        </ion-label>
+        <ion-range min="10" max="200" color="secondary" step="10" (ionChange)="selectionChanged($event)" pin="true"
+                   snaps="true" value="{{selectedFont}}">
+            <ion-label slot="start">10%</ion-label>
+            <ion-label slot="end">200%</ion-label>
+        </ion-range>
     </ion-item>
 </ion-list>
