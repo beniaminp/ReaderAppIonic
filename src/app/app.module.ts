@@ -19,7 +19,7 @@ import {FileChooser} from "@ionic-native/file-chooser/ngx";
 import {ShelfPageModule} from "./shelf/shelf.module";
 import {HttpClientModule} from "@angular/common/http";
 import {ServiceWorkerModule} from '@angular/service-worker';
-import { environment } from '../environments/environment';
+import {environment} from '../environments/environment';
 
 @NgModule({
     declarations: [AppComponent, BookmarksListComponent],
@@ -33,7 +33,7 @@ import { environment } from '../environments/environment';
         ShelfPageModule,
         HttpClientModule,
         ServiceWorkerModule.register('/ngsw-worker.js', {enabled: true}),
-        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+        ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
     ],
     providers: [
         StatusBar,

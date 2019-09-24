@@ -8,6 +8,7 @@ import * as Hammer from 'hammerjs';
 import {HammerGestureConfig, HAMMER_GESTURE_CONFIG} from '@angular/platform-browser';
 import {EbookPreferencesComponent} from "./ebook-preferences/ebook-preferences.component";
 import {EbookVisualSettingsComponent} from "./ebook-visual-settings/ebook-visual-settings.component";
+import {SharedModule} from "../utils/shared.module";
 
 export class MyHammerConfig extends HammerGestureConfig {
     overrides = <any> {
@@ -19,7 +20,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     imports: [
         CommonModule,
         FormsModule,
-        IonicModule
+        IonicModule,
+        SharedModule
     ],
     declarations: [
         EbookReaderComponent,

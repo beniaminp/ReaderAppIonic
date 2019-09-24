@@ -1,22 +1,28 @@
 <ion-list>
-    <!--<ion-item>
-        <ion-label>
-            Font Size
-        </ion-label>
-        <ion-select (ionChange)="selectionChanged($event)">
-            <ion-select-option *ngFor="let i of fontSize" [value]="i" [selected]="i == selectedFont">
-                {{i}} %
-            </ion-select-option>
-        </ion-select>
-    </ion-item>-->
-    <ion-item>
-        <ion-label>
-            Font Size
-        </ion-label>
-        <ion-range min="10" max="200" color="secondary" step="10" (ionChange)="selectionChanged($event)" pin="true"
-                   snaps="true" value="{{selectedFont}}">
-            <ion-label slot="start">10%</ion-label>
-            <ion-label slot="end">200%</ion-label>
-        </ion-range>
-    </ion-item>
+    <ion-item-group>
+        <ion-item-divider>
+            <ion-label>Font</ion-label>
+        </ion-item-divider>
+
+        <ion-item>
+            <ion-label>
+                Size
+            </ion-label>
+            <ion-range min="10" max="200" color="secondary" step="10" (ionChange)="selectionChanged($event)" pin="true"
+                       snaps="true" value="{{selectedFont}}">
+                <ion-label slot="start">10%</ion-label>
+                <ion-label slot="end">200%</ion-label>
+            </ion-range>
+        </ion-item>
+    </ion-item-group>
+
+    <ion-item-group>
+        <ion-item-divider>
+            <ion-label>Theme</ion-label>
+        </ion-item-divider>
+        <ion-item>
+            <ion-label>Text Color</ion-label>
+            <app-color-chooser></app-color-chooser>
+        </ion-item>
+    </ion-item-group>
 </ion-list>
