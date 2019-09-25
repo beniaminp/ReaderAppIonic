@@ -148,6 +148,48 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    public updateTextColor(textColor) {
+        var subject = new Subject<void>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let user = userDTO;
+                user.textColor = textColor;
+                this.appStorageService.setUserDTO(user).then(
+                    (res) => {
+                        let updateParams = '{"textColor": "' + textColor + '"}';
+                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
+                            () => {
+                                subject.next();
+                            }
+                        )
+                    }
+                ).catch(e => console.error(e));
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public updateBackgroundColor(backgroundColor) {
+        var subject = new Subject<void>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let user = userDTO;
+                user.backgroundColor = backgroundColor;
+                this.appStorageService.setUserDTO(user).then(
+                    (res) => {
+                        let updateParams = '{"backgroundColor": "' + backgroundColor + '"}';
+                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
+                            () => {
+                                subject.next();
+                            }
+                        )
+                    }
+                ).catch(e => console.error(e));
+            }
+        );
+        return subject.asObservable();
+    }
+
     public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
         var subject = new Subject<void>();
 

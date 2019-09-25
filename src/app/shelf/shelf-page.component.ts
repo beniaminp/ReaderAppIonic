@@ -158,6 +158,10 @@ export class ShelfPage implements OnInit {
 
                     }
                 )*/
+            },
+            (e) => {
+                console.error(e);
+                this.loadingService.dismissLoader();
             }
         );
     }

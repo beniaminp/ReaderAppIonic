@@ -62,7 +62,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         if (this.ebookSource == null) {
             alert('No ebook selected');
         }
-        this.book.open(this.ebookSource);
+        this.book.open(this.ebookSource/*, {storage: true, store: 'epubs-store'}*/);
         this.rendition = this.book.renderTo("book", {
             width: '100%',
             height: this.platform.height() - 105,
@@ -70,7 +70,14 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             resizeOnOrientationChange: true
         });
 
-        this.rendition.display();
+        let displayed = this.rendition.display();
+        /*displayed.then(
+            (res) => {
+                this.book.storage.add(this.book.resources, true).then(() => {
+                    console.log("stored");
+                });
+            }
+        );*/
 
         this.getBookmarksList();
 
@@ -91,6 +98,8 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.book.ready.then(() => {
             this.loadingService.dismissLoader();
 
+            // this.setupBookStorage();
+
             this.ebookService.eBookEmitter.next(this.bookDTO);
             this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.EPUB, value: this.book});
             this.book.locations.generate(1600);
@@ -98,6 +107,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.appStorageService.getUserDTO().then(
                 (userDTO: UserDTO) => {
                     this.setFontSize(userDTO.fontSize);
+                    this.setTextColor(userDTO.textColor);
                 }
             ).catch(e => console.error(e));
 
@@ -127,6 +137,15 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
             this.rendition.on("click", keyListener);
             document.addEventListener("mouseup", keyListener, false)*/
+        }).catch(e => this.loadingService.dismissLoader());
+    }
+
+    private setupBookStorage() {
+        this.book.storage.on("online", () => {
+            console.log("online");
+        });
+        this.book.storage.on("offline", () => {
+            console.log("offline");
         });
     }
 
@@ -200,6 +219,14 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.rendition.themes.fontSize(fontSize + '%');
     }
 
+    private setTextColor(textColor) {
+        this.rendition.themes.override('color', textColor, true);
+    }
+
+    private setBackgroundColor(backgroundColor) {
+        this.rendition.themes.override('background-color', backgroundColor, true);
+    }
+
     private initEventListeners() {
         this.ebookService.emitEpub(this.book);
         this.ebookService.ePubEmitter.subscribe(
@@ -212,6 +239,18 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                     this.httpParseService.updateFontSize(event.value).subscribe(
                         (res) => {
                             this.setFontSize(event.value);
+                        }
+                    );
+                } else if (event.type == EPUB_EVENT_TYPES.TEXT_COLOR_CHANGED) {
+                    this.httpParseService.updateTextColor(event.value).subscribe(
+                        (res) => {
+                            this.setTextColor(event.value);
+                        }
+                    );
+                } else if (event.type == EPUB_EVENT_TYPES.BACKGROUND_COLOR_CHANGED) {
+                    this.httpParseService.updateBackgroundColor(event.value).subscribe(
+                        (res) => {
+                            this.setBackgroundColor(event.value);
                         }
                     );
                 }

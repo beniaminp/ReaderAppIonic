@@ -40,7 +40,10 @@ export class SignUpPage implements OnInit {
                         this.goToShelf();
                     }
                 );
-            }, (e) => console.error(e)
+            }, (e) => {
+                console.error(e);
+                this.loadingService.dismissLoader()
+            }
         );
     }
 

@@ -12,6 +12,8 @@ import {UserDTO} from "../../models/UserDTO";
 export class EbookVisualSettingsComponent implements OnInit {
     private fontSize: number[] = [];
     public selectedFont = 100;
+    public textColor = '#330000';
+    public backgroundColor = 'white';
 
     constructor(private eBookService: EBookService,
                 public modalController: ModalController,
@@ -25,6 +27,8 @@ export class EbookVisualSettingsComponent implements OnInit {
         this.appStorageService.getUserDTO().then(
             (userDTO: UserDTO) => {
                 this.selectedFont = userDTO.fontSize;
+                this.textColor = userDTO.textColor != null ? userDTO.textColor : this.textColor;
+                this.backgroundColor = userDTO.backgroundColor != null ? userDTO.backgroundColor : this.backgroundColor;
             }
         )
     }
@@ -34,4 +38,13 @@ export class EbookVisualSettingsComponent implements OnInit {
         this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.FONT_SIZE_CHANGED, value: fontSizeSelected});
     }
 
+    public textColorChanged(color: string) {
+        this.textColor = color;
+        this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.TEXT_COLOR_CHANGED, value: color});
+    }
+
+    backgroundColorChanged(color: string) {
+        this.backgroundColor = color;
+        this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.BACKGROUND_COLOR_CHANGED, value: color});
+    }
 }

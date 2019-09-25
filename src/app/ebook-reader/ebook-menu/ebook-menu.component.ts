@@ -11,7 +11,7 @@ import {MenuService} from "../services/menu.service";
     styleUrls: ['./ebook-menu.component.scss']
 })
 export class EbookMenuComponent implements OnInit {
-    private bookDTO: BookDTO;
+    public bookDTO: BookDTO;
     public ePub;
     public chapters;
 

@@ -22,7 +22,11 @@
         </ion-item-divider>
         <ion-item>
             <ion-label>Text Color</ion-label>
-            <app-color-chooser></app-color-chooser>
+            <app-color-chooser [selectedColor]="textColor" (colorChoosed)="textColorChanged($event)"></app-color-chooser>
+        </ion-item>
+        <ion-item>
+            <ion-label>Background Color</ion-label>
+            <app-color-chooser [selectedColor]="backgroundColor" (colorChoosed)="backgroundColorChanged($event)"></app-color-chooser>
         </ion-item>
     </ion-item-group>
 </ion-list>

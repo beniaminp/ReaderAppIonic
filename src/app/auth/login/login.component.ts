@@ -40,6 +40,7 @@ export class LoginComponent implements OnInit {
                     }
                 );
             }, (e) => {
+                this.loadingService.dismissLoader();
                 console.error(e);
             }
         );

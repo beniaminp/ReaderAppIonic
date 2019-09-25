@@ -8,4 +8,6 @@ export class UserDTO {
     favoritesBook: string;
     goToLastRead: boolean;
     fontSize: any;
+    textColor: string;
+    backgroundColor: string;
 }
