@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {BookDTO} from "../ebook-reader/dto/BookDTO";
-import {BookFileDTO} from "../ebook-reader/dto/BookFileDTO";
 import {Subject} from "rxjs";
 import {UserDTO} from "../models/UserDTO";
 import {AppStorageService} from "./app-storage.service";
 import {BookmarkDTO} from "../ebook-reader/dto/BookmarkDTO";
+import {ConnectionDTO} from "../models/ConnectionDTO";
 
 @Injectable({
     providedIn: 'root'
@@ -25,10 +25,10 @@ export class HttpParseService {
 
     public signUpUser(userDTO: UserDTO) {
         let user: any = {};
-        user.set('username', userDTO.email);
-        user.set('name', userDTO.username);
-        user.set('email', userDTO.email);
-        user.set('password', userDTO.password);
+        user.username = userDTO.email;
+        user.name = userDTO.username;
+        user.email = userDTO.email;
+        user.password = userDTO.password;
 
         return this.httpClient.post(this.parseURL + ParseClasses.USER, user,
             {headers: this.createHeaders()});
@@ -299,6 +299,109 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    // start social
+    public getAllUsers() {
+        var subject = new Subject<UserDTO[]>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let query = encodeURI('{"email": {"$ne":"' + userDTO.email + '"}}');
+                this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
+                    .subscribe((res: any) => {
+                        let usersDTO: UserDTO[] = [];
+                        res.results.forEach(user => {
+                            let userDTO: UserDTO = new UserDTO();
+                            userDTO.username = user.name;
+                            userDTO.objectId = user.objectId;
+                            userDTO.email = user.email;
+                            usersDTO.push(userDTO);
+                        });
+                        subject.next(usersDTO);
+                    });
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public addConenction(reuqestedUserDTO: UserDTO) {
+        var subject = new Subject<any>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let connectionDTO: ConnectionDTO = new ConnectionDTO();
+                connectionDTO.firstUserId = userDTO.objectId;
+                connectionDTO.secondUserId = reuqestedUserDTO.objectId;
+                connectionDTO.firstUserAccepted = true;
+                connectionDTO.secondUserAccepted = false;
+                this.httpClient.post(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS, connectionDTO, {headers: this.createHeaders()})
+                    .subscribe((connection) => {
+                        subject.next(connection);
+                    });
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public getMyPendingConnection() {
+        var subject = new Subject<ConnectionDTO[]>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let query = encodeURI('{"firstUserId":"' + userDTO.objectId + '", "secondUserAccepted": false}');
+                this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()})
+                    .subscribe((connectionsDTO: any) => {
+                        subject.next(connectionsDTO.results);
+                    });
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public getReceivedConnections() {
+        var subject = new Subject<ConnectionDTO[]>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let query = encodeURI('{"secondUserId":"' + userDTO.objectId + '", "secondUserAccepted": false}');
+                this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()})
+                    .subscribe((connectionsDTO: any) => {
+                        subject.next(connectionsDTO.results);
+                    });
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public getUsersByIds(userIds: any[]) {
+        var subject = new Subject<UserDTO[]>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let userIdString = '[';
+                userIds.forEach(
+                    id => userIdString += '"' + id + '"'
+                );
+                userIdString += ']';
+                let query = encodeURI('{"objectId": {"$in":{' + userIdString + '}}');
+                this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
+                    .subscribe((res: any) => {
+                        let usersDTO: UserDTO[] = [];
+                        res.results.forEach(user => {
+                            let userDTO: UserDTO = new UserDTO();
+                            userDTO.username = user.name;
+                            userDTO.objectId = user.objectId;
+                            userDTO.email = user.email;
+                            usersDTO.push(userDTO);
+                        });
+                        subject.next(usersDTO);
+                    });
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public acceptConnection(connectionDTO: ConnectionDTO) {
+        connectionDTO.secondUserAccepted = true;
+        return this.httpClient.put(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '/' + connectionDTO.objectId, connectionDTO, {headers: this.createHeaders()})
+    }
+
+    // end social
+
     private createHeaders() {
         let httpHeaders: HttpHeaders = new HttpHeaders();
         httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');
@@ -320,5 +423,6 @@ export class HttpParseService {
 export enum ParseClasses {
     BOOK = 'Book',
     USER = 'users',
-    BOOKMARKS = 'Bookmarks'
+    BOOKMARKS = 'Bookmarks',
+    CONNECTIONS = 'Connections'
 }

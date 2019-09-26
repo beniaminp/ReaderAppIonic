@@ -22,6 +22,9 @@
                    (ionChange)="searchChanged($event)"></ion-searchbar>
     <ion-list *ngIf="books">
         <ion-item *ngFor="let book of books">
+            <!--<ion-avatar slot="start">
+                <img src="./avatar-finn.png">
+            </ion-avatar>-->
             <ion-label (click)="openBook(book)">{{book.fileName}}</ion-label>
             <ion-icon name="menu" (click)="showBookPopover($event, book)"></ion-icon>
         </ion-item>

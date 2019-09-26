@@ -10,6 +10,7 @@ import {ShelfPage} from './shelf-page.component';
 import {MyBooksMenuComponent} from './my-books-menu/my-books-menu.component';
 import {UserSettingsComponent} from "./user-settings/user-settings.component";
 import {BookPopoverComponent} from "./book-popover/book-popover.component";
+import {SocialModule} from "../social/social.module";
 
 const routes: Routes = [
     {
@@ -24,7 +25,8 @@ const routes: Routes = [
         FormsModule,
         IonicModule,
         RouterModule.forChild(routes),
-        NgxUploaderModule
+        NgxUploaderModule,
+        SocialModule
     ],
     declarations: [
         ShelfPage,

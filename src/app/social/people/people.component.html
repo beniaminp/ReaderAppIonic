@@ -1,0 +1,12 @@
+<ion-content>
+    <ion-searchbar animated showCancelButton="never" autocomplete="true" (ionInput)="searchInputChanged($event)"
+                   (ionChange)="searchChanged($event)"></ion-searchbar>
+    <ion-list *ngIf="usersDTO!= null && myPendingConnections != null">
+        <ion-item *ngFor="let user of usersDTO">
+            <ion-label>{{user.username}}</ion-label>
+            <ion-button (click)="sendInvite(user)" [disabled]="checkInvitationSent(user)">{{checkInvitationSent(user) ?
+                'Invitation Sent':'Send Invite'}}
+            </ion-button>
+        </ion-item>
+    </ion-list>
+</ion-content>

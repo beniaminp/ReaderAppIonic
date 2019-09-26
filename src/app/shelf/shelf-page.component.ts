@@ -10,6 +10,7 @@ import {UserDTO} from "../models/UserDTO";
 import {UserSettingsComponent} from "./user-settings/user-settings.component";
 import {LoadingService} from "../services/loading.service";
 import {BookPopoverComponent} from "./book-popover/book-popover.component";
+import {GenericHttpService} from "../services/generic-http.service";
 
 declare var ePub: any;
 
@@ -24,6 +25,7 @@ export class ShelfPage implements OnInit {
     public favoritesBooks: string[] = [];
     public showFavorites = false;
     public userDTO: UserDTO;
+    public viewFreeBooks = false;
 
     constructor(
         private router: Router,
@@ -118,9 +120,11 @@ export class ShelfPage implements OnInit {
         if (showBooks == 0) {
             this.getBooks();
             this.showFavorites = false;
+            this.viewFreeBooks = false;
         } else if (showBooks == 1) {
             this.books = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
             this.showFavorites = true;
+            this.viewFreeBooks = false;
         }
     }
 
@@ -133,6 +137,7 @@ export class ShelfPage implements OnInit {
         });
         return await popover.present();
     }
+
 
     private deleteBookLocal(bookDTO: BookDTO) {
         this.books.splice(this.books.indexOf(bookDTO), 1);
@@ -151,8 +156,8 @@ export class ShelfPage implements OnInit {
                 /*this.books.forEach(
                     book => {
                         ePub(book.fileUrl).ready.then(
-                            (res) => {
-                                console.error(res);
+                            (resBook) => {
+                                console.error(resBook);
                             }
                         )
 

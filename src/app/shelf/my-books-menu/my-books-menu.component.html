@@ -9,4 +9,10 @@
         <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)"
                multiple id="files" style="display: none">
     </ion-item>
+    <ion-item>
+        <ion-label (click)="openPeople()">People</ion-label>
+    </ion-item>
+    <ion-item>
+        <ion-label (click)="openPendingInvites()">Pending invites</ion-label>
+    </ion-item>
 </ion-list>

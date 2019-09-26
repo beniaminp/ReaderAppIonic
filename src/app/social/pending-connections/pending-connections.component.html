@@ -1,0 +1,11 @@
+<ion-content>
+    <ion-list *ngIf="usersDTO!= null && receivedConnections != null">
+        <ion-item *ngFor="let connection of receivedConnections">
+            <ion-label>{{usersMap.get(connection.firstUserId).username}}</ion-label>
+            <ion-button (click)="acceptInvite(connection)">Accept Invite</ion-button>
+        </ion-item>
+    </ion-list>
+    <ion-label *ngIf="receivedConnections != null && receivedConnections.length == 0">
+        No pending invites
+    </ion-label>
+</ion-content>
