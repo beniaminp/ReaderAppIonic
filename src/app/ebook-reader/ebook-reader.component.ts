@@ -108,6 +108,9 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 (userDTO: UserDTO) => {
                     this.setFontSize(userDTO.fontSize);
                     this.setTextColor(userDTO.textColor);
+                    this.setBackgroundColor(userDTO.backgroundColor);
+                    this.setTextBold(userDTO.isBold);
+                    this.setTextItalic(userDTO.isItalic);
                 }
             ).catch(e => console.error(e));
 
@@ -227,32 +230,68 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.rendition.themes.override('background-color', backgroundColor, true);
     }
 
+    private setTextBold(isBold: boolean) {
+        this.rendition.themes.override('font-weight', isBold ? 'bold' : 'normal', true);
+    }
+
+    private setTextItalic(isItalic: boolean) {
+        this.rendition.themes.override('font-style', isItalic ? 'italic' : 'normal', true);
+    }
+
     private initEventListeners() {
         this.ebookService.emitEpub(this.book);
         this.ebookService.ePubEmitter.subscribe(
             (event) => {
-                if (event.type == EPUB_EVENT_TYPES.GO_TO_BOOKMARK) {
-                    this.book.rendition.display(event.value);
-                    this.menuController.toggle();
-                    this.cdr.detectChanges();
-                } else if (event.type == EPUB_EVENT_TYPES.FONT_SIZE_CHANGED) {
-                    this.httpParseService.updateFontSize(event.value).subscribe(
-                        (res) => {
-                            this.setFontSize(event.value);
-                        }
-                    );
-                } else if (event.type == EPUB_EVENT_TYPES.TEXT_COLOR_CHANGED) {
-                    this.httpParseService.updateTextColor(event.value).subscribe(
-                        (res) => {
-                            this.setTextColor(event.value);
-                        }
-                    );
-                } else if (event.type == EPUB_EVENT_TYPES.BACKGROUND_COLOR_CHANGED) {
-                    this.httpParseService.updateBackgroundColor(event.value).subscribe(
-                        (res) => {
-                            this.setBackgroundColor(event.value);
-                        }
-                    );
+                switch (event.type) {
+                    case EPUB_EVENT_TYPES.GO_TO_BOOKMARK: {
+                        this.book.rendition.display(event.value);
+                        this.menuController.toggle();
+                        this.cdr.detectChanges();
+                        break;
+                    }
+                    case EPUB_EVENT_TYPES.FONT_SIZE_CHANGED: {
+                        this.httpParseService.updateFontSize(event.value).subscribe(
+                            (res) => {
+                                this.setFontSize(event.value);
+                            }
+                        );
+                        break;
+                    }
+                    case EPUB_EVENT_TYPES.TEXT_COLOR_CHANGED: {
+                        this.httpParseService.updateTextColor(event.value).subscribe(
+                            (res) => {
+                                this.setTextColor(event.value);
+                            }
+                        );
+                        break;
+                    }
+                    case EPUB_EVENT_TYPES.BACKGROUND_COLOR_CHANGED: {
+                        this.httpParseService.updateBackgroundColor(event.value).subscribe(
+                            (res) => {
+                                this.setBackgroundColor(event.value);
+                            }
+                        );
+                        break;
+                    }
+                    case EPUB_EVENT_TYPES.TEXT_BOLD_CHANGED: {
+                        this.httpParseService.updateTextBold(event.value).subscribe(
+                            (res) => {
+                                this.setTextBold(event.value);
+                            }
+                        );
+                        break;
+                    }
+                    case EPUB_EVENT_TYPES.TEXT_ITALIC_CHANGED: {
+                        this.httpParseService.updateTextItalic(event.value).subscribe(
+                            (res) => {
+                                this.setTextItalic(event.value);
+                            }
+                        );
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
                 }
             }
         );

@@ -36,8 +36,10 @@ export class ColorChooserComponent implements OnInit {
         await popover.present();
         popover.onDidDismiss().then(
             (res) => {
-                this.selectedColor = res.data.color;
-                this.setColor(res.data.color);
+                if (res.data != null) {
+                    this.selectedColor = res.data.color;
+                    this.setColor(res.data.color);
+                }
             }
         )
     }

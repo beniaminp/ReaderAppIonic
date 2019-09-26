@@ -28,5 +28,13 @@
             <ion-label>Background Color</ion-label>
             <app-color-chooser [selectedColor]="backgroundColor" (colorChoosed)="backgroundColorChanged($event)"></app-color-chooser>
         </ion-item>
+        <ion-item>
+            <ion-label>Bold</ion-label>
+            <ion-checkbox color="danger" [checked]="textBold" (ionChange)="boldChanged($event)"></ion-checkbox>
+        </ion-item>
+        <ion-item>
+            <ion-label>Italic</ion-label>
+            <ion-checkbox color="danger" [checked]="textItalic" (ionChange)="italicChanged($event)"></ion-checkbox>
+        </ion-item>
     </ion-item-group>
 </ion-list>

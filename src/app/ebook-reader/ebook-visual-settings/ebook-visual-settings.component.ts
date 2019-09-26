@@ -14,6 +14,8 @@ export class EbookVisualSettingsComponent implements OnInit {
     public selectedFont = 100;
     public textColor = '#330000';
     public backgroundColor = 'white';
+    public textBold: boolean;
+    public textItalic: boolean;
 
     constructor(private eBookService: EBookService,
                 public modalController: ModalController,
@@ -29,6 +31,8 @@ export class EbookVisualSettingsComponent implements OnInit {
                 this.selectedFont = userDTO.fontSize;
                 this.textColor = userDTO.textColor != null ? userDTO.textColor : this.textColor;
                 this.backgroundColor = userDTO.backgroundColor != null ? userDTO.backgroundColor : this.backgroundColor;
+                this.textBold = userDTO.isBold;
+                this.textItalic = userDTO.isItalic;
             }
         )
     }
@@ -43,8 +47,18 @@ export class EbookVisualSettingsComponent implements OnInit {
         this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.TEXT_COLOR_CHANGED, value: color});
     }
 
-    backgroundColorChanged(color: string) {
+    public backgroundColorChanged(color: string) {
         this.backgroundColor = color;
         this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.BACKGROUND_COLOR_CHANGED, value: color});
+    }
+
+    public boldChanged(event) {
+        this.textBold = event.detail.checked;
+        this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.TEXT_BOLD_CHANGED, value: this.textBold});
+    }
+
+    public italicChanged(event) {
+        this.textItalic = event.detail.checked;
+        this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.TEXT_ITALIC_CHANGED, value: this.textBold});
     }
 }

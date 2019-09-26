@@ -10,4 +10,6 @@ export class UserDTO {
     fontSize: any;
     textColor: string;
     backgroundColor: string;
+    isBold: boolean;
+    isItalic: boolean;
 }

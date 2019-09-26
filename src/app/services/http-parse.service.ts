@@ -190,6 +190,48 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    public updateTextBold(isBold: boolean) {
+        var subject = new Subject<void>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let user = userDTO;
+                user.isBold = isBold;
+                this.appStorageService.setUserDTO(user).then(
+                    (res) => {
+                        let updateParams = '{"isBold": "' + isBold + '"}';
+                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
+                            () => {
+                                subject.next();
+                            }
+                        )
+                    }
+                ).catch(e => console.error(e));
+            }
+        );
+        return subject.asObservable();
+    }
+
+    public updateTextItalic(isItalic: boolean) {
+        var subject = new Subject<void>();
+        this.appStorageService.getUserDTO().then(
+            (userDTO: UserDTO) => {
+                let user = userDTO;
+                user.isItalic = isItalic;
+                this.appStorageService.setUserDTO(user).then(
+                    (res) => {
+                        let updateParams = '{"isItalic": "' + isItalic + '"}';
+                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
+                            () => {
+                                subject.next();
+                            }
+                        )
+                    }
+                ).catch(e => console.error(e));
+            }
+        );
+        return subject.asObservable();
+    }
+
     public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
         var subject = new Subject<void>();
 
@@ -271,6 +313,7 @@ export class HttpParseService {
         httpHeaders = httpHeaders.append('X-Parse-Master-Key', 'dudc1cQQLmdxL4BWz8ajM0Tu4Bxw8KWvzvefQPDt');
         return httpHeaders;
     }
+
 }
 
 
