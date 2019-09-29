@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ConnectionDTO} from "../../models/ConnectionDTO";
 import {HttpParseService} from "../../services/http-parse.service";
 import {UserDTO} from "../../models/UserDTO";
+import {ModalController} from "@ionic/angular";
 
 @Component({
     selector: 'app-pending-connections',
@@ -12,7 +13,8 @@ export class PendingConnectionsComponent implements OnInit {
     public receivedConnections: ConnectionDTO[];
     public usersMap: Map<string, UserDTO> = new Map();
 
-    constructor(public httpParseService: HttpParseService) {
+    constructor(public httpParseService: HttpParseService,
+                public modalController: ModalController) {
     }
 
     ngOnInit() {
@@ -43,5 +45,9 @@ export class PendingConnectionsComponent implements OnInit {
                 this.refreshPendingConnections();
             }
         )
+    }
+
+    public dismissModal() {
+        this.modalController.dismiss();
     }
 }

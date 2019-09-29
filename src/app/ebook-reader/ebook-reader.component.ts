@@ -14,6 +14,7 @@ import {HttpParseService} from "../services/http-parse.service";
 import {UserDTO} from "../models/UserDTO";
 
 declare var ePub: any;
+declare var window: any;
 
 @Component({
     selector: 'app-ebook-reader',
@@ -64,10 +65,13 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         }
         this.book.open(this.ebookSource/*, {storage: true, store: 'epubs-store'}*/);
         this.rendition = this.book.renderTo("book", {
+            manager: "continuous",
+            flow: "paginated",
             width: '100%',
             height: this.platform.height() - 105,
             spread: 'always',
-            resizeOnOrientationChange: true
+            resizeOnOrientationChange: true,
+            snap: true
         });
 
         let displayed = this.rendition.display();
@@ -140,6 +144,17 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
             this.rendition.on("click", keyListener);
             document.addEventListener("mouseup", keyListener, false)*/
+
+            window.on("swipeleft", (event) => {
+                console.error('swipeleft');
+                this.rendition.next();
+            });
+
+            window.on("swiperight", (event) => {
+                console.error('swiperight');
+                this.rendition.prev();
+            });
+
         }).catch(e => this.loadingService.dismissLoader());
     }
 

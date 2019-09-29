@@ -1,3 +1,11 @@
+<ion-header translucent>
+    <ion-toolbar>
+        <ion-title>Connections</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismissModal()">Close</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
 <ion-content>
     <ion-list *ngIf="usersDTO!= null && receivedConnections != null">
         <ion-item *ngFor="let connection of receivedConnections">

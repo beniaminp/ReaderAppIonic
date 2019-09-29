@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {UserDTO} from "../../models/UserDTO";
 import {HttpParseService} from "../../services/http-parse.service";
 import {ConnectionDTO} from "../../models/ConnectionDTO";
+import {ModalController} from "@ionic/angular";
 
 @Component({
     selector: 'app-people',
@@ -13,7 +14,8 @@ export class PeopleComponent implements OnInit {
     public usersDTO: UserDTO[];
     public myPendingConnections: ConnectionDTO[];
 
-    constructor(public httpParseService: HttpParseService) {
+    constructor(public httpParseService: HttpParseService,
+                public modalController: ModalController) {
     }
 
     ngOnInit() {
@@ -39,6 +41,10 @@ export class PeopleComponent implements OnInit {
 
     public checkInvitationSent(user: UserDTO) {
         return this.myPendingConnections.find(conn => conn.secondUserId == user.objectId) != null;
+    }
+
+    public dismissModal() {
+        this.modalController.dismiss();
     }
 
     private refreshPendingConnections() {

@@ -1,3 +1,11 @@
+<ion-header translucent>
+    <ion-toolbar>
+        <ion-title>People</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismissModal()">Close</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
 <ion-content>
     <ion-searchbar animated showCancelButton="never" autocomplete="true" (ionInput)="searchInputChanged($event)"
                    (ionChange)="searchChanged($event)"></ion-searchbar>

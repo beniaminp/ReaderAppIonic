@@ -7,6 +7,7 @@ import {HttpParseService} from "../../services/http-parse.service";
 import {BookmarksListComponent} from "../../ebook-reader/ebook-menu/bookmarks-list/bookmarks-list.component";
 import {PeopleComponent} from "../../social/people/people.component";
 import {PendingConnectionsComponent} from "../../social/pending-connections/pending-connections.component";
+import {UploadService} from "../../services/upload.service";
 
 declare var ePub: any;
 
@@ -19,56 +20,37 @@ export class MyBooksMenuComponent implements OnInit {
     public filesArray = [];
     public options;
 
-    constructor(public menuCtrl: MenuController,
-                public storage: Storage,
-                public menuService: MenuService,
+    constructor(public storage: Storage,
                 public httpParseService: HttpParseService,
                 public alertController: AlertController,
-                public modalController: ModalController) {
+                public modalController: ModalController,
+                private uploadService: UploadService) {
 
     }
 
-
     onUploadOutput(output): void {
         if (output.type == 'allAddedToQueue') {
-            this.readAllFiles();
+            this.httpParseService.getBooksForUser().subscribe(
+                (bookDTO: BookDTO[]) => {
+                    this.filesArray.forEach(file => {
+                        let foundedBook = this.bookExists(bookDTO, file.name);
+                        if (foundedBook.length != 0) {
+                            this.presentAlert(file.name).then();
+                        } else {
+                            this.uploadService.readFile(file);
+                        }
+                    });
+                }
+            );
         }
         if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
             this.filesArray.push(output.file.nativeFile);
         }
     }
 
-    public readAllFiles() {
-        this.httpParseService.getBooksForUser().subscribe(
-            (bookDTO: BookDTO[]) => {
-
-                this.filesArray.forEach(file => {
-                    let reader = new FileReader();
-                    reader.onload = (e: any) => {
-                        let book = new BookDTO();
-
-                        book.bookContent = e.target.result;
-                        book.fileName = file.name;
-                        book.fileId = file.id;
-
-                        let foundedBook = bookDTO.filter(bookDTO => bookDTO.fileName.toLowerCase() == book.fileName.toLowerCase());
-                        if (foundedBook.length == 0) {
-                            this.httpParseService.addBook(book).subscribe(
-                                (res) => {
-                                    book.objectId = res.objectId;
-                                    this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED, value: book});
-                                }
-                            );
-                        } else {
-                            this.presentAlert(book.fileName).then();
-                        }
-                    };
-
-                    reader.readAsArrayBuffer(file);
-                });
-                this.menuCtrl.toggle().then();
-            }
-        );
+    private bookExists(bookDTO: BookDTO[], fileName) {
+        let foundedBook = bookDTO.filter(bookDTO => bookDTO.fileName.toLowerCase() == fileName.toLowerCase());
+        return foundedBook;
     }
 
     async presentAlert(bookTitle) {
@@ -80,7 +62,6 @@ export class MyBooksMenuComponent implements OnInit {
 
         await alert.present();
     }
-
 
     ngOnInit() {
         this.options = {allowedContentTypes: ['application/epub+zip']}

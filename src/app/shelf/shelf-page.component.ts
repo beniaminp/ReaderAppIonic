@@ -22,6 +22,7 @@ declare var ePub: any;
 export class ShelfPage implements OnInit {
 
     public books: BookDTO[];
+    public filteredBooks: BookDTO[];
     public favoritesBooks: string[] = [];
     public showFavorites = false;
     public userDTO: UserDTO;
@@ -98,19 +99,23 @@ export class ShelfPage implements OnInit {
     public searchChanged(event) {
         let searchedText = event.detail.value;
         if (searchedText.trim() == '') {
-            this.getBooks();
+            this.filteredBooks = this.books;
         } else {
-            this.books = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText));
+            this.filteredBooks = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText.toLowerCase()));
         }
     }
 
     public searchInputChanged(event) {
+        if (event.detail == null) {
+            this.filteredBooks = this.books;
+            return;
+        }
         let searchedText = event.detail.data;
         if (searchedText) {
             if (searchedText.trim() == '') {
-                this.getBooks();
+                this.filteredBooks = this.books;
             } else {
-                this.books = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText));
+                this.filteredBooks = this.books.filter(book => book.fileName.toLowerCase().includes(searchedText.toLowerCase()));
             }
         }
     }
@@ -152,6 +157,7 @@ export class ShelfPage implements OnInit {
         this.httpParseService.getBooksForUser().subscribe(
             (res) => {
                 this.books = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
+                this.filteredBooks = this.books;
                 this.loadingService.dismissLoader();
                 /*this.books.forEach(
                     book => {

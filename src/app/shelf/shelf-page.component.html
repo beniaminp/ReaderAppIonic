@@ -20,8 +20,8 @@
     </ion-refresher>
     <ion-searchbar animated showCancelButton="never" autocomplete="true" (ionInput)="searchInputChanged($event)"
                    (ionChange)="searchChanged($event)"></ion-searchbar>
-    <ion-list *ngIf="books">
-        <ion-item *ngFor="let book of books">
+    <ion-list *ngIf="filteredBooks">
+        <ion-item *ngFor="let book of filteredBooks">
             <!--<ion-avatar slot="start">
                 <img src="./avatar-finn.png">
             </ion-avatar>-->
