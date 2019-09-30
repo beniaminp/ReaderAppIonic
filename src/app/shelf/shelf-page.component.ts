@@ -153,6 +153,9 @@ export class ShelfPage implements OnInit {
     }
 
     private async getBooks() {
+        if (this.books != null && this.books.length > 1) {
+            return;
+        }
         this.loadingService.showLoader();
         this.httpParseService.getBooksForUser().subscribe(
             (res) => {

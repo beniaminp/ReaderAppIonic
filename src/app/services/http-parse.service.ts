@@ -377,7 +377,7 @@ export class HttpParseService {
                     id => userIdString += '"' + id + '"'
                 );
                 userIdString += ']';
-                let query = encodeURI('{"objectId": {"$in":{' + userIdString + '}}');
+                let query = '{"objectId": {"$in":{' + userIdString + '}}';
                 this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
                     .subscribe((res: any) => {
                         let usersDTO: UserDTO[] = [];

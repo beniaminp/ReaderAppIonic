@@ -21,6 +21,11 @@ export class LoadingService {
     }
 
     public dismissLoader() {
+        while (this.loading == null) {
+            setTimeout(() => {
+
+            }, 200)
+        }
         this.loading.dismiss();
         this.isLoaderPresent = false;
     }
