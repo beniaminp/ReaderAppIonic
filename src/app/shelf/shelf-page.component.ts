@@ -143,6 +143,7 @@ export class ShelfPage implements OnInit {
 
     private deleteBookLocal(bookDTO: BookDTO) {
         this.books.splice(this.books.indexOf(bookDTO), 1);
+        this.filteredBooks = this.books;
     }
 
     private enableMenu() {
@@ -183,6 +184,7 @@ export class ShelfPage implements OnInit {
                 switch (res.type) {
                     case MenuEvents.BOOKS_ADDED: {
                         this.books.push(res.value);
+                        this.filteredBooks = this.books;
                         break;
                     }
                     case MenuEvents.FAVORITES_CHANGED: {
