@@ -5,6 +5,7 @@ import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {Router} from '@angular/router';
 import {AppStorageService} from "./er-local-storage/app-storage.service";
 import {UserDTO} from "./models/UserDTO";
+import {HttpParseService} from "./services/http-parse.service";
 
 @Component({
     selector: 'app-root',
@@ -15,15 +16,16 @@ export class AppComponent {
         private platform: Platform,
         private statusBar: StatusBar,
         private router: Router,
-        private appStorageService: AppStorageService) {
+        private appStorageService: AppStorageService,
+        private httpParseService: HttpParseService) {
         this.initializeApp();
     }
 
-    async initializeApp() {
+    initializeApp() {
         this.statusBar.styleDefault();
+        this.httpParseService.initApp();
 
         this.platform.ready().then(() => {
-
             let userDTO = this.appStorageService.getUserDTO();
             if (userDTO != null && userDTO.sessionToken != null) {
                 this.router.navigate(["/shelf"]);

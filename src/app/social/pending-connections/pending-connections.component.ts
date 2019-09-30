@@ -12,6 +12,7 @@ import {ModalController} from "@ionic/angular";
 export class PendingConnectionsComponent implements OnInit {
     public receivedConnections: ConnectionDTO[];
     public usersMap: Map<string, UserDTO> = new Map();
+    public isOkToRender = false;
 
     constructor(public httpParseService: HttpParseService,
                 public modalController: ModalController) {
@@ -23,8 +24,12 @@ export class PendingConnectionsComponent implements OnInit {
 
     private refreshPendingConnections() {
         this.httpParseService.getReceivedConnections().subscribe(
-            (connections) => {
+            (connections: any) => {
                 this.receivedConnections = connections == null ? [] : connections;
+                if (this.receivedConnections.length == 0) {
+                    this.isOkToRender = false;
+                    return;
+                }
                 let usersIdArray = [];
 
                 this.receivedConnections.forEach(connection => {
@@ -33,6 +38,7 @@ export class PendingConnectionsComponent implements OnInit {
                 this.httpParseService.getUsersByIds(usersIdArray).subscribe(
                     (usersDTO: UserDTO[]) => {
                         usersDTO.forEach(userDTO => this.usersMap.set(userDTO.objectId, userDTO));
+                        this.isOkToRender = true;
                     }
                 ), e1 => console.error(e1)
             }, e => console.error(e)

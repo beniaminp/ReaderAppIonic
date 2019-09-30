@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, PopoverController} from "@ionic/angular";
 import {EbookVisualSettingsComponent} from "../ebook-visual-settings/ebook-visual-settings.component";
+import {EbookControlSettingsComponent} from "../ebook-control-settings/ebook-control-settings.component";
 
 @Component({
     selector: 'app-ebook-preferences',
@@ -19,6 +20,18 @@ export class EbookPreferencesComponent implements OnInit {
     public async openVisualSettings() {
         const modal = await this.modalController.create({
             component: EbookVisualSettingsComponent,
+            showBackdrop: true,
+            backdropDismiss: true,
+            cssClass: 'medium-modal'
+        });
+        modal.present();
+
+        this.popoverController.dismiss();
+    }
+
+    public async openControlSettings() {
+        const modal = await this.modalController.create({
+            component: EbookControlSettingsComponent,
             showBackdrop: true,
             backdropDismiss: true,
             cssClass: 'medium-modal'

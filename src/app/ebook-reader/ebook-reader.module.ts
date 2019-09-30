@@ -9,6 +9,7 @@ import {HammerGestureConfig, HAMMER_GESTURE_CONFIG} from '@angular/platform-brow
 import {EbookPreferencesComponent} from "./ebook-preferences/ebook-preferences.component";
 import {EbookVisualSettingsComponent} from "./ebook-visual-settings/ebook-visual-settings.component";
 import {SharedModule} from "../utils/shared.module";
+import {EbookControlSettingsComponent} from "./ebook-control-settings/ebook-control-settings.component";
 
 export class MyHammerConfig extends HammerGestureConfig {
     overrides = <any> {
@@ -27,7 +28,8 @@ export class MyHammerConfig extends HammerGestureConfig {
         EbookReaderComponent,
         EbookMenuComponent,
         EbookPreferencesComponent,
-        EbookVisualSettingsComponent
+        EbookVisualSettingsComponent,
+        EbookControlSettingsComponent
     ],
     exports: [
         EbookReaderComponent,
@@ -41,7 +43,8 @@ export class MyHammerConfig extends HammerGestureConfig {
     ],
     entryComponents: [
         EbookPreferencesComponent,
-        EbookVisualSettingsComponent
+        EbookVisualSettingsComponent,
+        EbookControlSettingsComponent
     ]
 })
 export class EbookReaderModule {

@@ -1,0 +1,12 @@
+<ion-list>
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Controls</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-label>Show navigation controls</ion-label>
+      <ion-checkbox color="danger" [checked]="showNavigationControls" (ionChange)="navigationControlChanged($event)"></ion-checkbox>
+    </ion-item>
+  </ion-item-group>
+</ion-list>

@@ -33,6 +33,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     private book: any = ePub();
     private rendition: any;
     private bookMarks: BookmarkDTO[] = [];
+    private showNavigationControl: boolean;
 
     constructor(public platform: Platform,
                 public storage: Storage,
@@ -68,7 +69,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             manager: "continuous",
             flow: "paginated",
             width: '100%',
-            height: this.platform.height() - 105,
+            height: this.platform.height() - 110,
             spread: 'always',
             resizeOnOrientationChange: true,
             snap: true
@@ -115,6 +116,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.setBackgroundColor(userDTO.backgroundColor);
             this.setTextBold(userDTO.isBold);
             this.setTextItalic(userDTO.isItalic);
+            this.setNavigationControl(userDTO.showNavigationControl);
 
             /*var keyListener = (e) => {
                 this.getCoordinates(e);
@@ -251,6 +253,10 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.rendition.themes.override('font-style', isItalic ? 'italic' : 'normal', true);
     }
 
+    private setNavigationControl(showNavigationControl) {
+        this.showNavigationControl = showNavigationControl;
+    }
+
     private initEventListeners() {
         this.ebookService.emitEpub(this.book);
         this.ebookService.ePubEmitter.subscribe(
@@ -298,6 +304,14 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                         this.httpParseService.updateTextItalic(event.value).subscribe(
                             (res) => {
                                 this.setTextItalic(event.value);
+                            }
+                        );
+                        break;
+                    }
+                    case EPUB_EVENT_TYPES.NAVIGATION_CONTROL_CHANGED: {
+                        this.httpParseService.updateNavigationControl(event.value).subscribe(
+                            (res) => {
+                                this.setNavigationControl(event.value);
                             }
                         );
                         break;

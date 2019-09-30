@@ -12,4 +12,5 @@ export class UserDTO {
     backgroundColor: string;
     isBold: boolean;
     isItalic: boolean;
+    showNavigationControl: boolean;
 }

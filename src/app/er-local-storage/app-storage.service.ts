@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {UserDTO} from "../models/UserDTO";
 import {LocalStorageService} from "angular-2-local-storage";
+import {ConnectionDTO} from "../models/ConnectionDTO";
+import {BookDTO} from "../ebook-reader/dto/BookDTO";
 
 @Injectable({
     providedIn: 'root'
@@ -11,15 +13,15 @@ export class AppStorageService {
     }
 
     public setUserDTO(userDTO: UserDTO) {
-        this.localStorageService.set('userDTO', userDTO);
+        this.localStorageService.set(STORAGE_DATA.USER, userDTO);
     }
 
     public getUserDTO(): UserDTO {
-        return this.localStorageService.get('userDTO');
+        return this.localStorageService.get(STORAGE_DATA.USER);
     }
 
     public clearUser() {
-        this.localStorageService.remove('userDTO');
+        this.localStorageService.remove(STORAGE_DATA.USER);
     }
 
     public setFontSize(fontSize) {
@@ -51,8 +53,49 @@ export class AppStorageService {
         userDTO.isItalic = isItalic;
         this.setUserDTO(userDTO);
     }
+
+    public setNavigationControl(showNavigationControl) {
+        let userDTO: UserDTO = this.getUserDTO();
+        userDTO.showNavigationControl = showNavigationControl;
+        this.setUserDTO(userDTO);
+    }
+
+    public setConnections(connectionsDTO: ConnectionDTO[]) {
+        this.localStorageService.set(STORAGE_DATA.CONNECTIONS, connectionsDTO);
+    }
+
+    public addConnection(connectionDTO: ConnectionDTO) {
+        let connections = this.getConnections();
+        connections.push(connectionDTO);
+        this.setConnections(connections);
+    }
+
+    public getConnections(): ConnectionDTO[] {
+        return this.localStorageService.get(STORAGE_DATA.CONNECTIONS);
+    }
+
+    public setBooks(booksDTO: BookDTO[]) {
+        this.localStorageService.set(STORAGE_DATA.BOOKS, booksDTO);
+    }
+
+    public getBooks(): BookDTO[] {
+        return this.localStorageService.get(STORAGE_DATA.BOOKS);
+    }
+
+    public addBook(bookDTO: BookDTO) {
+        let books = this.getBooks();
+        books.push(bookDTO);
+        this.setBooks(books);
+    }
+
+    public deleteBook(bookDTO: BookDTO) {
+        let books = this.getBooks().splice(this.getBooks().indexOf(bookDTO), 1);
+        this.setBooks(books);
+    }
 }
 
-export enum STDATA {
-    USER = 'userDTO'
+enum STORAGE_DATA {
+    USER = 'userDTO',
+    CONNECTIONS = 'connections',
+    BOOKS = 'booksDTO'
 }

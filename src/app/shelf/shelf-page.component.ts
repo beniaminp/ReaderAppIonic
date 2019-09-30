@@ -80,6 +80,7 @@ export class ShelfPage implements OnInit {
         this.httpParseService.getBooksForUser().subscribe(
             (res) => {
                 this.books = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
+                this.appStorageService.setBooks(this.books);
                 event.target.complete();
             }
         );
@@ -142,7 +143,8 @@ export class ShelfPage implements OnInit {
     }
 
     private deleteBookLocal(bookDTO: BookDTO) {
-        this.books.splice(this.books.indexOf(bookDTO), 1);
+        this.appStorageService.deleteBook(bookDTO);
+        this.books = this.appStorageService.getBooks();
         this.filteredBooks = this.books;
     }
 
@@ -152,6 +154,12 @@ export class ShelfPage implements OnInit {
 
     private async getBooks() {
         if (this.books != null && this.books.length > 1) {
+            this.filteredBooks = this.books;
+            return;
+        }
+        if (this.appStorageService.getBooks() != null) {
+            this.books = this.appStorageService.getBooks();
+            this.filteredBooks = this.books;
             return;
         }
         this.loadingService.showLoader();
@@ -183,7 +191,8 @@ export class ShelfPage implements OnInit {
             (res) => {
                 switch (res.type) {
                     case MenuEvents.BOOKS_ADDED: {
-                        this.books.push(res.value);
+                        this.appStorageService.addBook(res.value);
+                        this.books = this.appStorageService.getBooks();
                         this.filteredBooks = this.books;
                         break;
                     }

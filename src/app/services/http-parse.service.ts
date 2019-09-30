@@ -146,6 +146,14 @@ export class HttpParseService {
         return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()});
     }
 
+
+    public updateNavigationControl(showNavigationControl: boolean) {
+        this.appStorageService.setNavigationControl(showNavigationControl);
+
+        let updateParams = '{"showNavigationControl": "' + showNavigationControl + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()});
+    }
+
     public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
         this.appStorageService.setUserDTO(userDTO);
         let updateParams = '{"favoriteBooks": "' + favoriteBooks + '"}';
@@ -215,13 +223,14 @@ export class HttpParseService {
     }
 
     public getReceivedConnections() {
-        var subject = new Subject<ConnectionDTO[]>();
         let query = encodeURI('{"secondUserId":"' + this.appStorageService.getUserDTO().objectId + '", "secondUserAccepted": false}');
-        this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()})
-            .subscribe((connectionsDTO: any) => {
-                subject.next(connectionsDTO.results);
-            });
-        return subject.asObservable();
+        return this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()});
+    }
+
+    public getMyConnections() {
+        let query = encodeURI('{"$or": [{"secondUserId": "' + this.appStorageService.getUserDTO().objectId + '"}, ' +
+            '{"firstUserId": "' + this.appStorageService.getUserDTO().objectId + '"}], "secondUserAccepted": true, "firstUserAccepted": true}');
+        return this.httpClient.get(this.parseURL + 'classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()});
     }
 
     public getUsersByIds(userIds: any[]) {
@@ -231,7 +240,7 @@ export class HttpParseService {
             id => userIdString += '"' + id + '"'
         );
         userIdString += ']';
-        let query = '{"objectId": {"$in":{' + userIdString + '}}';
+        let query = '{"objectId": {"$in":' + userIdString + '}}';
         this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
             .subscribe((res: any) => {
                 let usersDTO: UserDTO[] = [];
@@ -248,8 +257,8 @@ export class HttpParseService {
     }
 
     public acceptConnection(connectionDTO: ConnectionDTO) {
-        connectionDTO.secondUserAccepted = true;
-        return this.httpClient.put(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '/' + connectionDTO.objectId, connectionDTO, {headers: this.createHeaders()})
+        let updateParams = '{"secondUserAccepted": true}';
+        return this.httpClient.put(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '/' + connectionDTO.objectId, updateParams, {headers: this.createHeaders()})
     }
 
     // end social
@@ -269,6 +278,20 @@ export class HttpParseService {
         return httpHeaders;
     }
 
+    public initApp() {
+        this.getMyConnections().subscribe(
+            (res: any) => {
+                this.appStorageService.setConnections(res.results as ConnectionDTO[]);
+            }
+        );
+        if (this.appStorageService.getBooks() == null) {
+            this.getBooksForUser().subscribe(
+                (books) => {
+                    this.appStorageService.setBooks(books);
+                }
+            )
+        }
+    }
 }
 
 
