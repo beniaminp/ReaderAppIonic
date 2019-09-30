@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpParseService} from "../../services/http-parse.service";
-import {AppStorageService} from "../../services/app-storage.service";
+import {AppStorageService} from "../../er-local-storage/app-storage.service";
 import {PopoverController} from "@ionic/angular";
 import {UserDTO} from "../../models/UserDTO";
 import {Router} from "@angular/router";
@@ -20,14 +20,10 @@ export class UserSettingsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                this.userDTO = userDTO;
-                if (this.userDTO.goToLastRead == null) {
-                    this.userDTO.goToLastRead = false;
-                }
-            }
-        )
+        this.userDTO = this.appStorageService.getUserDTO();
+        if (this.userDTO.goToLastRead == null) {
+            this.userDTO.goToLastRead = false;
+        }
     }
 
     async setOpenLastRead() {
@@ -38,7 +34,7 @@ export class UserSettingsComponent implements OnInit {
 
     async logOut() {
         await this.popoverController.dismiss();
-        this.appStorageService.setUserDTO(null).then();
+        this.appStorageService.clearUser();
         this.router.navigate(['/auth/login']).then();
     }
 }

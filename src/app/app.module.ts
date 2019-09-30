@@ -20,6 +20,7 @@ import {ShelfPageModule} from "./shelf/shelf.module";
 import {HttpClientModule} from "@angular/common/http";
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
+import {ErLocalStorageModule} from "./er-local-storage/er-local-storage.module";
 
 @NgModule({
     declarations: [AppComponent, BookmarksListComponent],
@@ -32,7 +33,8 @@ import {environment} from '../environments/environment';
         EbookReaderModule,
         ShelfPageModule,
         HttpClientModule,
-        ServiceWorkerModule.register('ngsw-worker.js', {enabled: true})
+        ServiceWorkerModule.register('ngsw-worker.js', {enabled: true}),
+        ErLocalStorageModule
     ],
     providers: [
         StatusBar,

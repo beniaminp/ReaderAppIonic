@@ -3,7 +3,7 @@ import {NgForm} from "@angular/forms";
 import {UserDTO} from "../../models/UserDTO";
 import {Router} from "@angular/router";
 import {HttpParseService} from "../../services/http-parse.service";
-import {AppStorageService} from "../../services/app-storage.service";
+import {AppStorageService} from "../../er-local-storage/app-storage.service";
 import {LoadingService} from "../../services/loading.service";
 
 @Component({
@@ -34,12 +34,11 @@ export class SignUpPage implements OnInit {
                 userDTO.sessionToken = res.sessionToken;
                 userDTO.objectId = res.objectId;
                 userDTO.lastReadBook = res.lastReadBook;
-                this.appStorageService.setUserDTO(userDTO).then(
-                    (res) => {
-                        this.loadingService.dismissLoader();
-                        this.goToShelf();
-                    }
-                );
+                this.appStorageService.setUserDTO(userDTO);
+
+
+                this.loadingService.dismissLoader();
+                this.goToShelf();
             }, (e) => {
                 console.error(e);
                 this.loadingService.dismissLoader()

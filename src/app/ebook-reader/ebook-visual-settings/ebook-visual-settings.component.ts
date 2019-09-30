@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {EBookService, EPUB_EVENT_TYPES} from "../services/e-book.service";
 import {ModalController} from "@ionic/angular";
-import {AppStorageService} from "../../services/app-storage.service";
+import {AppStorageService} from "../../er-local-storage/app-storage.service";
 import {UserDTO} from "../../models/UserDTO";
 
 @Component({
@@ -26,15 +26,13 @@ export class EbookVisualSettingsComponent implements OnInit {
         for (let i = 10; i <= 200; i += 10) {
             this.fontSize.push(i);
         }
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                this.selectedFont = userDTO.fontSize;
-                this.textColor = userDTO.textColor != null ? userDTO.textColor : this.textColor;
-                this.backgroundColor = userDTO.backgroundColor != null ? userDTO.backgroundColor : this.backgroundColor;
-                this.textBold = userDTO.isBold;
-                this.textItalic = userDTO.isItalic;
-            }
-        )
+        let userDTO = this.appStorageService.getUserDTO();
+
+        this.selectedFont = userDTO.fontSize;
+        this.textColor = userDTO.textColor != null ? userDTO.textColor : this.textColor;
+        this.backgroundColor = userDTO.backgroundColor != null ? userDTO.backgroundColor : this.backgroundColor;
+        this.textBold = userDTO.isBold;
+        this.textItalic = userDTO.isItalic;
     }
 
     public selectionChanged(event) {

@@ -7,7 +7,7 @@ import {MenuService} from "./services/menu.service";
 import {Router} from "@angular/router";
 import {UserSettingsComponent} from "../shelf/user-settings/user-settings.component";
 import {EbookPreferencesComponent} from "./ebook-preferences/ebook-preferences.component";
-import {AppStorageService} from "../services/app-storage.service";
+import {AppStorageService} from "../er-local-storage/app-storage.service";
 import {LoadingService} from "../services/loading.service";
 import {BookmarkDTO} from "./dto/BookmarkDTO";
 import {HttpParseService} from "../services/http-parse.service";
@@ -108,15 +108,13 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.EPUB, value: this.book});
             this.book.locations.generate(1600);
 
-            this.appStorageService.getUserDTO().then(
-                (userDTO: UserDTO) => {
-                    this.setFontSize(userDTO.fontSize);
-                    this.setTextColor(userDTO.textColor);
-                    this.setBackgroundColor(userDTO.backgroundColor);
-                    this.setTextBold(userDTO.isBold);
-                    this.setTextItalic(userDTO.isItalic);
-                }
-            ).catch(e => console.error(e));
+            let userDTO = this.appStorageService.getUserDTO();
+
+            this.setFontSize(userDTO.fontSize);
+            this.setTextColor(userDTO.textColor);
+            this.setBackgroundColor(userDTO.backgroundColor);
+            this.setTextBold(userDTO.isBold);
+            this.setTextItalic(userDTO.isItalic);
 
             /*var keyListener = (e) => {
                 this.getCoordinates(e);

@@ -3,7 +3,7 @@ import {MenuController, NavParams, PopoverController} from "@ionic/angular";
 import {BookDTO} from "../../ebook-reader/dto/BookDTO";
 import {UserDTO} from "../../models/UserDTO";
 import {HttpParseService} from "../../services/http-parse.service";
-import {AppStorageService} from "../../services/app-storage.service";
+import {AppStorageService} from "../../er-local-storage/app-storage.service";
 import {MenuEvents, MenuService} from "../../ebook-reader/services/menu.service";
 
 @Component({
@@ -26,16 +26,11 @@ export class BookPopoverComponent implements OnInit {
 
     ngOnInit() {
         this.bookDTO = this.navParams.get('bookDTO');
+        this.userDTO = this.appStorageService.getUserDTO();
 
-        this.appStorageService.getUserDTO().then(
-            (user: UserDTO) => {
-                this.userDTO = user;
-
-                if (this.userDTO.favoritesBook != null) {
-                    this.favoritesBooks = this.userDTO.favoritesBook.split(",");
-                }
-            }
-        );
+        if (this.userDTO.favoritesBook != null) {
+            this.favoritesBooks = this.userDTO.favoritesBook.split(",");
+        }
     }
 
     public isFavoriteBook() {
@@ -43,27 +38,24 @@ export class BookPopoverComponent implements OnInit {
     }
 
     public setFavorites(setFav: boolean) {
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                if (!setFav) {
-                    let indexOfBook = this.favoritesBooks.findIndex(objectId => objectId == this.bookDTO.objectId);
-                    this.favoritesBooks.splice(indexOfBook, 1);
-                } else {
-                    this.favoritesBooks.push(this.bookDTO.objectId);
-                }
-                userDTO.favoritesBook = this.favoritesBooks.join(",");
 
-                this.httpParseService.updateFavoritesBooks(this.favoritesBooks, userDTO).subscribe(
-                    (res) => {
-                        this.menuService.menuEmitter.next({
-                            type: MenuEvents.FAVORITES_CHANGED,
-                            value: userDTO.favoritesBook
-                        });
-                        this.popoverController.dismiss();
-                    }
-                );
+        if (!setFav) {
+            let indexOfBook = this.favoritesBooks.findIndex(objectId => objectId == this.bookDTO.objectId);
+            this.favoritesBooks.splice(indexOfBook, 1);
+        } else {
+            this.favoritesBooks.push(this.bookDTO.objectId);
+        }
+        this.userDTO.favoritesBook = this.favoritesBooks.join(",");
+
+        this.httpParseService.updateFavoritesBooks(this.favoritesBooks, this.userDTO).subscribe(
+            (res) => {
+                this.menuService.menuEmitter.next({
+                    type: MenuEvents.FAVORITES_CHANGED,
+                    value: this.userDTO.favoritesBook
+                });
+                this.popoverController.dismiss();
             }
-        ).catch(e => console.error(e))
+        );
     }
 
     public deleteBook() {

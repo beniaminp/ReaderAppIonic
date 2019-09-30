@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {PopoverController} from "@ionic/angular";
 import {ColorPalleteComponent} from "./color-pallete/color-pallete.component";
-import {AppStorageService} from "../../services/app-storage.service";
+import {AppStorageService} from "../../er-local-storage/app-storage.service";
 import {UserDTO} from "../../models/UserDTO";
 
 @Component({

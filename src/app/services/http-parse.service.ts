@@ -3,7 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {BookDTO} from "../ebook-reader/dto/BookDTO";
 import {Subject} from "rxjs";
 import {UserDTO} from "../models/UserDTO";
-import {AppStorageService} from "./app-storage.service";
+import {AppStorageService} from "../er-local-storage/app-storage.service";
 import {BookmarkDTO} from "../ebook-reader/dto/BookmarkDTO";
 import {ConnectionDTO} from "../models/ConnectionDTO";
 
@@ -42,20 +42,17 @@ export class HttpParseService {
 
     public addBook(bookDTO: BookDTO) {
         var subject = new Subject<BookDTO>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                this.uploadFile(bookDTO.bookContent, bookDTO.fileName).subscribe(
-                    (res: any) => {
-                        bookDTO.fileUrl = res.url;
-                        bookDTO.fileUrlName = res.name;
-                        bookDTO.userId = userDTO.objectId;
+        let userDTO = this.appStorageService.getUserDTO();
+        this.uploadFile(bookDTO.bookContent, bookDTO.fileName).subscribe(
+            (res: any) => {
+                bookDTO.fileUrl = res.url;
+                bookDTO.fileUrlName = res.name;
+                bookDTO.userId = userDTO.objectId;
 
-                        this.httpClient.post(this.parseURL + '/classes/' + ParseClasses.BOOK, bookDTO, {headers: this.createHeaders()})
-                            .subscribe((book) => {
-                                subject.next(bookDTO);
-                            });
-                    }
-                );
+                this.httpClient.post(this.parseURL + '/classes/' + ParseClasses.BOOK, bookDTO, {headers: this.createHeaders()})
+                    .subscribe((book) => {
+                        subject.next(bookDTO);
+                    });
             }
         );
         return subject.asObservable();
@@ -63,24 +60,22 @@ export class HttpParseService {
 
     public getBooksForUser() {
         var subject = new Subject<BookDTO[]>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let query = encodeURI('{"userId": "' + userDTO.objectId + '", "isDeleted": false}');
-                this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOK + '?where=' + query, {headers: this.createHeaders()})
-                    .subscribe((books: any) => {
-                        let booksDTO: BookDTO[] = [];
-                        books.results.forEach(book => {
-                            let bookDTO: BookDTO = new BookDTO();
-                            bookDTO.fileName = book.fileName;
-                            bookDTO.userId = book.userId;
-                            bookDTO.fileUrl = book.fileUrl;
-                            bookDTO.objectId = book.objectId;
-                            booksDTO.push(bookDTO);
-                        });
-                        subject.next(booksDTO);
-                    });
-            }
-        );
+        let userDTO = this.appStorageService.getUserDTO();
+
+        let query = encodeURI('{"userId": "' + userDTO.objectId + '", "isDeleted": false}');
+        this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOK + '?where=' + query, {headers: this.createHeaders()})
+            .subscribe((books: any) => {
+                let booksDTO: BookDTO[] = [];
+                books.results.forEach(book => {
+                    let bookDTO: BookDTO = new BookDTO();
+                    bookDTO.fileName = book.fileName;
+                    bookDTO.userId = book.userId;
+                    bookDTO.fileUrl = book.fileUrl;
+                    bookDTO.objectId = book.objectId;
+                    booksDTO.push(bookDTO);
+                });
+                subject.next(booksDTO);
+            });
         return subject.asObservable();
     }
 
@@ -107,175 +102,66 @@ export class HttpParseService {
     }
 
     public updateLastReadBook(bookDTO: BookDTO) {
-        var subject = new Subject<void>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let user = userDTO;
-                user.lastReadBook = bookDTO.objectId;
-                this.appStorageService.setUserDTO(user).then(
-                    (res) => {
-                        let updateParams = '{"lastReadBook": "' + bookDTO.objectId + '"}';
-                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
-                            () => {
-                                subject.next();
-                            }
-                        )
-                    }
-                ).catch(e => console.error(e));
-            }
-        );
-        return subject.asObservable();
+        let userDTO = this.appStorageService.getUserDTO();
+
+        userDTO.lastReadBook = bookDTO.objectId;
+        this.appStorageService.setUserDTO(userDTO);
+
+        let updateParams = '{"lastReadBook": "' + bookDTO.objectId + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()});
     }
 
     public updateFontSize(fontSize) {
-        var subject = new Subject<void>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let user = userDTO;
-                user.fontSize = fontSize;
-                this.appStorageService.setUserDTO(user).then(
-                    (res) => {
-                        let updateParams = '{"fontSize": "' + fontSize + '"}';
-                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
-                            () => {
-                                subject.next();
-                            }
-                        )
-                    }
-                ).catch(e => console.error(e));
-            }
-        );
-        return subject.asObservable();
+        this.appStorageService.setFontSize(fontSize);
+
+        let updateParams = '{"fontSize": "' + fontSize + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()});
     }
 
     public updateTextColor(textColor) {
-        var subject = new Subject<void>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let user = userDTO;
-                user.textColor = textColor;
-                this.appStorageService.setUserDTO(user).then(
-                    (res) => {
-                        let updateParams = '{"textColor": "' + textColor + '"}';
-                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
-                            () => {
-                                subject.next();
-                            }
-                        )
-                    }
-                ).catch(e => console.error(e));
-            }
-        );
-        return subject.asObservable();
+        this.appStorageService.setTextColor(textColor);
+
+        let updateParams = '{"textColor": "' + textColor + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()})
     }
 
     public updateBackgroundColor(backgroundColor) {
-        var subject = new Subject<void>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let user = userDTO;
-                user.backgroundColor = backgroundColor;
-                this.appStorageService.setUserDTO(user).then(
-                    (res) => {
-                        let updateParams = '{"backgroundColor": "' + backgroundColor + '"}';
-                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
-                            () => {
-                                subject.next();
-                            }
-                        )
-                    }
-                ).catch(e => console.error(e));
-            }
-        );
-        return subject.asObservable();
+        this.appStorageService.setBackgroundColor(backgroundColor);
+
+        let updateParams = '{"backgroundColor": "' + backgroundColor + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()})
     }
 
     public updateTextBold(isBold: boolean) {
-        var subject = new Subject<void>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let user = userDTO;
-                user.isBold = isBold;
-                this.appStorageService.setUserDTO(user).then(
-                    (res) => {
-                        let updateParams = '{"isBold": "' + isBold + '"}';
-                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
-                            () => {
-                                subject.next();
-                            }
-                        )
-                    }
-                ).catch(e => console.error(e));
-            }
-        );
-        return subject.asObservable();
+        this.appStorageService.setTextBold(isBold);
+
+        let updateParams = '{"isBold": "' + isBold + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()});
     }
 
     public updateTextItalic(isItalic: boolean) {
-        var subject = new Subject<void>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let user = userDTO;
-                user.isItalic = isItalic;
-                this.appStorageService.setUserDTO(user).then(
-                    (res) => {
-                        let updateParams = '{"isItalic": "' + isItalic + '"}';
-                        this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
-                            () => {
-                                subject.next();
-                            }
-                        )
-                    }
-                ).catch(e => console.error(e));
-            }
-        );
-        return subject.asObservable();
+        this.appStorageService.setTextItalic(isItalic);
+
+        let updateParams = '{"isItalic": "' + isItalic + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()});
     }
 
     public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
-        var subject = new Subject<void>();
-
-        this.appStorageService.setUserDTO(userDTO).then(
-            (res) => {
-                let updateParams = '{"favoriteBooks": "' + favoriteBooks + '"}';
-                this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
-                    () => {
-                        subject.next();
-                    }
-                )
-            }
-        );
-        return subject.asObservable();
+        this.appStorageService.setUserDTO(userDTO);
+        let updateParams = '{"favoriteBooks": "' + favoriteBooks + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()});
     }
 
     public updateOpenLastRead(userDTO: UserDTO) {
-        var subject = new Subject<void>();
+        this.appStorageService.setUserDTO(userDTO);
 
-        this.appStorageService.setUserDTO(userDTO).then(
-            (res) => {
-                let updateParams = '{"goToLastRead": "' + userDTO.goToLastRead + '"}';
-                this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()}).subscribe(
-                    () => {
-                        subject.next();
-                    }
-                )
-            }
-        );
-        return subject.asObservable();
+        let updateParams = '{"goToLastRead": "' + userDTO.goToLastRead + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + userDTO.objectId, updateParams, {headers: this.createFullHeaders()});
     }
 
     public getBookmarks(bookDTO: BookDTO) {
-        var subject = new Subject<BookmarkDTO[]>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let query = encodeURI('{"userId": "' + userDTO.objectId + '", "isDeleted": false, "bookId": "' + bookDTO.objectId + '"}');
-                this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOKMARKS + '?where=' + query, {headers: this.createHeaders()})
-                    .subscribe((bookMarksDTO: BookmarkDTO[]) => {
-                        subject.next(bookMarksDTO);
-                    });
-            }
-        );
-        return subject.asObservable();
+        let query = encodeURI('{"userId": "' + this.appStorageService.getUserDTO().objectId + '", "isDeleted": false, "bookId": "' + bookDTO.objectId + '"}');
+        return this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOKMARKS + '?where=' + query, {headers: this.createHeaders()});
     }
 
     public deleteBookMark(bookMarkDTO: BookmarkDTO) {
@@ -285,113 +171,79 @@ export class HttpParseService {
     }
 
     public addBookmark(bookMarkDTO: BookmarkDTO) {
-
-        var subject = new Subject<any>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                bookMarkDTO.userId = userDTO.objectId;
-                this.httpClient.post(this.parseURL + 'classes/' + ParseClasses.BOOKMARKS, bookMarkDTO, {headers: this.createHeaders()})
-                    .subscribe((res: any) => {
-                        subject.next(res);
-                    });
-            }
-        );
-        return subject.asObservable();
+        bookMarkDTO.userId = this.appStorageService.getUserDTO().objectId;
+        return this.httpClient.post(this.parseURL + 'classes/' + ParseClasses.BOOKMARKS, bookMarkDTO, {headers: this.createHeaders()});
     }
 
     // start social
     public getAllUsers() {
         var subject = new Subject<UserDTO[]>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let query = encodeURI('{"email": {"$ne":"' + userDTO.email + '"}}');
-                this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
-                    .subscribe((res: any) => {
-                        let usersDTO: UserDTO[] = [];
-                        res.results.forEach(user => {
-                            let userDTO: UserDTO = new UserDTO();
-                            userDTO.username = user.name;
-                            userDTO.objectId = user.objectId;
-                            userDTO.email = user.email;
-                            usersDTO.push(userDTO);
-                        });
-                        subject.next(usersDTO);
-                    });
-            }
-        );
+        let query = encodeURI('{"email": {"$ne":"' + this.appStorageService.getUserDTO().email + '"}}');
+        this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
+            .subscribe((res: any) => {
+                let usersDTO: UserDTO[] = [];
+                res.results.forEach(user => {
+                    let userDTO: UserDTO = new UserDTO();
+                    userDTO.username = user.name;
+                    userDTO.objectId = user.objectId;
+                    userDTO.email = user.email;
+                    usersDTO.push(userDTO);
+                });
+                subject.next(usersDTO);
+            });
         return subject.asObservable();
     }
 
     public addConenction(reuqestedUserDTO: UserDTO) {
         var subject = new Subject<any>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let connectionDTO: ConnectionDTO = new ConnectionDTO();
-                connectionDTO.firstUserId = userDTO.objectId;
-                connectionDTO.secondUserId = reuqestedUserDTO.objectId;
-                connectionDTO.firstUserAccepted = true;
-                connectionDTO.secondUserAccepted = false;
-                this.httpClient.post(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS, connectionDTO, {headers: this.createHeaders()})
-                    .subscribe((connection) => {
-                        subject.next(connection);
-                    });
-            }
-        );
-        return subject.asObservable();
+        let connectionDTO: ConnectionDTO = new ConnectionDTO();
+        connectionDTO.firstUserId = this.appStorageService.getUserDTO().objectId;
+        connectionDTO.secondUserId = reuqestedUserDTO.objectId;
+        connectionDTO.firstUserAccepted = true;
+        connectionDTO.secondUserAccepted = false;
+        return this.httpClient.post(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS, connectionDTO, {headers: this.createHeaders()});
     }
 
     public getMyPendingConnection() {
         var subject = new Subject<ConnectionDTO[]>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let query = encodeURI('{"firstUserId":"' + userDTO.objectId + '", "secondUserAccepted": false}');
-                this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()})
-                    .subscribe((connectionsDTO: any) => {
-                        subject.next(connectionsDTO.results);
-                    });
-            }
-        );
+        let query = encodeURI('{"firstUserId":"' + this.appStorageService.getUserDTO().objectId + '", "secondUserAccepted": false}');
+        this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()})
+            .subscribe((connectionsDTO: any) => {
+                subject.next(connectionsDTO.results);
+            });
         return subject.asObservable();
     }
 
     public getReceivedConnections() {
         var subject = new Subject<ConnectionDTO[]>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let query = encodeURI('{"secondUserId":"' + userDTO.objectId + '", "secondUserAccepted": false}');
-                this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()})
-                    .subscribe((connectionsDTO: any) => {
-                        subject.next(connectionsDTO.results);
-                    });
-            }
-        );
+        let query = encodeURI('{"secondUserId":"' + this.appStorageService.getUserDTO().objectId + '", "secondUserAccepted": false}');
+        this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.CONNECTIONS + '?where=' + query, {headers: this.createHeaders()})
+            .subscribe((connectionsDTO: any) => {
+                subject.next(connectionsDTO.results);
+            });
         return subject.asObservable();
     }
 
     public getUsersByIds(userIds: any[]) {
         var subject = new Subject<UserDTO[]>();
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                let userIdString = '[';
-                userIds.forEach(
-                    id => userIdString += '"' + id + '"'
-                );
-                userIdString += ']';
-                let query = '{"objectId": {"$in":{' + userIdString + '}}';
-                this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
-                    .subscribe((res: any) => {
-                        let usersDTO: UserDTO[] = [];
-                        res.results.forEach(user => {
-                            let userDTO: UserDTO = new UserDTO();
-                            userDTO.username = user.name;
-                            userDTO.objectId = user.objectId;
-                            userDTO.email = user.email;
-                            usersDTO.push(userDTO);
-                        });
-                        subject.next(usersDTO);
-                    });
-            }
+        let userIdString = '[';
+        userIds.forEach(
+            id => userIdString += '"' + id + '"'
         );
+        userIdString += ']';
+        let query = '{"objectId": {"$in":{' + userIdString + '}}';
+        this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
+            .subscribe((res: any) => {
+                let usersDTO: UserDTO[] = [];
+                res.results.forEach(user => {
+                    let userDTO: UserDTO = new UserDTO();
+                    userDTO.username = user.name;
+                    userDTO.objectId = user.objectId;
+                    userDTO.email = user.email;
+                    usersDTO.push(userDTO);
+                });
+                subject.next(usersDTO);
+            });
         return subject.asObservable();
     }
 

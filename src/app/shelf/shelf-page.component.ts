@@ -5,7 +5,7 @@ import {LoadingController, MenuController, Platform, PopoverController} from "@i
 import {MenuEvents, MenuService} from "../ebook-reader/services/menu.service";
 import {BookDTO} from "../ebook-reader/dto/BookDTO";
 import {HttpParseService} from "../services/http-parse.service";
-import {AppStorageService} from "../services/app-storage.service";
+import {AppStorageService} from "../er-local-storage/app-storage.service";
 import {UserDTO} from "../models/UserDTO";
 import {UserSettingsComponent} from "./user-settings/user-settings.component";
 import {LoadingService} from "../services/loading.service";
@@ -48,25 +48,23 @@ export class ShelfPage implements OnInit {
             this.getBooks();
         });
 
-        this.appStorageService.getUserDTO().then(
-            (userDTO: UserDTO) => {
-                this.userDTO = userDTO;
-                if (userDTO.lastReadBook && userDTO.goToLastRead) {
-                    this.httpParseService.getBookById(userDTO.lastReadBook).subscribe(
-                        (books: any) => {
-                            let bookDTO: BookDTO = books.results[0];
-                            this.openBook(bookDTO);
-                        }
-                    )
-                } else {
-                    this.getBooks();
-                    this.enableMenu();
+        let userDTO = this.appStorageService.getUserDTO();
+
+        this.userDTO = userDTO;
+        if (userDTO.lastReadBook && userDTO.goToLastRead) {
+            this.httpParseService.getBookById(userDTO.lastReadBook).subscribe(
+                (books: any) => {
+                    let bookDTO: BookDTO = books.results[0];
+                    this.openBook(bookDTO);
                 }
-                if (userDTO.favoritesBook != null) {
-                    this.favoritesBooks = userDTO.favoritesBook.split(",");
-                }
-            }
-        );
+            )
+        } else {
+            this.getBooks();
+            this.enableMenu();
+        }
+        if (userDTO.favoritesBook != null) {
+            this.favoritesBooks = userDTO.favoritesBook.split(",");
+        }
     }
 
     public openBook(book: BookDTO) {
@@ -142,7 +140,6 @@ export class ShelfPage implements OnInit {
         });
         return await popover.present();
     }
-
 
     private deleteBookLocal(bookDTO: BookDTO) {
         this.books.splice(this.books.indexOf(bookDTO), 1);
