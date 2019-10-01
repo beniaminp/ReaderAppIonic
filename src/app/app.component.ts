@@ -23,11 +23,11 @@ export class AppComponent {
 
     initializeApp() {
         this.statusBar.styleDefault();
-        this.httpParseService.initApp();
 
         this.platform.ready().then(() => {
             let userDTO = this.appStorageService.getUserDTO();
             if (userDTO != null && userDTO.sessionToken != null) {
+                this.httpParseService.initApp();
                 this.router.navigate(["/shelf"]);
             } else {
                 this.router.navigate(["/auth"]);
