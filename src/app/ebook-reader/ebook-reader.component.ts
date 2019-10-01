@@ -74,6 +74,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             resizeOnOrientationChange: true,
             snap: true
         });
+        this.initThemes();
 
         let displayed = this.rendition.display();
         /*displayed.then(
@@ -117,33 +118,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.setTextBold(userDTO.isBold);
             this.setTextItalic(userDTO.isItalic);
             this.setNavigationControl(userDTO.showNavigationControl);
-
-            /*var keyListener = (e) => {
-                this.getCoordinates(e);
-                if (this.isBookmarkPress(e)) {
-                    this.setUnsetBookmark();
-                    return;
-                }
-
-                 if (e.clientX > this.platform.width() / 2) {
-                     /!*this.book.package.metadata.direction === "rtl" ? this.rendition.next() : this.rendition.prev();*!/
-                     console.error('in next');
-                     this.rendition.next()
-                 } else {
-                     /!*this.book.package.metadata.direction === "rtl" ? this.rendition.prev() : this.rendition.next();*!/
-                     console.error('in prev');
-                     this.rendition.prev()
-                 }
-
-                this.isBookmarkSet = false;
-                if (this.bookmarkExists()) {
-                    this.isBookmarkSet = true;
-                }
-                 this.cdr.detectChanges();
-            };
-
-            this.rendition.on("click", keyListener);
-            document.addEventListener("mouseup", keyListener, false)*/
+            this.setTheme(userDTO.theme != null ? userDTO.theme : 'light');
 
             window.on("swipeleft", (event) => {
                 console.error('swipeleft');
@@ -257,6 +232,16 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.showNavigationControl = showNavigationControl;
     }
 
+    private setTheme(value: string) {
+        this.rendition.themes.select(value);
+    }
+
+    private initThemes() {
+        this.rendition.themes.register("dark", "assets/themes.css");
+        this.rendition.themes.register("light", "assets/themes.css");
+        this.rendition.themes.register("tan", "assets/themes.css");
+    }
+
     private initEventListeners() {
         this.ebookService.emitEpub(this.book);
         this.ebookService.ePubEmitter.subscribe(
@@ -312,6 +297,14 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                         this.httpParseService.updateNavigationControl(event.value).subscribe(
                             (res) => {
                                 this.setNavigationControl(event.value);
+                            }
+                        );
+                        break;
+                    }
+                    case EPUB_EVENT_TYPES.THEME_CHANGED: {
+                        this.httpParseService.updateTheme(event.value).subscribe(
+                            (res) => {
+                                this.setTheme(event.value);
                             }
                         );
                         break;

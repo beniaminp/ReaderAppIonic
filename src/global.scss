@@ -9,6 +9,17 @@
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
 
+// start tan theme
+:root {
+  --ion-content-background-color: #e8d9c5;
+  --ion-header-background-color: #dbc3a3;
+  --ion-menu-background-color: #d6bb97;
+  --ion-alert-background-color: #e8d8c3;
+  --ion-popover-background-color: #f6f0e8;
+}
+
+// start tan theme
+
 .modal {
   display: flex !important;
 }
@@ -16,4 +27,24 @@
 .medium-modal {
   display: flex !important;
   padding: 15%;
+}
+
+ion-content {
+  --ion-background-color: var(--ion-content-background-color);
+}
+
+ion-header {
+  --ion-background-color: var(--ion-header-background-color);
+}
+
+ion-menu {
+  --ion-background-color: var(--ion-menu-background-color);
+}
+
+ion-alert {
+  --ion-background-color: var(--ion-alert-background-color);
+}
+
+ion-popover {
+  --ion-background-color: var(--ion-popover-background-color);
 }

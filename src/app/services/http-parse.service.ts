@@ -154,6 +154,13 @@ export class HttpParseService {
         return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()});
     }
 
+    public updateTheme(theme: string) {
+        this.appStorageService.setTheme(theme);
+
+        let updateParams = '{"theme": "' + theme + '"}';
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()});
+    }
+
     public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
         this.appStorageService.setUserDTO(userDTO);
         let updateParams = '{"favoriteBooks": "' + favoriteBooks + '"}';

@@ -13,4 +13,5 @@ export class UserDTO {
     isBold: boolean;
     isItalic: boolean;
     showNavigationControl: boolean;
+    theme: string;
 }

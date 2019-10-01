@@ -16,6 +16,8 @@ export class EbookVisualSettingsComponent implements OnInit {
     public backgroundColor = 'white';
     public textBold: boolean;
     public textItalic: boolean;
+    public themes = [{value: 'dark', name: 'Dark'}, {value: 'tan', name: 'Tan'}, {value: 'light', name: 'Light'}];
+    public selectedTheme = 'light';
 
     constructor(private eBookService: EBookService,
                 public modalController: ModalController,
@@ -33,6 +35,7 @@ export class EbookVisualSettingsComponent implements OnInit {
         this.backgroundColor = userDTO.backgroundColor != null ? userDTO.backgroundColor : this.backgroundColor;
         this.textBold = userDTO.isBold;
         this.textItalic = userDTO.isItalic;
+        this.selectedTheme = userDTO.theme;
     }
 
     public selectionChanged(event) {
@@ -58,5 +61,10 @@ export class EbookVisualSettingsComponent implements OnInit {
     public italicChanged(event) {
         this.textItalic = event.detail.checked;
         this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.TEXT_ITALIC_CHANGED, value: this.textBold});
+    }
+
+    public themeChanged(event) {
+        this.selectedTheme = event.detail.value;
+        this.eBookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.THEME_CHANGED, value: this.selectedTheme});
     }
 }

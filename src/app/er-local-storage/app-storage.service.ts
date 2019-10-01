@@ -60,6 +60,12 @@ export class AppStorageService {
         this.setUserDTO(userDTO);
     }
 
+    public setTheme(theme: string) {
+        let userDTO: UserDTO = this.getUserDTO();
+        userDTO.theme = theme;
+        this.setUserDTO(userDTO);
+    }
+
     public setConnections(connectionsDTO: ConnectionDTO[]) {
         this.localStorageService.set(STORAGE_DATA.CONNECTIONS, connectionsDTO);
     }
