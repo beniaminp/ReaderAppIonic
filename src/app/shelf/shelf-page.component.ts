@@ -126,7 +126,7 @@ export class ShelfPage implements OnInit {
             this.showFavorites = false;
             this.viewFreeBooks = false;
         } else if (showBooks == 1) {
-            this.books = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
+            this.filteredBooks = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
             this.showFavorites = true;
             this.viewFreeBooks = false;
         }

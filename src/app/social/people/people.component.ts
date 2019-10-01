@@ -3,6 +3,7 @@ import {UserDTO} from "../../models/UserDTO";
 import {HttpParseService} from "../../services/http-parse.service";
 import {ConnectionDTO} from "../../models/ConnectionDTO";
 import {ModalController} from "@ionic/angular";
+import {AppStorageService} from "../../er-local-storage/app-storage.service";
 
 @Component({
     selector: 'app-people',
@@ -15,7 +16,8 @@ export class PeopleComponent implements OnInit {
     public myPendingConnections: ConnectionDTO[];
 
     constructor(public httpParseService: HttpParseService,
-                public modalController: ModalController) {
+                public modalController: ModalController,
+                public appStorageService: AppStorageService) {
     }
 
     ngOnInit() {
@@ -24,7 +26,7 @@ export class PeopleComponent implements OnInit {
     }
 
     private getAllUsers() {
-        this.httpParseService.getAllUsers().subscribe(
+        this.httpParseService.getUnconnectedUsers().subscribe(
             (res: UserDTO[]) => {
                 this.usersDTO = res;
             }, e => console.error(e)
@@ -33,7 +35,8 @@ export class PeopleComponent implements OnInit {
 
     public sendInvite(userDTO: UserDTO) {
         this.httpParseService.addConenction(userDTO).subscribe(
-            (res) => {
+            (connection: ConnectionDTO) => {
+                this.appStorageService.addConnection(connection);
                 this.refreshPendingConnections();
             }
         )

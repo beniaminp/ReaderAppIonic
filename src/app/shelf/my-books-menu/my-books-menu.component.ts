@@ -8,6 +8,7 @@ import {BookmarksListComponent} from "../../ebook-reader/ebook-menu/bookmarks-li
 import {PeopleComponent} from "../../social/people/people.component";
 import {PendingConnectionsComponent} from "../../social/pending-connections/pending-connections.component";
 import {UploadService} from "../../services/upload.service";
+import {MyConnectionsComponent} from "../../social/my-connections/my-connections.component";
 
 declare var ePub: any;
 
@@ -86,6 +87,21 @@ export class MyBooksMenuComponent implements OnInit {
         try {
             const modal = await this.modalController.create({
                 component: PendingConnectionsComponent,
+                componentProps: {},
+                showBackdrop: true,
+                backdropDismiss: true
+            });
+            modal.present();
+            const {data} = await modal.onWillDismiss();
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    public async openMyConnections() {
+        try {
+            const modal = await this.modalController.create({
+                component: MyConnectionsComponent,
                 componentProps: {},
                 showBackdrop: true,
                 backdropDismiss: true

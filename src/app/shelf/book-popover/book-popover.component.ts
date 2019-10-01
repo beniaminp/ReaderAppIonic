@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {MenuController, NavParams, PopoverController} from "@ionic/angular";
+import {MenuController, ModalController, NavParams, PopoverController} from "@ionic/angular";
 import {BookDTO} from "../../ebook-reader/dto/BookDTO";
 import {UserDTO} from "../../models/UserDTO";
 import {HttpParseService} from "../../services/http-parse.service";
 import {AppStorageService} from "../../er-local-storage/app-storage.service";
 import {MenuEvents, MenuService} from "../../ebook-reader/services/menu.service";
+import {BookmarksListComponent} from "../../ebook-reader/ebook-menu/bookmarks-list/bookmarks-list.component";
+import {ShareBookComponent} from "../share-book/share-book.component";
 
 @Component({
     selector: 'app-book-popover',
@@ -21,7 +23,8 @@ export class BookPopoverComponent implements OnInit {
                 private appStorageService: AppStorageService,
                 private httpParseService: HttpParseService,
                 public menuService: MenuService,
-                private popoverController: PopoverController) {
+                private popoverController: PopoverController,
+                public modalController: ModalController) {
     }
 
     ngOnInit() {
@@ -70,4 +73,17 @@ export class BookPopoverComponent implements OnInit {
         );
     }
 
+    public async shareBook() {
+        try {
+            const modal = await this.modalController.create({
+                component: ShareBookComponent,
+                componentProps: {'bookDTO': this.bookDTO},
+                showBackdrop: true,
+                backdropDismiss: true
+            });
+            modal.present();
+        } catch (e) {
+            console.error(e);
+        }
+    }
 }

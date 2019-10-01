@@ -7,8 +7,8 @@
             </ion-button>
         </ion-buttons>
         <ion-title>{{bookDTO.title}}</ion-title>
-        <ion-buttons slot="end">
-            <ion-button (click)="setUnsetBookmark()">
+        <ion-buttons slot="end" style="margin-right: 1%;">
+            <ion-button (click)="setUnsetBookmark()" style="margin-right: 2%;">
                 <ion-icon name="bookmark"
                           [style.opacity]="isBookmarkSet ? '1' : '0.2'"></ion-icon>
             </ion-button>

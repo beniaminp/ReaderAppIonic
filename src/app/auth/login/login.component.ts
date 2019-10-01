@@ -6,6 +6,7 @@ import {HttpParseService} from "../../services/http-parse.service";
 import {AppStorageService} from "../../er-local-storage/app-storage.service";
 import {LoadingController} from "@ionic/angular";
 import {LoadingService} from "../../services/loading.service";
+import {ConnectionDTO} from "../../models/ConnectionDTO";
 
 @Component({
     selector: 'app-login',
@@ -34,7 +35,7 @@ export class LoginComponent implements OnInit {
                 userDTO.objectId = res.objectId;
                 userDTO.lastReadBook = res.lastReadBook;
                 this.appStorageService.setUserDTO(userDTO);
-                this.initApp();
+                this.httpParseService.initApp();
 
                 this.loadingService.dismissLoader();
                 this.goToShelf();
@@ -52,9 +53,5 @@ export class LoginComponent implements OnInit {
 
     public goToShelf() {
         this.router.navigate(['shelf']);
-    }
-
-    private initApp() {
-
     }
 }

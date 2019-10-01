@@ -5,6 +5,7 @@ import {FormsModule} from "@angular/forms";
 import {IonicModule} from "@ionic/angular";
 import {PeopleComponent} from "./people/people.component";
 import {PendingConnectionsComponent} from "./pending-connections/pending-connections.component";
+import {MyConnectionsComponent} from "./my-connections/my-connections.component";
 
 const routes: Routes = [
     {
@@ -14,13 +15,18 @@ const routes: Routes = [
     {
         path: 'pending-connections',
         component: PendingConnectionsComponent
+    },
+    {
+        path: 'my-connections',
+        component: MyConnectionsComponent
     }
 ];
 
 @NgModule({
     declarations: [
         PeopleComponent,
-        PendingConnectionsComponent
+        PendingConnectionsComponent,
+        MyConnectionsComponent
     ],
     imports: [
         CommonModule,

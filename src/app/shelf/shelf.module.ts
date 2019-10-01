@@ -11,6 +11,7 @@ import {MyBooksMenuComponent} from './my-books-menu/my-books-menu.component';
 import {UserSettingsComponent} from "./user-settings/user-settings.component";
 import {BookPopoverComponent} from "./book-popover/book-popover.component";
 import {SocialModule} from "../social/social.module";
+import {ShareBookComponent} from "./share-book/share-book.component";
 
 const routes: Routes = [
     {
@@ -32,16 +33,19 @@ const routes: Routes = [
         ShelfPage,
         MyBooksMenuComponent,
         UserSettingsComponent,
-        BookPopoverComponent
+        BookPopoverComponent,
+        ShareBookComponent
     ],
     exports: [
         MyBooksMenuComponent,
         UserSettingsComponent,
-        BookPopoverComponent
+        BookPopoverComponent,
+        ShareBookComponent
     ],
     entryComponents: [
         UserSettingsComponent,
-        BookPopoverComponent
+        BookPopoverComponent,
+        ShareBookComponent
     ]
 })
 export class ShelfPageModule {

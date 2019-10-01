@@ -209,6 +209,68 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    public getUnconnectedUsers() {
+        var subject = new Subject<UserDTO[]>();
+
+        let userIdString = '["' + this.appStorageService.getUserDTO().objectId + '"';
+        this.appStorageService.getConnections().filter(conn => conn.secondUserAccepted == true && conn.firstUserAccepted == true).forEach(
+            connection => {
+                userIdString += ',"' + connection.secondUserId + '",';
+                userIdString += '"' + connection.firstUserId + '"';
+            }
+        );
+        userIdString += ']';
+        let query = '{"objectId": {"$nin":' + userIdString + '}}';
+
+        this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
+            .subscribe((res: any) => {
+                let usersDTO: UserDTO[] = [];
+                res.results.forEach(user => {
+                    let userDTO: UserDTO = new UserDTO();
+                    userDTO.username = user.name;
+                    userDTO.objectId = user.objectId;
+                    userDTO.email = user.email;
+                    usersDTO.push(userDTO);
+                });
+                subject.next(usersDTO);
+            });
+        return subject.asObservable();
+    }
+
+    public getMyConnectedUsers() {
+        var subject = new Subject<UserDTO[]>();
+
+        let query = '{"objectId":' +
+            '{"$inQuery":' +
+            '{"where":{"secondUserAccepted":true, "firstUserAccepted":true, ' +
+            '"$or": [{"secondUserId": "' + this.appStorageService.getUserDTO().objectId + '"}, ' +
+            '{"firstUserId": "' + this.appStorageService.getUserDTO().objectId + '"}],"className":"Connections"}}}';
+        /*
+                let userIdString = '["' + this.appStorageService.getUserDTO().objectId + '"';
+                this.appStorageService.getConnections().filter(conn => conn.secondUserAccepted == true && conn.firstUserAccepted == true).forEach(
+                    connection => {
+                        userIdString += ',"' + connection.secondUserId + '",';
+                        userIdString += '"' + connection.firstUserId + '"';
+                    }
+                );
+                userIdString += ']';
+                let query = '{"objectId": {"$in":' + userIdString + '}}';*/
+
+        this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, {headers: this.createHeaders()})
+            .subscribe((res: any) => {
+                let usersDTO: UserDTO[] = [];
+                res.results.forEach(user => {
+                    let userDTO: UserDTO = new UserDTO();
+                    userDTO.username = user.name;
+                    userDTO.objectId = user.objectId;
+                    userDTO.email = user.email;
+                    usersDTO.push(userDTO);
+                });
+                subject.next(usersDTO);
+            });
+        return subject.asObservable();
+    }
+
     public addConenction(reuqestedUserDTO: UserDTO) {
         var subject = new Subject<any>();
         let connectionDTO: ConnectionDTO = new ConnectionDTO();
@@ -286,11 +348,21 @@ export class HttpParseService {
     }
 
     public initApp() {
-        this.getMyConnections().subscribe(
-            (res: any) => {
-                this.appStorageService.setConnections(res.results as ConnectionDTO[]);
-            }
-        );
+        if (this.appStorageService.getConnections() == null) {
+            this.getMyConnections().subscribe(
+                (res: any) => {
+                    this.appStorageService.setConnections(res.results as ConnectionDTO[]);
+                }
+            );
+        }
+
+        if (this.appStorageService.getUserConnections() == null) {
+            this.getMyConnectedUsers().subscribe(
+                (res: any) => {
+                    this.appStorageService.setUserConnections(res.results as UserDTO[]);
+                }
+            );
+        }
         if (this.appStorageService.getBooks() == null) {
             this.getBooksForUser().subscribe(
                 (books) => {

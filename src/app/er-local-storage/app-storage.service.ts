@@ -98,10 +98,19 @@ export class AppStorageService {
         let books = this.getBooks().splice(this.getBooks().indexOf(bookDTO), 1);
         this.setBooks(books);
     }
+
+    public getUserConnections(): UserDTO[] {
+        return this.localStorageService.get(STORAGE_DATA.USER_CONNECTIONS);
+    }
+
+    public setUserConnections(usersDTO: UserDTO[]) {
+        this.localStorageService.set(STORAGE_DATA.USER_CONNECTIONS, usersDTO);
+    }
 }
 
 enum STORAGE_DATA {
     USER = 'userDTO',
     CONNECTIONS = 'connections',
-    BOOKS = 'booksDTO'
+    BOOKS = 'booksDTO',
+    USER_CONNECTIONS = 'userConnections'
 }
