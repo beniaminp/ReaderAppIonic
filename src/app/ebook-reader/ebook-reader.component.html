@@ -1,4 +1,4 @@
-<ion-header *ngIf="bookDTO != null">
+<ion-header #toolbarHeader *ngIf="bookDTO != null && showHideToolbar" style="z-index: 99999;position: absolute;">
     <ion-toolbar>
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
@@ -17,20 +17,23 @@
     </ion-toolbar>
 </ion-header>
 
-<main class="container" role="main">
+<main role="main">
     <div id="book"></div>
 </main>
 
 
-<footer class="footer" *ngIf="showNavigationControl">
-    <div class="container">
-        <ion-toolbar>
-            <ion-buttons slot="start">
-                <ion-icon name="arrow-dropleft-circle" (click)="move(0)"></ion-icon>
-            </ion-buttons>
-            <ion-buttons slot="end">
-                <ion-icon name="arrow-dropright-circle" (click)="move(1)" style="float:right;"></ion-icon>
-            </ion-buttons>
-        </ion-toolbar>
-    </div>
+<footer class="footer" #footer>
+    <ion-toolbar>
+        <ion-row>
+            <ion-col width-33 style="text-align: left" *ngIf="showNavigationControl">
+                <ion-icon name="arrow-dropleft-circle" (click)="move(0)" size="large"></ion-icon>
+            </ion-col>
+            <ion-col width-33 style="text-align: center">
+                <ion-icon name="radio-button-on" size="large" (click)="showHideToolbarClick()"></ion-icon>
+            </ion-col>
+            <ion-col width-33 style="text-align: right" *ngIf="showNavigationControl">
+                <ion-icon name="arrow-dropright-circle" (click)="move(1)" size="large"></ion-icon>
+            </ion-col>
+        </ion-row>
+    </ion-toolbar>
 </footer>
