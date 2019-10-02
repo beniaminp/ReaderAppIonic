@@ -22,6 +22,7 @@ import {HttpParseService} from "../services/http-parse.service";
 
 declare var ePub: any;
 declare var window: any;
+declare var EPUBJS: any;
 
 @Component({
     selector: 'app-ebook-reader',
@@ -41,6 +42,9 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     @ViewChild('footer', {static: false})
     public footer;
 
+    @ViewChild('mainContent', {static: false})
+    public mainContent;
+
     public isBookmarkSet: boolean = false;
     public showHideToolbar: boolean = false;
 
@@ -48,6 +52,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     private rendition: any;
     private bookMarks: BookmarkDTO[] = [];
     private showNavigationControl: boolean;
+    private runViewCheck = 0;
 
     constructor(public platform: Platform,
                 public storage: Storage,
@@ -72,15 +77,17 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     }
 
     ngAfterViewInit(): void {
-        this.initBook();
-        this.initEventListeners();
     }
 
     ngAfterContentInit(): void {
     }
 
     ngAfterViewChecked(): void {
-
+        if (this.runViewCheck == 2) {
+            this.initBook();
+            this.initEventListeners();
+        }
+        this.runViewCheck += 1;
     }
 
     private initBook() {
@@ -93,25 +100,19 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             manager: "continuous",
             flow: "paginated",
             width: '100%',
-            height: this.platform.height() - 110,
+            height: this.platform.height() - this.footer.nativeElement.offsetHeight,
             spread: 'always',
             resizeOnOrientationChange: true,
             snap: true
         });
         this.initThemes();
 
-        let displayed = this.rendition.display();
-        /*displayed.then(
-            (res) => {
-                this.book.storage.add(this.book.resources, true).then(() => {
-                    console.log("stored");
-                });
-            }
-        );*/
+        this.bookReady();
+
+        this.rendition.display();
 
         this.getBookmarksList();
 
-        this.bookReady();
     }
 
     private getBookmarksList() {
@@ -153,9 +154,6 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 console.error('swiperight');
                 this.rendition.prev();
             });
-
-            this.resizeBook();
-
 
         }).catch(e => this.loadingService.dismissLoader());
     }
@@ -271,19 +269,16 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     private resizeBook() {
         let platformHeight = this.platform.height();
         let footerHeight = this.footer.nativeElement.offsetHeight;
+        console.error('footerHeight', footerHeight);
 
         if (this.rendition != null) {
-            if (this.showHideToolbar) {
-                this.rendition.resize(this.platform.width(), platformHeight - footerHeight);
-            } else {
-                this.rendition.resize(this.platform.width(), platformHeight - footerHeight);
-            }
+            this.rendition.resize(this.platform.width(), platformHeight - footerHeight);
         }
 
         /*this.book.generatePagination().then(() => {
             console.error('this.book.pagination', this.book.pagination);
             console.error('book.pagination.pageFromCfi(book.getCurrentLocationCfi());', this.book.pagination.pageFromCfi(this.book.getCurrentLocationCfi()))
-        })*/;
+        })*/
     }
 
     private initThemes() {
