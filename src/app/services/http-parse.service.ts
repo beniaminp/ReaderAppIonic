@@ -11,7 +11,7 @@ import {ConnectionDTO} from "../models/ConnectionDTO";
     providedIn: 'root'
 })
 export class HttpParseService {
-    public parseURL = 'https://parseapi.back4app.com/';
+    public parseURL = 'http://vps658548.ovh.net:1337/parse/';
 
     constructor(private httpClient: HttpClient,
                 public appStorageService: AppStorageService) {
@@ -334,16 +334,16 @@ export class HttpParseService {
 
     private createHeaders() {
         let httpHeaders: HttpHeaders = new HttpHeaders();
-        httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');
-        httpHeaders = httpHeaders.append('X-Parse-REST-API-Key', 'luoPAzqoXsd88o1wtKkYo6qyGnTy2kDFhzOGM7Mv');
+        httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'sublime-reader-appId');
+        httpHeaders = httpHeaders.append('X-Parse-REST-API-Key', 'sublime-reader-restApiKey');
         return httpHeaders;
     }
 
     private createFullHeaders() {
         let httpHeaders: HttpHeaders = new HttpHeaders();
-        httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'lkECc2ZtoxfhBlTTY7Flq2iCSFDZs4H608qmoOSV');
-        httpHeaders = httpHeaders.append('X-Parse-REST-API-Key', 'luoPAzqoXsd88o1wtKkYo6qyGnTy2kDFhzOGM7Mv');
-        httpHeaders = httpHeaders.append('X-Parse-Master-Key', 'dudc1cQQLmdxL4BWz8ajM0Tu4Bxw8KWvzvefQPDt');
+        httpHeaders = httpHeaders.append('X-Parse-Application-Id', 'sublime-reader-appId');
+        httpHeaders = httpHeaders.append('X-Parse-REST-API-Key', 'sublime-reader-restApiKey');
+        httpHeaders = httpHeaders.append('X-Parse-Master-Key', 'sublime-reader-masterKey');
         return httpHeaders;
     }
 
