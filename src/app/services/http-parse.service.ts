@@ -11,7 +11,7 @@ import {ConnectionDTO} from "../models/ConnectionDTO";
     providedIn: 'root'
 })
 export class HttpParseService {
-    public parseURL = 'http://vps658548.ovh.net:1337/parse/';
+    public parseURL = 'https://vps658548.ovh.net/parse-server/parse/';
 
     constructor(private httpClient: HttpClient,
                 public appStorageService: AppStorageService) {
@@ -87,15 +87,13 @@ export class HttpParseService {
     public deleteBook(bookDTO: BookDTO) {
         var subject = new Subject<void>();
         let updateParams = '{"isDeleted": true}';
-        this.httpClient.put(this.parseURL + 'classes/' + ParseClasses.BOOK + '/' + bookDTO.objectId, updateParams, {headers: this.createHeaders()}).subscribe(
+        this.httpClient.delete(this.parseURL + 'classes/' + ParseClasses.BOOK + '/' + bookDTO.objectId, /*updateParams,*/ {headers: this.createHeaders()}).subscribe(
             (res) => {
-                /*this.httpClient.delete(this.parseURL + 'files/' + bookDTO.fileUrlName, {headers: this.createFullHeaders()}).subscribe(
+                this.httpClient.delete(this.parseURL + 'files/' + bookDTO.fileUrlName, {headers: this.createFullHeaders()}).subscribe(
                     (res) => {
                         subject.next();
                     }, (e) => console.error(e)
-                )*/
-
-                subject.next();
+                )
             }, (e) => console.error(e)
         );
         return subject.asObservable();
@@ -145,7 +143,6 @@ export class HttpParseService {
         let updateParams = '{"isItalic": "' + isItalic + '"}';
         return this.httpClient.put(this.parseURL + ParseClasses.USER + '/' + this.appStorageService.getUserDTO().objectId, updateParams, {headers: this.createFullHeaders()});
     }
-
 
     public updateNavigationControl(showNavigationControl: boolean) {
         this.appStorageService.setNavigationControl(showNavigationControl);
