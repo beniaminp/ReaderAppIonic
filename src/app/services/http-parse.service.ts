@@ -84,6 +84,10 @@ export class HttpParseService {
         return this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOK + '?where=' + query, {headers: this.createHeaders()});
     }
 
+    public getBookContent(bookUrl: string) {
+        return this.httpClient.get(bookUrl, {headers: this.createHeaders(), responseType: 'blob'});
+    }
+
     public deleteBook(bookDTO: BookDTO) {
         var subject = new Subject<void>();
         let updateParams = '{"isDeleted": true}';

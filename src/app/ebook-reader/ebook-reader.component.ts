@@ -94,25 +94,29 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         if (this.ebookSource == null) {
             alert('No ebook selected');
         }
-        this.book.open(this.ebookSource/*, {storage: true, store: 'epubs-store'}*/);
+        this.httpParseService.getBookContent(this.bookDTO.fileUrl).subscribe(
+            (bookContent) => {
+                console.error('bookContent', bookContent);
+                this.book.open(bookContent/*, {storage: true, store: 'epubs-store'}*/);
 
-        this.rendition = this.book.renderTo("book", {
-            manager: "continuous",
-            flow: "paginated",
-            width: '100%',
-            height: this.platform.height() - this.footer.nativeElement.offsetHeight,
-            spread: 'always',
-            resizeOnOrientationChange: true,
-            snap: true
-        });
-        this.initThemes();
+                this.rendition = this.book.renderTo("book", {
+                    manager: "continuous",
+                    flow: "paginated",
+                    width: '100%',
+                    height: this.platform.height() - this.footer.nativeElement.offsetHeight,
+                    spread: 'always',
+                    resizeOnOrientationChange: true,
+                    snap: true
+                });
+                this.initThemes();
 
-        this.bookReady();
+                this.bookReady();
 
-        this.rendition.display();
+                this.rendition.display();
 
-        this.getBookmarksList();
-
+                this.getBookmarksList();
+            }
+        );
     }
 
     private getBookmarksList() {
