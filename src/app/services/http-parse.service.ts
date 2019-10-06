@@ -45,12 +45,13 @@ export class HttpParseService {
         let userDTO = this.appStorageService.getUserDTO();
         this.uploadFile(bookDTO.bookContent, bookDTO.fileName).subscribe(
             (res: any) => {
-                bookDTO.fileUrl = res.url;
+                bookDTO.fileUrl = this.parseURL + 'files/' + res.url.split('/files')[1];
                 bookDTO.fileUrlName = res.name;
                 bookDTO.userId = userDTO.objectId;
 
                 this.httpClient.post(this.parseURL + '/classes/' + ParseClasses.BOOK, bookDTO, {headers: this.createHeaders()})
-                    .subscribe((book) => {
+                    .subscribe((book: any) => {
+                        bookDTO.objectId = book.objectId;
                         subject.next(bookDTO);
                     });
             }

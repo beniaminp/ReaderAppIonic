@@ -27,7 +27,6 @@ export class UploadService {
             book.fileId = file.id;
             this.httpParseService.addBook(book).subscribe(
                 (res) => {
-                    book.objectId = res.objectId;
                     this.menuService.menuEmitter.next({type: MenuEvents.BOOKS_ADDED, value: book});
                     this.presentToast('File ' + file.name + ' uploaded');
                 }
