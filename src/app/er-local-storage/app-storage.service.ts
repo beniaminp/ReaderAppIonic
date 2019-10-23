@@ -12,6 +12,14 @@ export class AppStorageService {
     constructor(private localStorageService: LocalStorageService) {
     }
 
+    public setToken(token: string) {
+        this.localStorageService.set(STORAGE_DATA.TOKEN, token);
+    }
+
+    public getToken() {
+        return this.localStorageService.get(STORAGE_DATA.TOKEN);
+    }
+
     public setUserDTO(userDTO: UserDTO) {
         this.localStorageService.set(STORAGE_DATA.USER, userDTO);
     }
@@ -22,6 +30,10 @@ export class AppStorageService {
 
     public clearUser() {
         this.localStorageService.remove(STORAGE_DATA.USER);
+        this.localStorageService.remove(STORAGE_DATA.CONNECTIONS);
+        this.localStorageService.remove(STORAGE_DATA.USER_CONNECTIONS);
+        this.localStorageService.remove(STORAGE_DATA.BOOKS);
+        this.localStorageService.remove(STORAGE_DATA.TOKEN);
     }
 
     public setFontSize(fontSize) {
@@ -112,5 +124,6 @@ enum STORAGE_DATA {
     USER = 'userDTO',
     CONNECTIONS = 'connections',
     BOOKS = 'booksDTO',
-    USER_CONNECTIONS = 'userConnections'
+    USER_CONNECTIONS = 'userConnections',
+    TOKEN = 'token'
 }

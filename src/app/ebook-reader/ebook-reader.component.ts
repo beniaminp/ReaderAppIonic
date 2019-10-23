@@ -122,7 +122,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     private getBookmarksList() {
         this.httpParseService.getBookmarks(this.bookDTO).subscribe(
             (bookmarksDTOList: any) => {
-                this.bookMarks = bookmarksDTOList.results;
+                this.bookMarks = bookmarksDTOList;
                 this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.BOOKMARKS_LOADED, value: this.bookMarks});
             },
             error => console.error(error)

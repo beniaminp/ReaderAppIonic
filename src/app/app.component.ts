@@ -26,7 +26,7 @@ export class AppComponent {
 
         this.platform.ready().then(() => {
             let userDTO = this.appStorageService.getUserDTO();
-            if (userDTO != null && userDTO.sessionToken != null) {
+            if (userDTO != null && this.appStorageService.getToken() != null) {
                 this.httpParseService.initApp();
                 this.router.navigate(["/shelf"]);
             } else {

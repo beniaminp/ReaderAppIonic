@@ -52,7 +52,7 @@ export class PeopleComponent implements OnInit {
 
     private refreshPendingConnections() {
         this.httpParseService.getMyPendingConnection().subscribe(
-            (connections) => {
+            (connections: any) => {
                 this.myPendingConnections = connections == null ? [] : connections;
             }, e => console.error(e)
         )

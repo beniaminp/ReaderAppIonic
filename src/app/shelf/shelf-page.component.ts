@@ -54,7 +54,7 @@ export class ShelfPage implements OnInit {
         if (userDTO.lastReadBook && userDTO.goToLastRead) {
             this.httpParseService.getBookById(userDTO.lastReadBook).subscribe(
                 (books: any) => {
-                    let bookDTO: BookDTO = books.results[0];
+                    let bookDTO: BookDTO = books[0];
                     this.openBook(bookDTO);
                 }
             )

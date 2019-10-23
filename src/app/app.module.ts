@@ -17,10 +17,10 @@ import {BookmarksListComponent} from "./ebook-reader/ebook-menu/bookmarks-list/b
 import {File} from "@ionic-native/file/ngx";
 import {FileChooser} from "@ionic-native/file-chooser/ngx";
 import {ShelfPageModule} from "./shelf/shelf.module";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {ServiceWorkerModule} from '@angular/service-worker';
-import {environment} from '../environments/environment';
 import {ErLocalStorageModule} from "./er-local-storage/er-local-storage.module";
+import {TokenInterceptorService} from "./services/token-interceptor.service";
 
 @NgModule({
     declarations: [AppComponent, BookmarksListComponent],
@@ -41,6 +41,7 @@ import {ErLocalStorageModule} from "./er-local-storage/er-local-storage.module";
         SplashScreen,
         NativeStorage,
         Facebook,
+        {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true},
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
         File,
         FileChooser
