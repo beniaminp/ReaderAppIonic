@@ -70,11 +70,9 @@ export class HttpParseService {
         let userDTO = this.appStorageService.getUserDTO();
         this.uploadFile(bookDTO.bookContent, bookDTO.fileName).subscribe(
             (res: any) => {
-                console.error('res', res);
                 bookDTO.fileUrl = res;
                 bookDTO.fileUrlName = bookDTO.fileName;
                 bookDTO.userId = userDTO.objectId;
-                console.error('bookDTO', bookDTO);
 
                 this.httpClient.post(this.parseURL + ParseClasses.BOOK + '/addBook', bookDTO, this.createHttpOptions())
                     .subscribe((book: any) => {
@@ -125,7 +123,7 @@ export class HttpParseService {
         userDTO.lastReadBook = bookDTO.objectId;
         this.appStorageService.setUserDTO(userDTO);
 
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateLastReadBook/' + userDTO.objectId + '?lastReadBook=' + bookDTO.objectId, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateLastReadBook?lastReadBook=' + bookDTO.objectId, null, {headers: this.createFullHeaders()});
     }
 
     public updateFontSize(fontSize) {
