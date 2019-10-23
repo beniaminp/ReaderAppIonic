@@ -7,6 +7,9 @@ pages:
   - mkdir .public
   - cp -R platforms/browser/www/* .public
   - mv .public public
+  - apt-get -y install openssh-client
+  - apt-get -y install sshpass
+  - sshpass -p "carol1234" scp -r platforms/browser/www/* beniaminp@vps658548.ovh.net:/home/beniaminp/sublime-client/
   artifacts:
     paths:
     - public/

@@ -6,12 +6,13 @@ import {UserDTO} from "../models/UserDTO";
 import {AppStorageService} from "../er-local-storage/app-storage.service";
 import {BookmarkDTO} from "../ebook-reader/dto/BookmarkDTO";
 import {ConnectionDTO} from "../models/ConnectionDTO";
+import {environment} from "../../environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class HttpParseService {
-    public parseURL = 'http://localhost:8080/';
+    public parseURL = 'http://' + window.location.hostname + ':8080/';
 
     constructor(private httpClient: HttpClient,
                 public appStorageService: AppStorageService) {
@@ -129,48 +130,48 @@ export class HttpParseService {
 
     public updateFontSize(fontSize) {
         this.appStorageService.setFontSize(fontSize);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateFontSize/' + this.appStorageService.getUserDTO().objectId + '?fontSize=' + fontSize, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateFontSize?fontSize=' + fontSize, null, {headers: this.createFullHeaders()});
     }
 
     public updateTextColor(textColor) {
         this.appStorageService.setTextColor(textColor);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextColor/' + this.appStorageService.getUserDTO().objectId + '?textColor=' + textColor, null, {headers: this.createFullHeaders()})
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextColor?textColor=' + textColor, null, {headers: this.createFullHeaders()})
     }
 
     public updateBackgroundColor(backgroundColor) {
         this.appStorageService.setBackgroundColor(backgroundColor);
 
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateBackgroundColor/' + this.appStorageService.getUserDTO().objectId + '?backgroundColor=' + backgroundColor, null, {headers: this.createFullHeaders()})
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateBackgroundColor?backgroundColor=' + backgroundColor, null, {headers: this.createFullHeaders()})
     }
 
     public updateTextBold(isBold: boolean) {
         this.appStorageService.setTextBold(isBold);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextBold/' + this.appStorageService.getUserDTO().objectId + '?isBold=' + isBold, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextBold?isBold=' + isBold, null, {headers: this.createFullHeaders()});
     }
 
     public updateTextItalic(isItalic: boolean) {
         this.appStorageService.setTextItalic(isItalic);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextItalic/' + this.appStorageService.getUserDTO().objectId + '?isItalic=' + isItalic, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextItalic?isItalic=' + isItalic, null, {headers: this.createFullHeaders()});
     }
 
     public updateNavigationControl(showNavigationControl: boolean) {
         this.appStorageService.setNavigationControl(showNavigationControl);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateNavigationControl/' + this.appStorageService.getUserDTO().objectId + '?showNavigationControl=' + showNavigationControl, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateNavigationControl?showNavigationControl=' + showNavigationControl, null, {headers: this.createFullHeaders()});
     }
 
     public updateTheme(theme: string) {
         this.appStorageService.setTheme(theme);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTheme/' + this.appStorageService.getUserDTO().objectId + '?theme=' + theme, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTheme?theme=' + theme, null, {headers: this.createFullHeaders()});
     }
 
     public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
         this.appStorageService.setUserDTO(userDTO);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateFavoritesBooks/' + userDTO.objectId, favoriteBooks, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateFavoritesBooks', favoriteBooks, {headers: this.createFullHeaders()});
     }
 
     public updateOpenLastRead(userDTO: UserDTO) {
         this.appStorageService.setUserDTO(userDTO);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateOpenLastRead/' + userDTO.objectId + '?goToLastRead=' + userDTO.goToLastRead, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateOpenLastRead/?goToLastRead=' + userDTO.goToLastRead, null, {headers: this.createFullHeaders()});
     }
 
     public getBookmarks(bookDTO: BookDTO) {

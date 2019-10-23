@@ -7,8 +7,7 @@
     </ion-toolbar>
 </ion-header>
 <ion-content>
-    <ion-searchbar animated showCancelButton="never" autocomplete="true" (ionInput)="searchInputChanged($event)"
-                   (ionChange)="searchChanged($event)"></ion-searchbar>
+    <ion-searchbar animated showCancelButton="never" autocomplete="true"></ion-searchbar>
     <ion-list *ngIf="usersDTO!= null && myPendingConnections != null">
         <ion-item *ngFor="let user of usersDTO">
             <ion-label>{{user.username}}</ion-label>

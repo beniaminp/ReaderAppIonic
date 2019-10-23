@@ -48,11 +48,11 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     public isBookmarkSet: boolean = false;
     public showHideToolbar: boolean = false;
 
-    private book: any = ePub();
-    private rendition: any;
-    private bookMarks: BookmarkDTO[] = [];
-    private showNavigationControl: boolean;
-    private runViewCheck = 0;
+    public book: any = ePub();
+    public rendition: any;
+    public bookMarks: BookmarkDTO[] = [];
+    public showNavigationControl: boolean;
+    public runViewCheck = 0;
 
     constructor(public platform: Platform,
                 public storage: Storage,
