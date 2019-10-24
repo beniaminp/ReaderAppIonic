@@ -22,7 +22,7 @@ export class EbookPreferencesComponent implements OnInit {
             component: EbookVisualSettingsComponent,
             showBackdrop: true,
             backdropDismiss: true,
-            cssClass: 'medium-modal'
+            cssClass: 'modal'
         });
         modal.present();
 
@@ -34,7 +34,7 @@ export class EbookPreferencesComponent implements OnInit {
             component: EbookControlSettingsComponent,
             showBackdrop: true,
             backdropDismiss: true,
-            cssClass: 'medium-modal'
+            cssClass: 'modal'
         });
         modal.present();
 

@@ -10,7 +10,8 @@ import {UserDTO} from "../../models/UserDTO";
     styleUrls: ['./ebook-visual-settings.component.scss'],
 })
 export class EbookVisualSettingsComponent implements OnInit {
-    private fontSize: number[] = [];
+    public shouldRender = false;
+    public fontSize: number[] = [];
     public selectedFont = 100;
     public textColor = '#330000';
     public backgroundColor = 'white';
@@ -36,6 +37,12 @@ export class EbookVisualSettingsComponent implements OnInit {
         this.textBold = userDTO.isBold;
         this.textItalic = userDTO.isItalic;
         this.selectedTheme = userDTO.theme;
+
+        this.shouldRender = true;
+    }
+
+    dismissModal(data) {
+        this.modalController.dismiss(data);
     }
 
     public selectionChanged(event) {

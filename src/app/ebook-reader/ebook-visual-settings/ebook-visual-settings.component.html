@@ -1,52 +1,65 @@
-<ion-list>
-    <ion-item-group>
-        <ion-item-divider>
-            <ion-label>Font</ion-label>
-        </ion-item-divider>
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Visual Settings</ion-title>
+        <ion-buttons slot="primary">
+            <ion-button (click)="dismissModal(null)">
+                <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content *ngIf="shouldRender">
+    <ion-list>
+        <ion-item-group>
+            <ion-item-divider>
+                <ion-label>Font</ion-label>
+            </ion-item-divider>
 
-        <ion-item>
-            <ion-label>
-                Size
-            </ion-label>
-            <ion-range min="10" max="200" color="secondary" step="10" (ionChange)="selectionChanged($event)" pin="true"
-                       snaps="true" value="{{selectedFont}}">
-                <ion-label slot="start">10%</ion-label>
-                <ion-label slot="end">200%</ion-label>
-            </ion-range>
-        </ion-item>
-    </ion-item-group>
+            <ion-item>
+                <ion-label>
+                    Size
+                </ion-label>
+                <ion-range min="10" max="200" color="secondary" step="10" (ionChange)="selectionChanged($event)"
+                           pin="true"
+                           snaps="true" value="{{selectedFont}}">
+                    <ion-label slot="start">10%</ion-label>
+                    <ion-label slot="end">200%</ion-label>
+                </ion-range>
+            </ion-item>
+        </ion-item-group>
 
-    <ion-item-group>
-        <ion-item-divider>
-            <ion-label>Theme</ion-label>
-        </ion-item-divider>
-        <ion-item>
-            <ion-label>Text Color</ion-label>
-            <app-color-chooser [selectedColor]="textColor"
-                               (colorChoosed)="textColorChanged($event)"></app-color-chooser>
-        </ion-item>
-        <ion-item>
-            <ion-label>Background Color</ion-label>
-            <app-color-chooser [selectedColor]="backgroundColor"
-                               (colorChoosed)="backgroundColorChanged($event)"></app-color-chooser>
-        </ion-item>
-        <ion-item>
-            <ion-label>Bold</ion-label>
-            <ion-checkbox color="danger" [checked]="textBold" (ionChange)="boldChanged($event)"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-            <ion-label>Italic</ion-label>
-            <ion-checkbox color="danger" [checked]="textItalic" (ionChange)="italicChanged($event)"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-            <ion-label>
-                Predefined Themes
-            </ion-label>
-            <ion-select (ionChange)="themeChanged($event)">
-                <ion-select-option *ngFor="let theme of themes" [value]="theme.value"
-                                   [selected]="selectedTheme == theme.value">{{theme.name}}
-                </ion-select-option>
-            </ion-select>
-        </ion-item>
-    </ion-item-group>
-</ion-list>
+        <ion-item-group>
+            <ion-item-divider>
+                <ion-label>Theme</ion-label>
+            </ion-item-divider>
+            <ion-item>
+                <ion-label>Text Color</ion-label>
+                <app-color-chooser [selectedColor]="textColor"
+                                   (colorChoosed)="textColorChanged($event)"></app-color-chooser>
+            </ion-item>
+            <ion-item>
+                <ion-label>Background Color</ion-label>
+                <app-color-chooser [selectedColor]="backgroundColor"
+                                   (colorChoosed)="backgroundColorChanged($event)"></app-color-chooser>
+            </ion-item>
+            <ion-item>
+                <ion-label>Bold</ion-label>
+                <ion-checkbox color="danger" [checked]="textBold" (ionChange)="boldChanged($event)"></ion-checkbox>
+            </ion-item>
+            <ion-item>
+                <ion-label>Italic</ion-label>
+                <ion-checkbox color="danger" [checked]="textItalic" (ionChange)="italicChanged($event)"></ion-checkbox>
+            </ion-item>
+            <ion-item>
+                <ion-label>
+                    Predefined Themes
+                </ion-label>
+                <ion-select (ionChange)="themeChanged($event)">
+                    <ion-select-option *ngFor="let theme of themes" [value]="theme.value"
+                                       [selected]="selectedTheme == theme.value">{{theme.name}}
+                    </ion-select-option>
+                </ion-select>
+            </ion-item>
+        </ion-item-group>
+    </ion-list>
+</ion-content>

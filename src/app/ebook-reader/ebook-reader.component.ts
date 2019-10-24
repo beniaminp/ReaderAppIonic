@@ -94,29 +94,33 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         if (this.ebookSource == null) {
             alert('No ebook selected');
         }
+
         this.httpParseService.getBookContent(this.bookDTO.fileUrl).subscribe(
             (bookContent) => {
-                console.error('bookContent', bookContent);
-                this.book.open(bookContent/*, {storage: true, store: 'epubs-store'}*/);
-
-                this.rendition = this.book.renderTo("book", {
-                    manager: "continuous",
-                    flow: "paginated",
-                    width: '100%',
-                    height: this.platform.height() - this.footer.nativeElement.offsetHeight,
-                    spread: 'always',
-                    resizeOnOrientationChange: true,
-                    snap: true
-                });
-                this.initThemes();
-
-                this.bookReady();
-
-                this.rendition.display();
-
-                this.getBookmarksList();
+                this.renderBookContent(bookContent);
             }
         );
+    }
+
+    private renderBookContent(bookContent) {
+        this.book.open(bookContent/*, {storage: true, store: 'epubs-store'}*/);
+
+        this.rendition = this.book.renderTo("book", {
+            manager: "continuous",
+            flow: "paginated",
+            width: '100%',
+            height: this.platform.height() - this.footer.nativeElement.offsetHeight,
+            spread: 'always',
+            resizeOnOrientationChange: true,
+            snap: true
+        });
+        this.initThemes();
+
+        this.bookReady();
+
+        this.rendition.display();
+
+        this.getBookmarksList();
     }
 
     private getBookmarksList() {
@@ -150,12 +154,12 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.setTheme(userDTO.theme != null ? userDTO.theme : 'light');
 
             window.on("swipeleft", (event) => {
-                console.error('swipeleft');
+                this.showHideToolbar = false;
                 this.rendition.next();
             });
 
             window.on("swiperight", (event) => {
-                console.error('swiperight');
+                this.showHideToolbar = false;
                 this.rendition.prev();
             });
 
@@ -176,6 +180,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     }
 
     public move(where) {
+        this.showHideToolbar = false;
         if (where == 0) {
             this.rendition.prev().then(res => this.setUnsetBookmarkIcon());
         } else {
@@ -197,14 +202,14 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 (res: any) => {
                     bookMarkDTO.objectId = res.objectId;
                     this.bookMarks.push(bookMarkDTO);
+                    this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.BOOKMARKS_LOADED, value: this.bookMarks});
                 }
             );
         } else {
             let indexOfBookmark = this.bookMarks.findIndex(bookMarkDTO => bookMarkDTO.cfi == cfi);
             let bookMarkToDelete = this.bookMarks[indexOfBookmark];
-            console.error('index', indexOfBookmark);
-            console.error('bookMarkToDelete', bookMarkToDelete);
             this.bookMarks.splice(indexOfBookmark, 1);
+            this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.BOOKMARKS_LOADED, value: this.bookMarks});
             this.isBookmarkSet = false;
 
             this.httpParseService.deleteBookMark(bookMarkToDelete).subscribe();

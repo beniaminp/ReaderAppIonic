@@ -3,6 +3,7 @@ import {ModalController} from "@ionic/angular";
 import {BookDTO} from "../../dto/BookDTO";
 import {EBookService, EPUB_EVENT_TYPES} from "../../services/e-book.service";
 import {BookmarkDTO} from "../../dto/BookmarkDTO";
+import {debug} from "util";
 
 @Component({
     selector: 'bookmarks-list',

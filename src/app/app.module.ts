@@ -21,6 +21,8 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {ErLocalStorageModule} from "./er-local-storage/er-local-storage.module";
 import {TokenInterceptorService} from "./services/token-interceptor.service";
+import {RequestCache} from "./services/cache/request-cache";
+import {CachingInterceptor} from "./services/cache/caching-interceptor";
 
 @NgModule({
     declarations: [AppComponent, BookmarksListComponent],
@@ -42,6 +44,8 @@ import {TokenInterceptorService} from "./services/token-interceptor.service";
         NativeStorage,
         Facebook,
         {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true},
+        {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
+        RequestCache,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
         File,
         FileChooser

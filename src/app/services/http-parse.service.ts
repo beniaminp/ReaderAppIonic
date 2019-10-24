@@ -22,13 +22,13 @@ export class HttpParseService {
     public loginUser(userDTO: UserDTO) {
         var subject = new Subject<UserDTO>();
 
-        this.httpClient.post(this.parseURL + ParseClasses.AUTH + '/authenticate', {
+        this.httpClient.post(this.parseURL + RestControllers.AUTH + '/authenticate', {
             username: userDTO.email,
             password: userDTO.password
         }).subscribe(
             (res: any) => {
                 this.appStorageService.setToken(res.token);
-                this.httpClient.get(this.parseURL + ParseClasses.USER + '/getUser', this.createHttpOptions()).subscribe(
+                this.httpClient.get(this.parseURL + RestControllers.USER + '/getUser', this.createHttpOptions()).subscribe(
                     (userDTO: UserDTO) => {
                         subject.next(userDTO);
                     }
@@ -48,10 +48,10 @@ export class HttpParseService {
         user.email = userDTO.email;
         user.password = userDTO.password;
 
-        this.httpClient.post(this.parseURL + ParseClasses.AUTH + '/signup', user).subscribe(
+        this.httpClient.post(this.parseURL + RestControllers.AUTH + '/signup', user).subscribe(
             (res: any) => {
                 this.appStorageService.setToken(res.token);
-                this.httpClient.get(this.parseURL + ParseClasses.USER + '/getUser').subscribe(
+                this.httpClient.get(this.parseURL + RestControllers.USER + '/getUser').subscribe(
                     (userDTO: UserDTO) => {
                         subject.next(userDTO);
                     }
@@ -61,8 +61,9 @@ export class HttpParseService {
         return subject.asObservable();
     }
 
+    // start books
     public uploadFile(byteArrayFile, fileName) {
-        return this.httpClient.post(this.parseURL + ParseClasses.BOOK + '/uploadFile/' + fileName, byteArrayFile, this.createHttpOptionsEpub());
+        return this.httpClient.post(this.parseURL + RestControllers.BOOK + '/uploadFile/' + fileName, byteArrayFile, this.createHttpOptionsEpub());
     }
 
     public addBook(bookDTO: BookDTO) {
@@ -74,7 +75,7 @@ export class HttpParseService {
                 bookDTO.fileUrlName = bookDTO.fileName;
                 bookDTO.userId = userDTO.objectId;
 
-                this.httpClient.post(this.parseURL + ParseClasses.BOOK + '/addBook', bookDTO, this.createHttpOptions())
+                this.httpClient.post(this.parseURL + RestControllers.BOOK + '/addBook', bookDTO, this.createHttpOptions())
                     .subscribe((book: any) => {
                         bookDTO.objectId = book.objectId;
                         subject.next(bookDTO);
@@ -87,7 +88,7 @@ export class HttpParseService {
     public getBooksForUser() {
         var subject = new Subject<BookDTO[]>();
 
-        this.httpClient.get(this.parseURL + ParseClasses.BOOK + '/getBooks', this.createHttpOptions())
+        this.httpClient.get(this.parseURL + RestControllers.BOOK + '/getBooks', this.createHttpOptions())
             .subscribe((books: any) => {
                 let booksDTO: BookDTO[] = [];
                 books.forEach(book => {
@@ -104,8 +105,11 @@ export class HttpParseService {
     }
 
     public getBookById(bookId) {
-        let query = encodeURI('{"objectId": "' + bookId + '"}');
-        return this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOK + '?where=' + query, this.createHttpOptions());
+        return this.httpClient.get(this.parseURL + RestControllers.BOOK + '/getBookById?bookId=' + bookId);
+    }
+
+    public booksCount() {
+        return this.httpClient.get(this.parseURL + RestControllers.BOOK + '/booksCount');
     }
 
     public getBookContent(bookUrl: string) {
@@ -113,9 +117,12 @@ export class HttpParseService {
     }
 
     public deleteBook(bookDTO: BookDTO) {
-        return this.httpClient.delete(this.parseURL + ParseClasses.BOOK + '/deleteBook/' + bookDTO.objectId);
+        return this.httpClient.delete(this.parseURL + RestControllers.BOOK + '/deleteBook/' + bookDTO.objectId);
 
     }
+
+    // end books
+
 
     public updateLastReadBook(bookDTO: BookDTO) {
         let userDTO = this.appStorageService.getUserDTO();
@@ -123,76 +130,73 @@ export class HttpParseService {
         userDTO.lastReadBook = bookDTO.objectId;
         this.appStorageService.setUserDTO(userDTO);
 
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateLastReadBook?lastReadBook=' + bookDTO.objectId, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateLastReadBook?lastReadBook=' + bookDTO.objectId, null, {headers: this.createFullHeaders()});
     }
 
     public updateFontSize(fontSize) {
         this.appStorageService.setFontSize(fontSize);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateFontSize?fontSize=' + fontSize, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateFontSize?fontSize=' + fontSize, null, {headers: this.createFullHeaders()});
     }
 
     public updateTextColor(textColor) {
         this.appStorageService.setTextColor(textColor);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextColor?textColor=' + textColor, null, {headers: this.createFullHeaders()})
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateTextColor?textColor=' + textColor, null, {headers: this.createFullHeaders()})
     }
 
     public updateBackgroundColor(backgroundColor) {
         this.appStorageService.setBackgroundColor(backgroundColor);
 
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateBackgroundColor?backgroundColor=' + backgroundColor, null, {headers: this.createFullHeaders()})
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateBackgroundColor?backgroundColor=' + backgroundColor, null, {headers: this.createFullHeaders()})
     }
 
     public updateTextBold(isBold: boolean) {
         this.appStorageService.setTextBold(isBold);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextBold?isBold=' + isBold, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateTextBold?isBold=' + isBold, null, {headers: this.createFullHeaders()});
     }
 
     public updateTextItalic(isItalic: boolean) {
         this.appStorageService.setTextItalic(isItalic);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTextItalic?isItalic=' + isItalic, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateTextItalic?isItalic=' + isItalic, null, {headers: this.createFullHeaders()});
     }
 
     public updateNavigationControl(showNavigationControl: boolean) {
         this.appStorageService.setNavigationControl(showNavigationControl);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateNavigationControl?showNavigationControl=' + showNavigationControl, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateNavigationControl?showNavigationControl=' + showNavigationControl, null, {headers: this.createFullHeaders()});
     }
 
     public updateTheme(theme: string) {
         this.appStorageService.setTheme(theme);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateTheme?theme=' + theme, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateTheme?theme=' + theme, null, {headers: this.createFullHeaders()});
     }
 
     public updateFavoritesBooks(favoriteBooks: string[], userDTO: UserDTO) {
         this.appStorageService.setUserDTO(userDTO);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateFavoritesBooks', favoriteBooks, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateFavoritesBooks', favoriteBooks, {headers: this.createFullHeaders()});
     }
 
     public updateOpenLastRead(userDTO: UserDTO) {
         this.appStorageService.setUserDTO(userDTO);
-        return this.httpClient.put(this.parseURL + ParseClasses.USER + '/updateOpenLastRead/?goToLastRead=' + userDTO.goToLastRead, null, {headers: this.createFullHeaders()});
+        return this.httpClient.put(this.parseURL + RestControllers.USER + '/updateOpenLastRead/?goToLastRead=' + userDTO.goToLastRead, null, {headers: this.createFullHeaders()});
     }
 
     public getBookmarks(bookDTO: BookDTO) {
-        let query = encodeURI('{"userId": "' + this.appStorageService.getUserDTO().objectId + '", "isDeleted": false, "bookId": "' + bookDTO.objectId + '"}');
-        return this.httpClient.get(this.parseURL + '/classes/' + ParseClasses.BOOKMARKS + '?where=' + query, this.createHttpOptions());
+        return this.httpClient.get(this.parseURL + RestControllers.BOOKMARKS + '/getBookmarks?bookId=' + bookDTO.objectId);
     }
 
     public deleteBookMark(bookMarkDTO: BookmarkDTO) {
-        let updateParams = '{"isDeleted": true}';
         return this.httpClient
-            .put(this.parseURL + 'classes/' + ParseClasses.BOOKMARKS + '/' + bookMarkDTO.objectId, updateParams, {headers: this.createFullHeaders()});
+            .delete(this.parseURL + RestControllers.BOOKMARKS + '/deleteBookmark/' + bookMarkDTO.objectId);
     }
 
     public addBookmark(bookMarkDTO: BookmarkDTO) {
-        bookMarkDTO.userId = this.appStorageService.getUserDTO().objectId;
-        return this.httpClient.post(this.parseURL + 'classes/' + ParseClasses.BOOKMARKS, bookMarkDTO, this.createHttpOptions());
+        return this.httpClient.post(this.parseURL + RestControllers.BOOKMARKS + '/addBookmark', bookMarkDTO, this.createHttpOptions());
     }
 
     // start social
     public getAllUsers() {
         var subject = new Subject<UserDTO[]>();
         let query = encodeURI('{"email": {"$ne":"' + this.appStorageService.getUserDTO().email + '"}}');
-        this.httpClient.get(this.parseURL + ParseClasses.USER + '?where=' + query, this.createHttpOptions())
+        this.httpClient.get(this.parseURL + RestControllers.USER + '?where=' + query, this.createHttpOptions())
             .subscribe((res: any) => {
                 let usersDTO: UserDTO[] = [];
                 res.forEach(user => {
@@ -208,11 +212,11 @@ export class HttpParseService {
     }
 
     public getUnconnectedUsers() {
-        return this.httpClient.get(this.parseURL + ParseClasses.USER + '/getUnconnectedUsers', this.createHttpOptions());
+        return this.httpClient.get(this.parseURL + RestControllers.USER + '/getUnconnectedUsers', this.createHttpOptions());
     }
 
     public getMyConnectedUsers() {
-        return this.httpClient.get(this.parseURL + ParseClasses.USER + '/getMyConnections', this.createHttpOptions())
+        return this.httpClient.get(this.parseURL + RestControllers.USER + '/getMyConnections', this.createHttpOptions())
     }
 
     public addConenction(reuqestedUserDTO: UserDTO) {
@@ -221,27 +225,31 @@ export class HttpParseService {
         connectionDTO.secondUserId = reuqestedUserDTO.objectId;
         connectionDTO.firstUserAccepted = true;
         connectionDTO.secondUserAccepted = false;
-        return this.httpClient.post(this.parseURL + ParseClasses.CONNECTIONS + '/addConnection', connectionDTO, this.createHttpOptions());
+        return this.httpClient.post(this.parseURL + RestControllers.CONNECTIONS + '/addConnection', connectionDTO, this.createHttpOptions());
     }
 
     public getMyPendingConnection() {
-        return this.httpClient.get(this.parseURL + ParseClasses.CONNECTIONS + '/getPendingConnections', this.createHttpOptions());
+        return this.httpClient.get(this.parseURL + RestControllers.CONNECTIONS + '/getPendingConnections', this.createHttpOptions());
     }
 
     public getReceivedConnections() {
-        return this.httpClient.get(this.parseURL + ParseClasses.CONNECTIONS + '/getReceivedConnections', this.createHttpOptions());
+        return this.httpClient.get(this.parseURL + RestControllers.CONNECTIONS + '/getReceivedConnections', this.createHttpOptions());
     }
 
     public getMyConnections() {
-        return this.httpClient.get(this.parseURL + ParseClasses.CONNECTIONS + '/getMyConnections', this.createHttpOptions());
+        return this.httpClient.get(this.parseURL + RestControllers.CONNECTIONS + '/getMyConnections', this.createHttpOptions());
     }
 
     public getUsersByIds(userIds: any[]) {
-        return this.httpClient.post(this.parseURL + ParseClasses.USER + '/getUsersByIds', userIds, this.createHttpOptions());
+        return this.httpClient.post(this.parseURL + RestControllers.USER + '/getUsersByIds', userIds, this.createHttpOptions());
     }
 
     public acceptConnection(connectionDTO: ConnectionDTO) {
-        return this.httpClient.put(this.parseURL + ParseClasses.CONNECTIONS + '/acceptConnection/' + connectionDTO.objectId, null, this.createHttpOptions())
+        return this.httpClient.put(this.parseURL + RestControllers.CONNECTIONS + '/acceptConnection/' + connectionDTO.objectId, null, this.createHttpOptions())
+    }
+
+    public connectionsCount() {
+        return this.httpClient.get(this.parseURL + RestControllers.CONNECTIONS + '/connectionsCount');
     }
 
     // end social
@@ -309,11 +317,36 @@ export class HttpParseService {
                     this.appStorageService.setUserConnections(res as UserDTO[]);
                 }
             );
+        } else {
+            this.connectionsCount().subscribe(
+                (res: number) => {
+                    if (this.appStorageService.getUserConnections().length != res) {
+                        this.getMyConnectedUsers().subscribe(
+                            (res: any) => {
+                                this.appStorageService.setUserConnections(res as UserDTO[]);
+                            }
+                        );
+                    }
+                }
+            )
         }
+
         if (this.appStorageService.getBooks() == null) {
             this.getBooksForUser().subscribe(
                 (books) => {
                     this.appStorageService.setBooks(books);
+                }
+            )
+        } else {
+            this.booksCount().subscribe(
+                (res: number) => {
+                    if (this.appStorageService.getBooks().length != res) {
+                        this.getBooksForUser().subscribe(
+                            (books) => {
+                                this.appStorageService.setBooks(books);
+                            }
+                        )
+                    }
                 }
             )
         }
@@ -321,10 +354,10 @@ export class HttpParseService {
 }
 
 
-export enum ParseClasses {
+export enum RestControllers {
     AUTH = 'jwt-controller',
     BOOK = 'book-controller',
     USER = 'user-controller',
-    BOOKMARKS = 'Bookmarks',
+    BOOKMARKS = 'bookmarks-controller',
     CONNECTIONS = 'connection-controller'
 }

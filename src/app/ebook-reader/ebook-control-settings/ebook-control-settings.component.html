@@ -1,12 +1,26 @@
-<ion-list>
-  <ion-item-group>
-    <ion-item-divider>
-      <ion-label>Controls</ion-label>
-    </ion-item-divider>
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Control Settings</ion-title>
+        <ion-buttons slot="primary">
+            <ion-button (click)="dismissModal(null)">
+                <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
 
-    <ion-item>
-      <ion-label>Show navigation controls</ion-label>
-      <ion-checkbox color="danger" [checked]="showNavigationControls" (ionChange)="navigationControlChanged($event)"></ion-checkbox>
-    </ion-item>
-  </ion-item-group>
-</ion-list>
+<ion-content>
+    <ion-list>
+        <ion-item-group>
+            <ion-item-divider>
+                <ion-label>Controls</ion-label>
+            </ion-item-divider>
+
+            <ion-item>
+                <ion-label>Show navigation controls</ion-label>
+                <ion-checkbox color="danger" [checked]="showNavigationControls"
+                              (ionChange)="navigationControlChanged($event)"></ion-checkbox>
+            </ion-item>
+        </ion-item-group>
+    </ion-list>
+</ion-content>
