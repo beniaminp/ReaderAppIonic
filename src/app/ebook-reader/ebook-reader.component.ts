@@ -53,6 +53,9 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     public bookMarks: BookmarkDTO[] = [];
     public showNavigationControl: boolean;
     public runViewCheck = 0;
+    public currentPage = 0;
+    public totalPageNo = 0;
+    public progress: any = 0;
 
     constructor(public platform: Platform,
                 public storage: Storage,
@@ -102,6 +105,17 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         );
     }
 
+    private initAnimation() {
+        /*this.rendition.hooks.content.register((contents, view) => {
+                console.error('contents', contents);
+                return contents.addSt("test-red")
+                    .then(function () {
+                        // init code
+                    });
+            }
+        );*/
+    }
+
     private renderBookContent(bookContent) {
         this.book.open(bookContent/*, {storage: true, store: 'epubs-store'}*/);
 
@@ -121,6 +135,8 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.rendition.display();
 
         this.getBookmarksList();
+
+        this.initAnimation();
     }
 
     private getBookmarksList() {
@@ -153,17 +169,64 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
             this.setNavigationControl(userDTO.showNavigationControl);
             this.setTheme(userDTO.theme != null ? userDTO.theme : 'light');
 
-            window.on("swipeleft", (event) => {
-                this.showHideToolbar = false;
-                this.rendition.next();
-            });
+            this.swipeToChanged();
 
-            window.on("swiperight", (event) => {
-                this.showHideToolbar = false;
-                this.rendition.prev();
-            });
+            this.updatePage();
+
+            this.setPages();
+
 
         }).catch(e => this.loadingService.dismissLoader());
+    }
+
+    private updatePage() {
+        this.rendition.on('relocated', (locations) => {
+            let progress = this.book.locations.percentageFromCfi(locations.start.cfi);
+            this.progress = Number(progress * 100).toFixed(1);
+            this.currentPage = this.book.locations.locationFromCfi(locations.start.cfi);
+            this.totalPageNo = this.book.locations.total;
+            this.cdr.detectChanges();
+        });
+    }
+
+    public setPages() {
+        this.currentPage = this.book.locations.currentLocation;
+        this.totalPageNo = this.book.locations.total;
+        this.cdr.detectChanges();
+    }
+
+    private swipeToChanged() {
+        this.rendition.hooks.content.register((contents) => {
+                const el = contents.document.documentElement;
+                if (el) {
+
+                    //Enable swipe gesture to flip a page
+                    let start: Touch;
+                    let end: Touch;
+
+                    el.addEventListener('touchstart', (event: TouchEvent) => {
+                        start = event.changedTouches[0];
+                    });
+
+                    el.addEventListener('touchend', (event: TouchEvent) => {
+                        end = event.changedTouches[0];
+                        const elBook = document.querySelector('main'); //Parent div, which contains the #area div
+                        if (elBook) {
+                            const bound = elBook.getBoundingClientRect();
+                            const hr = (end.screenX - start.screenX) / bound.width;
+                            const vr = Math.abs((end.screenY - start.screenY) / bound.height);
+                            if (hr > 0.25 && vr < 0.1) {
+                                this.move(0);
+                            }
+
+                            if (hr < -0.25 && vr < 0.1) {
+                                this.move(1);
+                            }
+                        }
+                    });
+                }
+            }
+        );
     }
 
     private setupBookStorage() {
@@ -181,6 +244,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
     public move(where) {
         this.showHideToolbar = false;
+        this.cdr.detectChanges();
         if (where == 0) {
             this.rendition.prev().then(res => this.setUnsetBookmarkIcon());
         } else {
@@ -202,7 +266,10 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
                 (res: any) => {
                     bookMarkDTO.objectId = res.objectId;
                     this.bookMarks.push(bookMarkDTO);
-                    this.ebookService.ePubEmitter.next({type: EPUB_EVENT_TYPES.BOOKMARKS_LOADED, value: this.bookMarks});
+                    this.ebookService.ePubEmitter.next({
+                        type: EPUB_EVENT_TYPES.BOOKMARKS_LOADED,
+                        value: this.bookMarks
+                    });
                 }
             );
         } else {
@@ -278,10 +345,11 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
     private resizeBook() {
         let platformHeight = this.platform.height();
         let footerHeight = this.footer.nativeElement.offsetHeight;
-        console.error('footerHeight', footerHeight);
+        // console.error('footerHeight', footerHeight);
 
         if (this.rendition != null) {
             this.rendition.resize(this.platform.width(), platformHeight - footerHeight);
+            this.updatePage();
         }
 
         /*this.book.generatePagination().then(() => {
