@@ -14,6 +14,8 @@ import {environment} from "../../environments/environment";
 export class HttpParseService {
     public parseURL = 'http://' + window.location.hostname + ':8080/';
 
+    // public parseURL = 'http://vps658548.ovh.net:8080/';
+
     constructor(private httpClient: HttpClient,
                 public appStorageService: AppStorageService) {
 

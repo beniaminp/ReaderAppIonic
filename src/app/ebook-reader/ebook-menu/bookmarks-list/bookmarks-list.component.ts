@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ModalController} from "@ionic/angular";
 import {BookDTO} from "../../dto/BookDTO";
 import {EBookService, EPUB_EVENT_TYPES} from "../../services/e-book.service";
 import {BookmarkDTO} from "../../dto/BookmarkDTO";
 import {debug} from "util";
+import {Storage} from "@ionic/storage";
 
 @Component({
     selector: 'bookmarks-list',
@@ -18,7 +19,8 @@ export class BookmarksListComponent implements OnInit {
     public bookmarksDTOList: BookmarkDTO[] = [];
 
     constructor(public modalController: ModalController,
-                public ebookService: EBookService) {
+                public ebookService: EBookService,
+                public cdr: ChangeDetectorRef) {
 
     }
 
@@ -38,6 +40,7 @@ export class BookmarksListComponent implements OnInit {
                     this.ePub = event.value;
                 } else if (event.type == EPUB_EVENT_TYPES.BOOKMARKS_LOADED) {
                     this.bookmarksDTOList = event.value;
+                    this.cdr.detectChanges();
                 }
             }
         )

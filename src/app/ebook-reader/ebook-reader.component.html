@@ -28,13 +28,13 @@
             <ion-col width-18 style="text-align: left" *ngIf="showNavigationControl">
                 <ion-icon name="arrow-dropleft-circle" (click)="move(0)" size="large"></ion-icon>
             </ion-col>
-            <ion-col width-15 style="text-align: right" *ngIf="showNavigationControl">
+            <ion-col width-15 style="text-align: center">
                 {{progress}}%
             </ion-col>
             <ion-col width-33 style="text-align: center">
                 <ion-icon name="radio-button-on" size="large" (click)="showHideToolbarClick()"></ion-icon>
             </ion-col>
-            <ion-col width-15 style="text-align: right" *ngIf="showNavigationControl">
+            <ion-col width-15 style="text-align: center">
                 {{currentPage}} of {{totalPageNo}}
             </ion-col>
             <ion-col width-18 style="text-align: right" *ngIf="showNavigationControl">

@@ -9,5 +9,4 @@ export class BookDTO {
     bookContent;
     fileUrlName: any;
     objectId: any;
-    isDeleted = false;
 }

@@ -171,7 +171,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
             this.swipeToChanged();
 
-            this.updatePage();
+            this.setupPageUpdate();
 
             this.setPages();
 
@@ -179,7 +179,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         }).catch(e => this.loadingService.dismissLoader());
     }
 
-    private updatePage() {
+    private setupPageUpdate() {
         this.rendition.on('relocated', (locations) => {
             let progress = this.book.locations.percentageFromCfi(locations.start.cfi);
             this.progress = Number(progress * 100).toFixed(1);
@@ -246,9 +246,9 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.showHideToolbar = false;
         this.cdr.detectChanges();
         if (where == 0) {
-            this.rendition.prev().then(res => this.setUnsetBookmarkIcon());
+            this.rendition.prev().then(() => this.setUnsetBookmarkIcon());
         } else {
-            this.rendition.next().then((res) => this.setUnsetBookmarkIcon());
+            this.rendition.next().then(() => this.setUnsetBookmarkIcon());
         }
     }
 
@@ -349,7 +349,7 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
         if (this.rendition != null) {
             this.rendition.resize(this.platform.width(), platformHeight - footerHeight);
-            this.updatePage();
+            this.setupPageUpdate();
         }
 
         /*this.book.generatePagination().then(() => {
