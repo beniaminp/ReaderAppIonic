@@ -6,6 +6,7 @@ const routes: Routes = [
     {path: 'auth', loadChildren: './auth/auth.module#AuthModule'},
     {path: 'reader', loadChildren: './reader/reader.module#ReaderPageModule'},
     {path: 'shelf', loadChildren: './shelf/shelf.module#ShelfPageModule'},
+    {path: '**', redirectTo: 'auth'}
 ];
 
 @NgModule({
