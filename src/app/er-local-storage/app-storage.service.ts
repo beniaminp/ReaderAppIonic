@@ -97,7 +97,8 @@ export class AppStorageService {
     }
 
     public getBooks(): BookDTO[] {
-        return this.localStorageService.get(STORAGE_DATA.BOOKS);
+        let books: BookDTO[] = this.localStorageService.get(STORAGE_DATA.BOOKS);
+        return books != null ? books : [];
     }
 
     public addBook(bookDTO: BookDTO) {

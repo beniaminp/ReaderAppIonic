@@ -9,9 +9,9 @@
     </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-    <ion-list>
+    <ion-list *ngIf="bookmarksDTOList.length > 0">
         <ion-item *ngFor="let bookMark of bookmarksDTOList">
-            <ion-label (click)="dismissModal(bookMark)">{{bookMark.percentage}} % of book</ion-label>
+            <ion-label (click)="dismissModal(bookMark.cfi)">{{bookMark.percentage}} % of book</ion-label>
         </ion-item>
     </ion-list>
 </ion-content>

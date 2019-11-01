@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {ModalController} from "@ionic/angular";
+import {ModalController, NavParams} from "@ionic/angular";
 import {BookDTO} from "../../dto/BookDTO";
 import {EBookService, EPUB_EVENT_TYPES} from "../../services/e-book.service";
 import {BookmarkDTO} from "../../dto/BookmarkDTO";
@@ -20,30 +20,19 @@ export class BookmarksListComponent implements OnInit {
 
     constructor(public modalController: ModalController,
                 public ebookService: EBookService,
-                public cdr: ChangeDetectorRef) {
+                public navParams: NavParams) {
 
     }
 
     ngOnInit(): void {
-        this.initEventListeners();
+        this.bookmarksDTOList = this.navParams.get('bookmarksDTOList');
+        this.bookmarksDTOList.sort((a, b) => Number(a.percentage) - Number(b.percentage));
+        this.ePub = this.navParams.get('ePub');
 
     }
 
     dismissModal(data) {
         this.modalController.dismiss(data);
-    }
-
-    private initEventListeners() {
-        this.ebookService.ePubEmitter.subscribe(
-            (event) => {
-                if (event.type == EPUB_EVENT_TYPES.EPUB) {
-                    this.ePub = event.value;
-                } else if (event.type == EPUB_EVENT_TYPES.BOOKMARKS_LOADED) {
-                    this.bookmarksDTOList = event.value;
-                    this.cdr.detectChanges();
-                }
-            }
-        )
     }
 
 

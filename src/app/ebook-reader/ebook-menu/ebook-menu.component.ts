@@ -4,6 +4,7 @@ import {BookDTO} from "../dto/BookDTO";
 import {BookmarksListComponent} from "./bookmarks-list/bookmarks-list.component";
 import {MenuController, ModalController} from "@ionic/angular";
 import {MenuService} from "../services/menu.service";
+import {BookmarkDTO} from "../dto/BookmarkDTO";
 
 @Component({
     selector: 'ebook-menu',
@@ -14,6 +15,7 @@ export class EbookMenuComponent implements OnInit {
     public bookDTO: BookDTO;
     public ePub;
     public chapters;
+    private bookmarksDTOList: BookmarkDTO[];
 
     constructor(public ebookService: EBookService,
                 public modalController: ModalController,
@@ -29,7 +31,7 @@ export class EbookMenuComponent implements OnInit {
         try {
             const modal = await this.modalController.create({
                 component: BookmarksListComponent,
-                componentProps: {'bookDTO': this.bookDTO, ePub: this.ePub},
+                componentProps: {bookDTO: this.bookDTO, ePub: this.ePub, bookmarksDTOList: this.bookmarksDTOList},
                 showBackdrop: true,
                 backdropDismiss: true
             });
@@ -64,6 +66,8 @@ export class EbookMenuComponent implements OnInit {
             (event) => {
                 if (event.type == EPUB_EVENT_TYPES.EPUB) {
                     this.ePub = event.value;
+                } else if (event.type == EPUB_EVENT_TYPES.BOOKMARKS_LOADED) {
+                    this.bookmarksDTOList = event.value;
                 }
             }
         )
