@@ -9,4 +9,5 @@ export class BookDTO {
     bookContent;
     fileUrlName: any;
     objectId: any;
+    lastReadCfi: any;
 }

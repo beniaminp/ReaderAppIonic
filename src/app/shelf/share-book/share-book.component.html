@@ -1,0 +1,17 @@
+<ion-header translucent>
+    <ion-toolbar>
+        <ion-title>Share Book</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismissModal()">Close</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-list *ngIf="isOkToRender">
+        <ion-item *ngFor="let user of connections">
+            <ion-label>{{user.username}}</ion-label>
+            <ion-button (click)="shareWithUser(user)">Share
+            </ion-button>
+        </ion-item>
+    </ion-list>
+</ion-content>

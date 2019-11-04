@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, OnInit} from '@angular/core';
+import {AfterContentInit, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Storage} from "@ionic/storage";
 import {LoadingController, MenuController, Platform, PopoverController} from "@ionic/angular";
@@ -21,12 +21,13 @@ declare var ePub: any;
 })
 export class ShelfPage implements OnInit {
 
-    public books: BookDTO[];
-    public filteredBooks: BookDTO[];
+    public books: BookDTO[] = [];
+    public filteredBooks: BookDTO[] = [];
     public favoritesBooks: string[] = [];
     public showFavorites = false;
     public userDTO: UserDTO;
     public viewFreeBooks = false;
+    public showBooks = 0;
 
     constructor(
         private router: Router,
@@ -38,7 +39,8 @@ export class ShelfPage implements OnInit {
         private httpParseService: HttpParseService,
         private appStorageService: AppStorageService,
         private popoverController: PopoverController,
-        private loadingService: LoadingService) {
+        private loadingService: LoadingService,
+        public cdr: ChangeDetectorRef) {
         this.initEventListeners();
     }
 
@@ -77,13 +79,15 @@ export class ShelfPage implements OnInit {
     }
 
     public doRefresh(event) {
-        this.httpParseService.getBooksForUser().subscribe(
+        this.selectionChanged({detail: {value: this.showBooks}});
+        /*this.httpParseService.getBooksForUser().subscribe(
             (res) => {
                 this.books = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
+                this.filteredBooks = this.books;
                 this.appStorageService.setBooks(this.books);
                 event.target.complete();
             }
-        );
+        );*/
     }
 
     public async presentPopover(ev) {
@@ -120,15 +124,19 @@ export class ShelfPage implements OnInit {
     }
 
     public selectionChanged(event) {
-        let showBooks = event.detail.value;
-        if (showBooks == 0) {
+        this.showBooks = event.detail.value;
+        if (this.showBooks == 0) {
             this.getBooks();
             this.showFavorites = false;
             this.viewFreeBooks = false;
-        } else if (showBooks == 1) {
+        } else if (this.showBooks == 1) {
             this.filteredBooks = this.books.filter(book => this.favoritesBooks.includes(book.objectId));
             this.showFavorites = true;
             this.viewFreeBooks = false;
+        } else if (this.showBooks == 2) {
+            this.showFavorites = false;
+            this.viewFreeBooks = false;
+            this.getSharedWithMeBooks();
         }
     }
 
@@ -168,18 +176,21 @@ export class ShelfPage implements OnInit {
                 this.books = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
                 this.filteredBooks = this.books;
                 this.loadingService.dismissLoader();
-                /*this.books.forEach(
-                    book => {
-                        ePub(book.fileUrl).ready.then(
-                            (resBook) => {
-                                console.error(resBook);
-                            }
-                        )
-
-                    }
-                )*/
             },
             (e) => {
+                console.error(e);
+                this.loadingService.dismissLoader();
+            }
+        );
+    }
+
+    private getSharedWithMeBooks() {
+        this.loadingService.showLoader();
+        this.httpParseService.getSharedWithMeBooks().subscribe(
+            (res: BookDTO[]) => {
+                this.loadingService.dismissLoader();
+                this.filteredBooks = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
+            }, (e) => {
                 console.error(e);
                 this.loadingService.dismissLoader();
             }

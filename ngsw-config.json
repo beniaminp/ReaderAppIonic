@@ -32,7 +32,7 @@
       "name": "Files",
       "urls": [
         [
-          "https://parsefiles.back4app.com/**"
+          "http://*/**"
         ]
       ],
       "cacheConfig": {
@@ -44,7 +44,7 @@
       "name": "Requests",
       "urls": [
         [
-          "https://parseapi.back4app.com/**"
+          "http://*/**"
         ]
       ],
       "cacheConfig": {

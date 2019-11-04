@@ -246,10 +246,22 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
         this.showHideToolbar = false;
         this.cdr.detectChanges();
         if (where == 0) {
-            this.rendition.prev().then(() => this.setUnsetBookmarkIcon());
+            this.rendition.prev().then(() => {
+                this.setUnsetBookmarkIcon();
+                this.setLastPage();
+            });
         } else {
-            this.rendition.next().then(() => this.setUnsetBookmarkIcon());
+            this.rendition.next().then(() => {
+                this.setUnsetBookmarkIcon();
+                this.setLastPage();
+            });
         }
+    }
+
+    public setLastPage() {
+        var cfi = this.ebookService.getStartCfi(this.book);
+        this.bookDTO.lastReadCfi = cfi;
+        this.httpParseService.updateLastCfi(this.bookDTO.objectId, cfi).subscribe();
     }
 
     public setUnsetBookmark() {

@@ -81,6 +81,7 @@ export class BookPopoverComponent implements OnInit {
                 showBackdrop: true,
                 backdropDismiss: true
             });
+            this.popoverController.dismiss();
             modal.present();
         } catch (e) {
             console.error(e);

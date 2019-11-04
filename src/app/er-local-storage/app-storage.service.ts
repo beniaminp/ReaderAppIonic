@@ -89,7 +89,8 @@ export class AppStorageService {
     }
 
     public getConnections(): ConnectionDTO[] {
-        return this.localStorageService.get(STORAGE_DATA.CONNECTIONS);
+        let connections: ConnectionDTO[] = this.localStorageService.get(STORAGE_DATA.CONNECTIONS);
+        return connections != null ? connections : [];
     }
 
     public setBooks(booksDTO: BookDTO[]) {
@@ -110,6 +111,10 @@ export class AppStorageService {
     public deleteBook(bookDTO: BookDTO) {
         let books = this.getBooks().splice(this.getBooks().indexOf(bookDTO), 1);
         this.setBooks(books);
+    }
+
+    public updateBook(bookDTO: BookDTO) {
+
     }
 
     public getUserConnections(): UserDTO[] {

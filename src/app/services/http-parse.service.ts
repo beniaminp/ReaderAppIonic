@@ -90,7 +90,26 @@ export class HttpParseService {
     public getBooksForUser() {
         var subject = new Subject<BookDTO[]>();
 
-        this.httpClient.get(this.parseURL + RestControllers.BOOK + '/getBooks', this.createHttpOptions())
+        this.httpClient.get(this.parseURL + RestControllers.BOOK + '/getBooks')
+            .subscribe((books: any) => {
+                let booksDTO: BookDTO[] = [];
+                books.forEach(book => {
+                    let bookDTO: BookDTO = new BookDTO();
+                    bookDTO.fileName = book.fileName;
+                    bookDTO.userId = book.userId;
+                    bookDTO.fileUrl = book.fileUrl;
+                    bookDTO.objectId = book.objectId;
+                    booksDTO.push(bookDTO);
+                });
+                subject.next(booksDTO);
+            });
+        return subject.asObservable();
+    }
+
+    public getSharedWithMeBooks() {
+        var subject = new Subject<BookDTO[]>();
+
+        this.httpClient.get(this.parseURL + RestControllers.BOOK + '/getSharedWithMeBooks')
             .subscribe((books: any) => {
                 let booksDTO: BookDTO[] = [];
                 books.forEach(book => {
@@ -123,8 +142,11 @@ export class HttpParseService {
 
     }
 
-    // end books
+    public updateLastCfi(bookId: string, lastCfi: string) {
+        return this.httpClient.put(this.parseURL + RestControllers.BOOK + '/updateLastCfi/' + bookId + '?lastCfi=' + encodeURI(lastCfi), null);
+    }
 
+    // end books
 
     public updateLastReadBook(bookDTO: BookDTO) {
         let userDTO = this.appStorageService.getUserDTO();
@@ -252,6 +274,10 @@ export class HttpParseService {
 
     public connectionsCount() {
         return this.httpClient.get(this.parseURL + RestControllers.CONNECTIONS + '/connectionsCount');
+    }
+
+    public shareWithUser(user: UserDTO, book: BookDTO) {
+        return this.httpClient.put(this.parseURL + RestControllers.CONNECTIONS + '/shareBookWithUser/' + user.objectId + '/' + book.objectId + '/10', null);
     }
 
     // end social
