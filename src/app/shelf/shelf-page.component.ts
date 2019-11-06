@@ -11,6 +11,7 @@ import {UserSettingsComponent} from "./user-settings/user-settings.component";
 import {LoadingService} from "../services/loading.service";
 import {BookPopoverComponent} from "./book-popover/book-popover.component";
 import {GenericHttpService} from "../services/generic-http.service";
+import {SharedBookDTO} from "../ebook-reader/dto/SharedBookDTO";
 
 declare var ePub: any;
 
@@ -28,6 +29,9 @@ export class ShelfPage implements OnInit {
     public userDTO: UserDTO;
     public viewFreeBooks = false;
     public showBooks = 0;
+
+    public areSharedBooks = false;
+    public sharedBooks: SharedBookDTO[];
 
     constructor(
         private router: Router,
@@ -80,14 +84,7 @@ export class ShelfPage implements OnInit {
 
     public doRefresh(event) {
         this.selectionChanged({detail: {value: this.showBooks}});
-        /*this.httpParseService.getBooksForUser().subscribe(
-            (res) => {
-                this.books = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
-                this.filteredBooks = this.books;
-                this.appStorageService.setBooks(this.books);
-                event.target.complete();
-            }
-        );*/
+        event.target.complete();
     }
 
     public async presentPopover(ev) {
@@ -163,11 +160,13 @@ export class ShelfPage implements OnInit {
     private async getBooks() {
         if (this.books != null && this.books.length > 1) {
             this.filteredBooks = this.books;
+            this.areSharedBooks = false;
             return;
         }
-        if (this.appStorageService.getBooks() != null) {
+        if (this.appStorageService.getBooks().length > 0) {
             this.books = this.appStorageService.getBooks();
             this.filteredBooks = this.books;
+            this.areSharedBooks = false;
             return;
         }
         this.loadingService.showLoader();
@@ -175,6 +174,7 @@ export class ShelfPage implements OnInit {
             (res) => {
                 this.books = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
                 this.filteredBooks = this.books;
+                this.areSharedBooks = false;
                 this.loadingService.dismissLoader();
             },
             (e) => {
@@ -187,9 +187,10 @@ export class ShelfPage implements OnInit {
     private getSharedWithMeBooks() {
         this.loadingService.showLoader();
         this.httpParseService.getSharedWithMeBooks().subscribe(
-            (res: BookDTO[]) => {
+            (res: SharedBookDTO[]) => {
                 this.loadingService.dismissLoader();
-                this.filteredBooks = res.sort((a, b) => a.fileName > b.fileName ? 1 : -1);
+                this.sharedBooks = res.sort((a, b) => a.bookDTO.fileName > b.bookDTO.fileName ? 1 : -1);
+                this.areSharedBooks = true;
             }, (e) => {
                 console.error(e);
                 this.loadingService.dismissLoader();

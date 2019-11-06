@@ -21,12 +21,22 @@
     </ion-refresher>
     <ion-searchbar animated showCancelButton="never" autocomplete="true" (ionInput)="searchInputChanged($event)"
                    (ionChange)="searchChanged($event)"></ion-searchbar>
-    <ion-list *ngIf="filteredBooks">
+    <ion-list *ngIf="filteredBooks && !areSharedBooks">
         <ion-item *ngFor="let book of filteredBooks">
             <!--<ion-avatar slot="start">
                 <img src="./avatar-finn.png">
             </ion-avatar>-->
             <ion-label (click)="openBook(book)">{{book.fileName}}</ion-label>
+            <ion-icon name="menu" (click)="showBookPopover($event, book)"></ion-icon>
+        </ion-item>
+    </ion-list>
+
+    <ion-list *ngIf="areSharedBooks">
+        <ion-item *ngFor="let sharedBook of sharedBooks">
+            <!--<ion-avatar slot="start">
+                <img src="./avatar-finn.png">
+            </ion-avatar>-->
+            <ion-label (click)="openBook(sharedBook.bookDTO)">{{sharedBook.bookDTO.fileName}} by {{sharedBook.fromUser}}</ion-label>
             <ion-icon name="menu" (click)="showBookPopover($event, book)"></ion-icon>
         </ion-item>
     </ion-list>
