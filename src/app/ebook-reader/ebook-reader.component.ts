@@ -175,6 +175,11 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
             this.setPages();
 
+            if (this.bookDTO.lastReadCfi != null) {
+                this.book.rendition.display(this.bookDTO.lastReadCfi);
+                this.cdr.detectChanges();
+            }
+
 
         }).catch(e => this.loadingService.dismissLoader());
     }
@@ -244,16 +249,17 @@ export class EbookReaderComponent implements OnInit, AfterViewInit, AfterContent
 
     public move(where) {
         this.showHideToolbar = false;
-        this.cdr.detectChanges();
         if (where == 0) {
             this.rendition.prev().then(() => {
                 this.setUnsetBookmarkIcon();
                 this.setLastPage();
+                this.cdr.detectChanges();
             });
         } else {
             this.rendition.next().then(() => {
                 this.setUnsetBookmarkIcon();
                 this.setLastPage();
+                this.cdr.detectChanges();
             });
         }
     }
